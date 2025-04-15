@@ -1,0 +1,29 @@
+name: UnitTests
+
+on:
+  push:
+  workflow_dispatch:
+    
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    concurrency:
+      cancel-in-progress: true
+      group: unit-test-${{ github.ref }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install dependencies
+        run: |
+          composer install
+
+      - name: Run Unit Tests
+        run: |
+          composer test
