@@ -15,7 +15,6 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
             "php-http/discovery": true,
             "masgeek/windows-ext-ignorer": true
         }
@@ -35,8 +34,7 @@
         "masgeek/windows-ext-ignorer": "^0.1.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.1",
+        "reliese/laravel": "^1.4",
         "vcian/laravel-db-auditor": "^2.2"
     },
     "autoload": {
@@ -70,7 +68,13 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
-        ]
+        ],
+        "meta:helper": "@php artisan ide-helper:generate",
+        "meta:ide": "@php artisan ide-helper:meta",
+        "model:gen": "@php artisan code:models && @php artisan ide-helper:models --write && pint --dirty",
+        "lint:fix-all": "./vendor/bin/pint",
+        "lint:fix": "./vendor/bin/pint --dirty",
+        "lint:check": "pint --test"
     },
     "extra": {
         "laravel": {
