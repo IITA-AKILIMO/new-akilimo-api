@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class HealthCheckController extends Controller
 {
-
     public function check(): \Illuminate\Http\JsonResponse
     {
         $healthChecks = [
@@ -104,7 +103,7 @@ class HealthCheckController extends Controller
     private function checkCache(): array
     {
         try {
-            $testKey = 'health_check_' . uniqid();
+            $testKey = 'health_check_'.uniqid();
             Cache::put($testKey, 'test', 60);
             $value = Cache::get($testKey);
             Cache::forget($testKey);
@@ -124,7 +123,7 @@ class HealthCheckController extends Controller
     private function checkFileStorage(): array
     {
         try {
-            $testFile = 'health_check_' . uniqid() . '.txt';
+            $testFile = 'health_check_'.uniqid().'.txt';
             Storage::put($testFile, 'Storage health check');
             $fileExists = Storage::exists($testFile);
             Storage::delete($testFile);
