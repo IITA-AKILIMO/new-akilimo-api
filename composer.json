@@ -21,6 +21,7 @@
     },
     "require": {
         "php": "^8.2",
+        "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1"
     },
