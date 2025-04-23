@@ -12,7 +12,7 @@ class FertilizerPriceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): FertilizerPriceResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
@@ -24,51 +24,19 @@ class FertilizerPriceController extends Controller
         return FertilizerPriceResourceCollection::make($prices);
     }
 
-    public function priceByKey(string $fertilizerKey, Request $request)
+    public function byFertiilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
         $prices = FertilizerPrice::query()
-            ->when($fertilizerKey != null, function ($query) use ($fertilizerKey) {
-                return $query->where('fertilizer_key', strtoupper($fertilizerKey));
-            })
+            ->where('fertilizer_key', strtoupper(trim($fertilizerKey)))
+            ->where('price_active', true)
             ->orderBy($orderBy, $sort)
             ->paginate($perPage);
 
         return FertilizerPriceResourceCollection::make($prices);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(FertilizerPrice $fertilizer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, FertilizerPrice $fertilizer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(FertilizerPrice $fertilizer)
-    {
-        //
-    }
 }
