@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Enums\EnumCountry;
 use App\Models\Fertilizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,9 +23,10 @@ class FertilizerResource extends JsonResource
             'id' => $fertilizer->id,
             'name' => $fertilizer->name,
             'type' => $fertilizer->type,
-            'key' => $fertilizer->fertilizer_key,
+            'fertilizer_key' => $fertilizer->fertilizer_key,
             'weight' => $fertilizer->weight,
-            'country' => $fertilizer->country,
+            'country_code' => $fertilizer->country,
+            'currency_code' => EnumCountry::fromCode($fertilizer->country)->currency(),
             'sort_order' => $fertilizer->sort_order,
             'use_case' => $fertilizer->use_case,
             'available' => $fertilizer->available,
