@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Collections;
 
+use App\Http\Resources\CassavaPriceResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -14,6 +15,8 @@ class CassavaPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'data' => CassavaPriceResource::collection($this->collection),
+        ];
     }
 }
