@@ -17,6 +17,7 @@ class InvestmentAmountResource extends JsonResource
     {
         /** @var InvestmentAmount $amount */
         $amount = $this->resource;
+
         return [
             'id' => $amount->id,
             'investment_amount' => $amount->investment_amount,
