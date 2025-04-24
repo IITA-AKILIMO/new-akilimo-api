@@ -33,4 +33,11 @@ class Country extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'COUNTRY',
+        'COUNTRY_CODE',
+        'CURRENCY_CODE',
+        'NAME_OF_CURRENCY',
+    ];
 }

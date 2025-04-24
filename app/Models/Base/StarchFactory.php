@@ -43,4 +43,12 @@ class StarchFactory extends Model
         'factory_active' => 'bool',
         'sort_order' => 'int',
     ];
+
+    protected $fillable = [
+        'factory_name',
+        'factory_label',
+        'country',
+        'factory_active',
+        'sort_order',
+    ];
 }

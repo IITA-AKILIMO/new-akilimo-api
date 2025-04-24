@@ -36,4 +36,11 @@ use Illuminate\Database\Eloquent\Model;
 class ApiRequest extends Model
 {
     protected $table = 'api_requests';
+
+    protected $fillable = [
+        'request_id',
+        'droid_request',
+        'plumber_request',
+        'plumber_response',
+    ];
 }

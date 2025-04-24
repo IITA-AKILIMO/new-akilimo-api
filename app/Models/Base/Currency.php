@@ -42,4 +42,14 @@ use Illuminate\Database\Eloquent\Model;
 class Currency extends Model
 {
     protected $table = 'currencies';
+
+    protected $fillable = [
+        'country_code',
+        'country',
+        'currency_name',
+        'currency_code',
+        'currency_symbol',
+        'currency_native_symbol',
+        'name_plural',
+    ];
 }

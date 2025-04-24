@@ -44,4 +44,13 @@ class User extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $fillable = [
+        'name',
+        'username',
+        'email',
+        'email_verified_at',
+        'password',
+        'remember_token',
+    ];
 }

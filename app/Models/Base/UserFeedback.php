@@ -45,4 +45,13 @@ class UserFeedback extends Model
         'akilimo_rec_rating' => 'int',
         'akilimo_useful_rating' => 'int',
     ];
+
+    protected $fillable = [
+        'akilimo_usage',
+        'user_type',
+        'akilimo_rec_rating',
+        'akilimo_useful_rating',
+        'language',
+        'device_token',
+    ];
 }

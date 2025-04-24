@@ -44,4 +44,12 @@ class RequestFertilizer extends Model
         'price' => 'float',
         'weight' => 'float',
     ];
+
+    protected $fillable = [
+        'request_id',
+        'fertilizer_type',
+        'available',
+        'price',
+        'weight',
+    ];
 }

@@ -81,4 +81,26 @@ class YieldRequest extends Model
         'harvest_date' => 'datetime',
         'processed' => 'bool',
     ];
+
+    protected $fillable = [
+        'map_lat',
+        'map_long',
+        'cassava_unit_weight',
+        'cassava_unit_price',
+        'max_investment',
+        'field_area',
+        'planting_date',
+        'harvest_date',
+        'country',
+        'client',
+        'area_units',
+        'user_name',
+        'user_phone_code',
+        'user_phone_number',
+        'cassava_pd',
+        'field_description',
+        'user_email',
+        'processed',
+        'recommendation_text',
+    ];
 }

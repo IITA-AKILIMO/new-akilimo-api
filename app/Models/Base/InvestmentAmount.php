@@ -44,4 +44,12 @@ class InvestmentAmount extends Model
         'price_active' => 'bool',
         'sort_order' => 'int',
     ];
+
+    protected $fillable = [
+        'country',
+        'investment_amount',
+        'area_unit',
+        'price_active',
+        'sort_order',
+    ];
 }

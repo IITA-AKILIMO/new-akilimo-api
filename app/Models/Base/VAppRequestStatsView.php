@@ -62,4 +62,20 @@ class VAppRequestStatsView extends Model
         'lon' => 'float',
         'excluded' => 'bool',
     ];
+
+    protected $fillable = [
+        'id',
+        'request_date',
+        'device_token',
+        'country_code',
+        'lat',
+        'lon',
+        'full_names',
+        'gender_name',
+        'excluded',
+        'gender',
+        'phone_number',
+        'user_type',
+        'use_case',
+    ];
 }

@@ -59,4 +59,17 @@ class MaizePrice extends Model
         'price_active' => 'bool',
         'sort_order' => 'int',
     ];
+
+    protected $fillable = [
+        'country',
+        'min_local_price',
+        'max_local_price',
+        'min_usd',
+        'max_usd',
+        'min_price',
+        'max_price',
+        'price_active',
+        'sort_order',
+        'produce_type',
+    ];
 }

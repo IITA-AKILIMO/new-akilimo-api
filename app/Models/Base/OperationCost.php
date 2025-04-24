@@ -56,4 +56,16 @@ class OperationCost extends Model
         'min_tzs' => 'float',
         'active' => 'bool',
     ];
+
+    protected $fillable = [
+        'operation_name',
+        'operation_type',
+        'min_usd',
+        'max_usd',
+        'min_ngn',
+        'max_ngn',
+        'max_tzs',
+        'min_tzs',
+        'active',
+    ];
 }

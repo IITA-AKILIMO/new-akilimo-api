@@ -50,4 +50,15 @@ class Fertilizer extends Model
         'sort_order' => 'int',
         'available' => 'bool',
     ];
+
+    protected $fillable = [
+        'name',
+        'type',
+        'fertilizer_key',
+        'weight',
+        'country',
+        'sort_order',
+        'use_case',
+        'available',
+    ];
 }

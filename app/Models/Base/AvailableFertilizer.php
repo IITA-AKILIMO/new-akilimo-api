@@ -63,4 +63,19 @@ class AvailableFertilizer extends Model
         'custom' => 'bool',
         'sort_order' => 'int',
     ];
+
+    protected $fillable = [
+        'name',
+        'type',
+        'n_content',
+        'p_content',
+        'k_content',
+        'weight',
+        'price',
+        'country',
+        'use_case',
+        'available',
+        'custom',
+        'sort_order',
+    ];
 }
