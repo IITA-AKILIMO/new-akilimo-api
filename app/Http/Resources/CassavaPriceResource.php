@@ -18,11 +18,11 @@ class CassavaPriceResource extends JsonResource
     {
         /** @var CassavaPrice $cassavaPrice */
         $cassavaPrice = $this->resource;
-        $repo = new CassavaPriceRepo();
-        $price = $repo->findMinMaxPriceEntityByCountryCode($cassavaPrice->country);
-
+        $repo = new CassavaPriceRepo;
+        $price = $repo->findPriceBandsByCountryCode($cassavaPrice->country);
 
         $avgPrice = ($cassavaPrice->min_local_price + $cassavaPrice->max_local_price) / 2;
+
         return [
             'id' => $cassavaPrice->id,
             'country_code' => $cassavaPrice->country,
@@ -31,7 +31,7 @@ class CassavaPriceResource extends JsonResource
             'average_price' => $avgPrice,
             'min_allowed_price' => $price->min_price,
             'max_allowed_price' => $price->max_price,
-            'active' => $cassavaPrice->price_active
+            'active' => $cassavaPrice->price_active,
         ];
     }
 }
