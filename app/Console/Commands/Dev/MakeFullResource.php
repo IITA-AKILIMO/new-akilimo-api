@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands\Dev;
 
 use Illuminate\Console\Command;
