@@ -34,16 +34,4 @@ use App\Models\Base\FertilizerPrice as BaseFertilizerPrice;
  *
  * @mixin \Eloquent
  */
-class FertilizerPrice extends BaseFertilizerPrice
-{
-    protected $fillable = [
-        'country',
-        'fertilizer_key',
-        'min_price',
-        'max_price',
-        'price_per_bag',
-        'price_active',
-        'sort_order',
-        'desc',
-    ];
-}
+class FertilizerPrice extends BaseFertilizerPrice {}

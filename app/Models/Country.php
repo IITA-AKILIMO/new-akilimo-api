@@ -20,12 +20,4 @@ use App\Models\Base\Country as BaseCountry;
  *
  * @mixin \Eloquent
  */
-class Country extends BaseCountry
-{
-    protected $fillable = [
-        'COUNTRY',
-        'COUNTRY_CODE',
-        'CURRENCY_CODE',
-        'NAME_OF_CURRENCY',
-    ];
-}
+class Country extends BaseCountry {}

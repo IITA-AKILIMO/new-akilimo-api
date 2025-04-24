@@ -36,17 +36,4 @@ use App\Models\Base\OperationCost as BaseOperationCost;
  *
  * @mixin \Eloquent
  */
-class OperationCost extends BaseOperationCost
-{
-    protected $fillable = [
-        'operation_name',
-        'operation_type',
-        'min_usd',
-        'max_usd',
-        'min_ngn',
-        'max_ngn',
-        'max_tzs',
-        'min_tzs',
-        'active',
-    ];
-}
+class OperationCost extends BaseOperationCost {}

@@ -35,13 +35,4 @@ class UserFeedback extends BaseUserFeedback
     protected $hidden = [
         'device_token',
     ];
-
-    protected $fillable = [
-        'akilimo_usage',
-        'user_type',
-        'akilimo_rec_rating',
-        'akilimo_useful_rating',
-        'language',
-        'device_token',
-    ];
 }

@@ -38,18 +38,4 @@ use App\Models\Base\MaizePrice as BaseMaizePrice;
  *
  * @mixin \Eloquent
  */
-class MaizePrice extends BaseMaizePrice
-{
-    protected $fillable = [
-        'country',
-        'min_local_price',
-        'max_local_price',
-        'min_usd',
-        'max_usd',
-        'min_price',
-        'max_price',
-        'price_active',
-        'sort_order',
-        'produce_type',
-    ];
-}
+class MaizePrice extends BaseMaizePrice {}

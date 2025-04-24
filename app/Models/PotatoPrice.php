@@ -36,17 +36,4 @@ use App\Models\Base\PotatoPrice as BasePotatoPrice;
  *
  * @mixin \Eloquent
  */
-class PotatoPrice extends BasePotatoPrice
-{
-    protected $fillable = [
-        'country',
-        'min_local_price',
-        'max_local_price',
-        'min_usd',
-        'max_usd',
-        'min_price',
-        'max_price',
-        'price_active',
-        'sort_order',
-    ];
-}
+class PotatoPrice extends BasePotatoPrice {}

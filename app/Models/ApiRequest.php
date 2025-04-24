@@ -26,12 +26,4 @@ use App\Models\Base\ApiRequest as BaseApiRequest;
  *
  * @mixin \Eloquent
  */
-class ApiRequest extends BaseApiRequest
-{
-    protected $fillable = [
-        'request_id',
-        'droid_request',
-        'plumber_request',
-        'plumber_response',
-    ];
-}
+class ApiRequest extends BaseApiRequest {}

@@ -24,13 +24,4 @@ use App\Models\Base\RequestFertilizer as BaseRequestFertilizer;
  *
  * @mixin \Eloquent
  */
-class RequestFertilizer extends BaseRequestFertilizer
-{
-    protected $fillable = [
-        'request_id',
-        'fertilizer_type',
-        'available',
-        'price',
-        'weight',
-    ];
-}
+class RequestFertilizer extends BaseRequestFertilizer {}

@@ -36,17 +36,4 @@ use App\Models\Base\CassavaPrice as BaseCassavaPrice;
  *
  * @mixin \Eloquent
  */
-class CassavaPrice extends BaseCassavaPrice
-{
-    protected $fillable = [
-        'country',
-        'min_local_price',
-        'max_local_price',
-        'min_usd',
-        'max_usd',
-        'min_price',
-        'max_price',
-        'price_active',
-        'sort_order',
-    ];
-}
+class CassavaPrice extends BaseCassavaPrice {}

@@ -32,15 +32,4 @@ use App\Models\Base\Currency as BaseCurrency;
  *
  * @mixin \Eloquent
  */
-class Currency extends BaseCurrency
-{
-    protected $fillable = [
-        'country_code',
-        'country',
-        'currency_name',
-        'currency_code',
-        'currency_symbol',
-        'currency_native_symbol',
-        'name_plural',
-    ];
-}
+class Currency extends BaseCurrency {}

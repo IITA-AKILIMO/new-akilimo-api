@@ -34,16 +34,4 @@ use App\Models\Base\Fertilizer as BaseFertilizer;
  *
  * @mixin \Eloquent
  */
-class Fertilizer extends BaseFertilizer
-{
-    protected $fillable = [
-        'name',
-        'type',
-        'fertilizer_key',
-        'weight',
-        'country',
-        'sort_order',
-        'use_case',
-        'available',
-    ];
-}
+class Fertilizer extends BaseFertilizer {}

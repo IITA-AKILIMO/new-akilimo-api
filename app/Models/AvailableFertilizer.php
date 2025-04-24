@@ -42,20 +42,4 @@ use App\Models\Base\AvailableFertilizer as BaseAvailableFertilizer;
  *
  * @mixin \Eloquent
  */
-class AvailableFertilizer extends BaseAvailableFertilizer
-{
-    protected $fillable = [
-        'name',
-        'type',
-        'n_content',
-        'p_content',
-        'k_content',
-        'weight',
-        'price',
-        'country',
-        'use_case',
-        'available',
-        'custom',
-        'sort_order',
-    ];
-}
+class AvailableFertilizer extends BaseAvailableFertilizer {}

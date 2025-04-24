@@ -28,13 +28,4 @@ use App\Models\Base\InvestmentAmount as BaseInvestmentAmount;
  *
  * @mixin \Eloquent
  */
-class InvestmentAmount extends BaseInvestmentAmount
-{
-    protected $fillable = [
-        'country',
-        'investment_amount',
-        'area_unit',
-        'price_active',
-        'sort_order',
-    ];
-}
+class InvestmentAmount extends BaseInvestmentAmount {}

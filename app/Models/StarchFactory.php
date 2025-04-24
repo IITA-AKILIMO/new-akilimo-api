@@ -28,13 +28,4 @@ use App\Models\Base\StarchFactory as BaseStarchFactory;
  *
  * @mixin \Eloquent
  */
-class StarchFactory extends BaseStarchFactory
-{
-    protected $fillable = [
-        'factory_name',
-        'factory_label',
-        'country',
-        'factory_active',
-        'sort_order',
-    ];
-}
+class StarchFactory extends BaseStarchFactory {}
