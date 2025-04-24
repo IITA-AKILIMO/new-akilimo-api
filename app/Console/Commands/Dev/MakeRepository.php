@@ -7,16 +7,14 @@ use Illuminate\Filesystem\Filesystem;
 
 class MakeRepository extends Command
 {
-    protected $signature = 'make:repo {name}';
+    protected $signature = 'make:repo {name} {--model=}';
 
     protected $description = 'Create a new repository class';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $name = $this->argument('name');
+        $model = $this->option('model');
         $repositoryPath = app_path("Repositories/{$name}.php");
 
         if (file_exists($repositoryPath)) {
@@ -25,32 +23,69 @@ class MakeRepository extends Command
             return false;
         }
 
-        // Ensure the directory exists
         (new Filesystem)->ensureDirectoryExists(app_path('Repositories'));
 
-        // Define repository template
+        $modelImport = $model ? "use App\\Models\\{$model};" : '';
+        $modelVariable = $model ? lcfirst(class_basename($model)) : 'model';
+        $modelType = $model ?: 'Model';
+
         $stub = <<<PHP
-        <?php
+<?php
 
-        namespace App\Repositories;
+namespace App\Repositories;
 
-        class {$name}
-        {
-            public function all()
-            {
-                // TODO Implement logic
-            }
+$modelImport
 
-            public function find(\$id)
-            {
-                // TODO Implement logic
-            }
+class {$name}
+{
+    protected \${$modelVariable};
+
+    public function __construct({$modelType} \${$modelVariable})
+    {
+        \$this->{$modelVariable} = \${$modelVariable};
+    }
+
+    public function all()
+    {
+        return \$this->{$modelVariable}->all();
+    }
+
+    public function find(\$id)
+    {
+        return \$this->{$modelVariable}->find(\$id);
+    }
+
+    public function selectOne(array \$conditions)
+    {
+        return \$this->{$modelVariable}->where(\$conditions)->first();
+    }
+
+    public function update(\$id, array \$data)
+    {
+        \$record = \$this->find(\$id);
+        if (!\$record) {
+            return null;
         }
-        PHP;
 
-        // Create the file
+        \$record->update(\$data);
+        return \$record;
+    }
+
+    public function delete(\$id)
+    {
+        \$record = \$this->find(\$id);
+        if (!\$record) {
+            return false;
+        }
+
+        return \$record->delete();
+    }
+}
+PHP;
+
         file_put_contents($repositoryPath, $stub);
 
         $this->info("Repository '{$name}' created successfully.");
+        return true;
     }
 }
