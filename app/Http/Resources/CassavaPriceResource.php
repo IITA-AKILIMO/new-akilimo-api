@@ -22,6 +22,10 @@ class CassavaPriceResource extends JsonResource
         $price = $repo->findPriceBandsByCountryCode($cassavaPrice->country);
 
         $avgPrice = ($cassavaPrice->min_local_price + $cassavaPrice->max_local_price) / 2;
+        $tag = "$cassavaPrice->id";
+        if ($avgPrice === -1.0) {
+            $tag = 'exact';
+        }
 
         return [
             'id' => $cassavaPrice->id,
@@ -29,9 +33,12 @@ class CassavaPriceResource extends JsonResource
             'min_local_price' => $cassavaPrice->min_local_price,
             'max_local_price' => $cassavaPrice->max_local_price,
             'average_price' => $avgPrice,
+            'exact_price' => $avgPrice === -1.0,
+            'item_tag' => $tag,
             'min_allowed_price' => $price->min_price,
             'max_allowed_price' => $price->max_price,
             'active' => $cassavaPrice->price_active,
+            'sort_order' => $cassavaPrice->sort_order,
         ];
     }
 }
