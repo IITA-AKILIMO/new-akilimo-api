@@ -11,7 +11,7 @@ class MakeRepository extends Command
 
     protected $description = 'Create a new repository class';
 
-    public function handle()
+    public function handle(): bool
     {
         $name = $this->argument('name');
         $model = $this->option('model');
@@ -25,8 +25,10 @@ class MakeRepository extends Command
 
         (new Filesystem)->ensureDirectoryExists(app_path('Repositories'));
 
-        $modelImport = $model ? "use App\\Models\\{$model};" : '';
-        $modelVariable = $model ? lcfirst(class_basename($model)) : 'model';
+        $modelClass = $model ? "\\App\\Models\\{$model}" : '';
+        $modelImport = $model ? "use {$modelClass};" : '';
+//        $modelVariable = $model ? lcfirst(class_basename($model)) : 'model';
+        $modelVariable = 'model';
         $modelType = $model ?: 'Model';
 
         $stub = <<<PHP
@@ -36,49 +38,17 @@ namespace App\Repositories;
 
 $modelImport
 
-class {$name}
+
+/**
+ * @extends \App\Repositories\BaseRepository<$modelType>
+ */
+class {$name} extends \App\Repositories\BaseRepository
 {
-    protected \${$modelVariable};
+    protected {$modelType} \${$modelVariable};
 
-    public function __construct({$modelType} \${$modelVariable})
+    protected function model(): string
     {
-        \$this->{$modelVariable} = \${$modelVariable};
-    }
-
-    public function all()
-    {
-        return \$this->{$modelVariable}->all();
-    }
-
-    public function find(\$id)
-    {
-        return \$this->{$modelVariable}->find(\$id);
-    }
-
-    public function selectOne(array \$conditions)
-    {
-        return \$this->{$modelVariable}->where(\$conditions)->first();
-    }
-
-    public function update(\$id, array \$data)
-    {
-        \$record = \$this->find(\$id);
-        if (!\$record) {
-            return null;
-        }
-
-        \$record->update(\$data);
-        return \$record;
-    }
-
-    public function delete(\$id)
-    {
-        \$record = \$this->find(\$id);
-        if (!\$record) {
-            return false;
-        }
-
-        return \$record->delete();
+        return {$modelType}::class;
     }
 }
 PHP;
