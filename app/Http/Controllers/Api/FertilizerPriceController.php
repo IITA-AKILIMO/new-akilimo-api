@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\FertilizerPriceResourceCollection;
-use App\Models\FertilizerPrice;
+use App\Repositories\FertilizerPriceRepo;
 use Illuminate\Http\Request;
 
 class FertilizerPriceController extends Controller
 {
+
+    public function __construct(protected FertilizerPriceRepo $repo)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -18,10 +23,38 @@ class FertilizerPriceController extends Controller
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
-        $prices = FertilizerPrice::orderBy($orderBy, $sort)
-            ->paginate($perPage);
+        $fertilizerPrices = $this->repo->paginateWithSort(
+            perPage: $perPage,
+            sortBy: $orderBy,
+            direction: $sort);
 
-        return FertilizerPriceResourceCollection::make($prices);
+        return FertilizerPriceResourceCollection::make($fertilizerPrices);
+    }
+
+    /**
+     * @param string $countryCode
+     * @param Request $request
+     * @return FertilizerPriceResourceCollection
+     */
+    public function byCountry(string $countryCode, Request $request): FertilizerPriceResourceCollection
+    {
+        $perPage = $request->input('per_page', 50);
+        $orderBy = $request->input('order_by', 'sort_order');
+        $sort = $request->input('sort', 'asc');
+
+        $filters = [
+            'country' => strtoupper(trim($countryCode)),
+            'price_active' => true
+        ];
+
+
+        $fertilizerPrices = $this->repo->paginateWithSort(
+            perPage: $perPage,
+            sortBy: $orderBy,
+            direction: $sort,
+            filters: $filters);
+
+        return FertilizerPriceResourceCollection::make($fertilizerPrices);
     }
 
     public function byFertilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
@@ -30,13 +63,18 @@ class FertilizerPriceController extends Controller
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
-        $prices = FertilizerPrice::query()
-            ->where('fertilizer_key', strtoupper(trim($fertilizerKey)))
-            ->where('price_active', true)
-            ->orderBy($orderBy, $sort)
-            ->paginate($perPage);
+        $filters = [
+            'fertilizer_key' => strtoupper(trim($fertilizerKey)),
+            'price_active' => true
+        ];
 
-        return FertilizerPriceResourceCollection::make($prices);
+        $fertilizerPrices = $this->repo->paginateWithSort(
+            perPage: $perPage,
+            sortBy: $orderBy,
+            direction: $sort,
+            filters: $filters);
+
+        return FertilizerPriceResourceCollection::make($fertilizerPrices);
     }
 
 }
