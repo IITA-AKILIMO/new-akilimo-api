@@ -16,23 +16,24 @@ class OperationCostResource extends \Illuminate\Http\Resources\Json\JsonResource
         /** @var OperationCost $model */
         $model = $this->resource;
 
-        $averageCost = $model->min_usd + ($model->max_usd - $model->min_usd) / 2;
+        $avgCost = ($model->min_cost + $model->max_cost) / 2;
+        $tag = "{$model->id}";
+        if ($avgCost === -1.0) {
+            $tag = 'exact';
+        }
 
         return [
             'id' => $model->id,
+            'item_tag' => $tag,
             'operation_name' => $model->operation_name,
             'operation_type' => $model->operation_type,
-            'average_cost' => $averageCost,
-//            'min_usd' => $model->min_usd,
-//            'max_usd' => $model->max_usd,
-//            'min_ngn' => $model->min_ngn,
-//            'max_ngn' => $model->max_ngn,
-//            'max_tzs' => $model->max_tzs,
-//            'min_tzs' => $model->min_tzs,
-            'active' => $model->active,
+            'country_code' => $model->country_code,
+            'min_cost' => $model->min_cost,
+            'max_cost' => $model->max_cost,
+            'average_cost' => $avgCost,
+            'is_active' => $model->is_active,
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at,
-
         ];
     }
 }
