@@ -13,7 +13,7 @@ Route::prefix('v1/fertilizers')->group(function () {
 
 Route::prefix('v1/fertilizer-prices')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'index']);
-    Route::get('/{fertilizerKey}', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'byFertiilizerKey']);
+    Route::get('/{fertilizerKey}', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'byFertilizerKey']);
 });
 
 
@@ -22,7 +22,7 @@ Route::prefix('v1/investment-amounts')->group(function () {
 });
 
 Route::prefix('v1/operation-costs')->group(function () {
-    Route::get('/currency/{currencyCode}', [\App\Http\Controllers\Api\OperationCostController::class, 'byCountry']);
+    Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\OperationCostController::class, 'byCountry']);
 });
 
 Route::prefix('v1/recommendations')->group(function () {
