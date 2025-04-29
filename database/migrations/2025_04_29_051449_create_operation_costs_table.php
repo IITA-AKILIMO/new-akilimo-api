@@ -7,7 +7,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     private string $table = 'operation_costs';
 
     /**
@@ -26,9 +27,8 @@ return new class extends Migration {
             $table->timestampTz('created_at')->useCurrent();
             $table->timestampTz('updated_at')->useCurrent()->useCurrentOnUpdate();
 
-            $table->index(['operation_type', 'country_code'], 'idx-op-type-op-country');
+            $table->index(['operation_type', 'operation_name', 'country_code'], 'idx-op-type-op-country');
         });
-
 
         $this->transferData();
     }
@@ -48,7 +48,6 @@ return new class extends Migration {
         $insertData = [];
         foreach ($records as $record) {
             /** @var OperationCost $record */
-
             $insertData[] = [
                 'operation_name' => $record->operation_name,
                 'operation_type' => $record->operation_type,
