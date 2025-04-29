@@ -12,8 +12,9 @@ Route::prefix('v1/fertilizers')->group(function () {
 });
 
 Route::prefix('v1/fertilizer-prices')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'index']);
+//    Route::get('/', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'index']);
     Route::get('/{fertilizerKey}', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'byFertilizerKey']);
+    Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'byCountry']);
 });
 
 
