@@ -24,7 +24,7 @@ class FertilizerPriceController extends Controller
         return FertilizerPriceResourceCollection::make($prices);
     }
 
-    public function byFertiilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
+    public function byFertilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
