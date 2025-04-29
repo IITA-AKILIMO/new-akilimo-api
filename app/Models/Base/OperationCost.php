@@ -15,28 +15,22 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $operation_name
  * @property string $operation_type
- * @property float $min_usd
- * @property float $max_usd
- * @property float $min_ngn
- * @property float $max_ngn
- * @property float $max_tzs
- * @property float $min_tzs
- * @property bool|null $active
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property string $country_code
+ * @property float $min_cost
+ * @property float $max_cost
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereCountryCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMaxNgn($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMaxTzs($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMaxUsd($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMinNgn($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMinTzs($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMinUsd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMaxCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereMinCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereOperationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereOperationType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OperationCost whereUpdatedAt($value)
@@ -48,24 +42,17 @@ class OperationCost extends Model
     protected $table = 'operation_costs';
 
     protected $casts = [
-        'min_usd' => 'float',
-        'max_usd' => 'float',
-        'min_ngn' => 'float',
-        'max_ngn' => 'float',
-        'max_tzs' => 'float',
-        'min_tzs' => 'float',
-        'active' => 'bool',
+        'min_cost' => 'float',
+        'max_cost' => 'float',
+        'is_active' => 'bool',
     ];
 
     protected $fillable = [
         'operation_name',
         'operation_type',
-        'min_usd',
-        'max_usd',
-        'min_ngn',
-        'max_ngn',
-        'max_tzs',
-        'min_tzs',
-        'active',
+        'country_code',
+        'min_cost',
+        'max_cost',
+        'is_active',
     ];
 }
