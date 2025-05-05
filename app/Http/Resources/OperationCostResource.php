@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\OperationCost;
+use Illuminate\Support\Str;
 
 class OperationCostResource extends \Illuminate\Http\Resources\Json\JsonResource
 {
@@ -25,8 +26,8 @@ class OperationCostResource extends \Illuminate\Http\Resources\Json\JsonResource
         return [
             'id' => $model->id,
             'item_tag' => $tag,
-            'operation_name' => $model->operation_name,
-            'operation_type' => $model->operation_type,
+            'operation_name' => Str::upper($model->operation_name),
+            'operation_type' => Str::upper($model->operation_type),
             'country_code' => $model->country_code,
             'min_cost' => $model->min_cost,
             'max_cost' => $model->max_cost,
