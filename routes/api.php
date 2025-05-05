@@ -27,7 +27,7 @@ Route::prefix('v1/operation-costs')->group(function () {
 });
 
 Route::prefix('v1/recommendations')->group(function () {
-    Route::post('/compute', [\App\Http\Controllers\Api\RecommenationController::class, 'compute']);
+    Route::post('/compute', [\App\Http\Controllers\Api\RecommendationController::class, 'computeRecommendations']);
 });
 
 Route::prefix('v1/starch-factories')->group(function () {
