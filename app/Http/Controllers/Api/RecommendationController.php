@@ -10,6 +10,6 @@ class RecommendationController extends Controller
 
     public function computeRecommendations(ComputeRequest $request)
     {
-        //
+        return $request;
     }
 }
