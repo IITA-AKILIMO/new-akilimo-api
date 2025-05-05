@@ -7,7 +7,7 @@ class ComputeFieldRules
     public static function rules(): array
     {
         return [
-            'compute_request.area_units' => ['required', 'string', 'in:acre,ha'],
+            'compute_request.area_unit' => ['required', 'string', 'in:acre,ha'],
             'compute_request.cass_up_m1' => ['required', 'numeric'],
             'compute_request.cass_up_m2' => ['required', 'numeric'],
             'compute_request.cass_up_p1' => ['required', 'numeric'],
@@ -32,7 +32,7 @@ class ComputeFieldRules
             'compute_request.fallow_height' => ['required', 'numeric'],
             'compute_request.fallow_type' => ['required', 'string'],
             'compute_request.fertilizer_rec' => ['required', 'boolean'],
-            'compute_request.field_area' => ['required', 'numeric'],
+            'compute_request.field_size' => ['required', 'numeric'],
             'compute_request.harrowing_done' => ['required', 'boolean'],
             'compute_request.harvest_date' => ['nullable', 'date'],
             'compute_request.harvest_date_window' => ['required', 'numeric'],
