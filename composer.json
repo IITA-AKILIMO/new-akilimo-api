@@ -15,8 +15,9 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true,
-            "masgeek/windows-ext-ignorer": true
+            "masgeek/windows-ext-ignorer": true,
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "require": {
@@ -36,7 +37,9 @@
         "masgeek/windows-ext-ignorer": "^0.1.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "4.x-dev",
         "reliese/laravel": "^1.4",
+        "sebastian/environment": "^8.0",
         "vcian/laravel-db-auditor": "^2.2"
     },
     "autoload": {
@@ -76,7 +79,9 @@
         "model:gen": "@php artisan code:models && @php artisan ide-helper:models --write && pint --dirty",
         "lint:fix-all": "./vendor/bin/pint",
         "lint:fix": "./vendor/bin/pint --dirty",
-        "lint:check": "pint --test"
+        "lint:check": "pint --test",
+        "test": "@php artisan test",
+        "tests": "pest tests"
     },
     "extra": {
         "laravel": {
