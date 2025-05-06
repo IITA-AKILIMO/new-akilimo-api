@@ -16,6 +16,7 @@ class FertilizerRules
             'fertilizer_list' => ['present', 'array'],
             'fertilizer_list.*' => ['array'],
             'fertilizer_list.*.name' => ['required', 'string'],
+            'fertilizer_list.*.fertilizer_type' => ['required', 'string'],
             'fertilizer_list.*.key' => ['required', 'string'],
             'fertilizer_list.*.weight' => ['required', 'numeric', 'min:0'],
             'fertilizer_list.*.price' => ['required', 'numeric', 'min:0'],
