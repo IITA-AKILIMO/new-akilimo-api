@@ -3,7 +3,7 @@ name: UnitTests
 on:
   push:
   workflow_dispatch:
-    
+
 
 jobs:
   test:
@@ -11,6 +11,8 @@ jobs:
     concurrency:
       cancel-in-progress: true
       group: unit-test-${{ github.ref }}
+    env:
+      APP_KEY: 'base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I='
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
