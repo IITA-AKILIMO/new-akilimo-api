@@ -34,9 +34,20 @@ class ComputeFieldRules
             'compute_request.fertilizer_rec' => ['required', 'boolean'],
             'compute_request.field_size' => ['required', 'numeric'],
             'compute_request.harrowing_done' => ['required', 'boolean'],
-            'compute_request.harvest_date' => ['nullable', 'date'],
+
+            'compute_request.planting_date' => [
+                'nullable',
+                'date',
+            ],
+            'compute_request.harvest_date' => [
+                'nullable',
+                'date',
+            ],
+
+            'compute_request.planting_date_window' => ['required', 'numeric'],
             'compute_request.harvest_date_window' => ['required', 'numeric'],
-            'compute_request.inter_crop' => ['required', 'boolean'],
+
+            'compute_request.inter_cropped_crop' => ['nullable', 'string'],
             'compute_request.inter_cropping_maize_rec' => ['required', 'boolean'],
             'compute_request.inter_cropping_potato_rec' => ['required', 'boolean'],
             'compute_request.inter_cropping_type' => ['nullable', 'string'],
@@ -50,8 +61,6 @@ class ComputeFieldRules
             'compute_request.method_ploughing' => ['nullable', 'string'],
             'compute_request.method_ridging' => ['nullable', 'string'],
             'compute_request.method_weeding' => ['nullable', 'string'],
-            'compute_request.planting_date' => ['nullable', 'date'],
-            'compute_request.planting_date_window' => ['required', 'numeric'],
             'compute_request.planting_practices_rec' => ['required', 'boolean'],
             'compute_request.ploughing_done' => ['required', 'boolean'],
             'compute_request.problem_weeds' => ['required', 'boolean'],
