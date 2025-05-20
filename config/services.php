@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'plumbr' => [
+        'endpoint' => env('PLUMBR_ENDPOINT', 'https://plumbr.akilimo.org'),
+        'timeout' => env('PLUMBR_TIMEOUT', 10),
+    ],
+
 ];
