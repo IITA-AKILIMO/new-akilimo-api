@@ -290,6 +290,7 @@ return [
             'password_resets',
             'personal_access_tokens',
             'password_reset_tokens',
+            'cache*',
         ],
 
         /*
