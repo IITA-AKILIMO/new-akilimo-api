@@ -7,13 +7,11 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
  * @template TModel of Model
  */
 abstract class BaseRepository implements Repository
 {
-
     /**
      * @var TModel
      */
@@ -50,9 +48,31 @@ abstract class BaseRepository implements Repository
         return $this->model->find($id);
     }
 
-    public function selectOne(array $conditions): ?Model
+    /**
+     * Retrieves records based on the specified conditions.
+     *
+     * @param  array  $conditions  An associative array of conditions for filtering the records.
+     * @param  array  $columns  Optional array of columns to select, with support for aliases.
+     *                          Examples:
+     *                          - ['name', 'email']
+     *                          - ['name as username', 'email as user_email']
+     * @return Collection A collection of retrieved records.
+     */
+    public function selectByCondition(array $conditions, array $columns = ['*']): Collection
     {
-        return $this->model->where($conditions)->first();
+        return $this->model->where($conditions)->select($columns)->get();
+    }
+
+    /**
+     * Retrieve a single record matching the given conditions.
+     *
+     * @param  array  $conditions  Conditions to filter the query.
+     * @param  array  $columns  Columns to select in the query. Defaults to all columns.
+     * @return Model|null The matching model instance or null if no match is found.
+     */
+    public function selectOne(array $conditions, array $columns = ['*']): ?Model
+    {
+        return $this->model->where($conditions)->select($columns)->first();
     }
 
     public function create(array $data): Model
@@ -79,15 +99,14 @@ abstract class BaseRepository implements Repository
     }
 
     public function paginateWithSort(
-        int    $perPage = 50,
+        int $perPage = 50,
         string $sortBy = 'created_at',
         string $direction = 'desc',
-        array  $filters = []
-    ): LengthAwarePaginator
-    {
+        array $filters = []
+    ): LengthAwarePaginator {
         $query = $this->model->newQuery();
 
-        if (!empty($filters)) {
+        if (! empty($filters)) {
             $query->where($filters);
         }
 
