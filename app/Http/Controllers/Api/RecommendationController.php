@@ -8,25 +8,48 @@ use App\Data\PlumberComputeData;
 use App\Data\UserInfoData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
+use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
 use App\Service\PlumberService;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Arr;
 
 class RecommendationController extends Controller
 {
-//    protected PlumberService $service;
+    //    protected PlumberService $service;
 
-    public function __construct(protected FertilizerRepo $repo, protected PlumberService $service)
-    {
+    public function __construct(
+        protected FertilizerRepo $repo,
+        protected ApiRequestRepo $apiRequestRepo,
+        protected PlumberService $service
+    ) {}
 
-    }
-
+    /**
+     * Processes the computation of fertilizer recommendations based on the provided request data.
+     *
+     * Extracts user information, computation details, and fertilizer list from the request object.
+     * Retrieves available fertilizers from the repository based on specific conditions (e.g., country and availability).
+     * Maps the retrieved fertilizers and updates their properties (e.g., selection status, weight, and price) based on the provided fertilizer list.
+     * Generates a new compute request using the user information, computation details, and processed fertilizers.
+     * Adjusts the area unit in the request to standardized values for further processing.
+     * Sends the request to the computation service and returns the original request data, the computed response, and the final request sent to the service.
+     *
+     * @param  ComputeRequest  $request  The incoming compute request containing user data, computation details, and a list of fertilizers.
+     * @return array An associative array containing:
+     *               - 'droidRequest': The original request data extracted from the incoming ComputeRequest.
+     *               - 'plumberResponse': The response returned from the computation service.
+     *               - 'plumberRequest': The final formatted request sent to the computation service.
+     *
+     * @throws ConnectionException
+     * @throws RequestException
+     */
     public function computeRecommendations(ComputeRequest $request)
     {
-        $data = $request->array();
-        $userInfo = Arr::get($data, 'user_info');
-        $computeRequest = Arr::get($data, 'compute_request');
-        $fertilizerList = Arr::get($data, 'fertilizer_list');
+        $droidRequest = $request->array();
+        $userInfo = Arr::get($droidRequest, 'user_info');
+        $computeRequest = Arr::get($droidRequest, 'compute_request');
+        $fertilizerList = Arr::get($droidRequest, 'fertilizer_list');
 
         $userInfoData = UserInfoData::from($userInfo);
         $computeRequest = ComputeRequestData::from($computeRequest);
@@ -81,24 +104,31 @@ class RecommendationController extends Controller
             $fertilizers["{$label}CostperBag"] = $pricePerBag;
         }
 
-
-        $data = PlumberComputeData::from($computeRequest, $userInfoData, $fertilizers);
+        $plumberRequest = PlumberComputeData::from($computeRequest, $userInfoData, $fertilizers);
         // Area unit translation
-        if (strcasecmp($data->areaUnit, 'ekari') === 0) {
-            $data->areaUnit = 'acre';
-        } elseif (strcasecmp($data->areaUnit, 'hekta') === 0) {
-            $data->areaUnit = 'ha';
+        if (strcasecmp($plumberRequest->areaUnit, 'ekari') === 0) {
+            $plumberRequest->areaUnit = 'acre';
+        } elseif (strcasecmp($plumberRequest->areaUnit, 'hekta') === 0) {
+            $plumberRequest->areaUnit = 'ha';
         }
 
-        $data = $data->toArray();
+        $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
 
-        $resp = $this->service->sendComputeRequest(plumberComputeData: $data);
+        // now log all these to the database
+        $requestData = [
+            'request_id' => Arr::get($userInfo, 'device_token'),
+            'droid_request' => $droidRequest,
+            'plumber_response' => $plumberResp,
+            'plumber_request' => $plumberRequest,
+        ];
 
-        return $resp;
+        return $requestData;
+        $result = $this->apiRequestRepo->create($requestData);
+
         return [
-            //            'user'=>$userInfoData,
-            //            'computeRequest' => $computeRequest,
-            'plumberData' => $data,
+            'droidRequest' => $droidRequest,
+            'plumberResponse' => $plumberResp,
+            'plumberRequest' => $plumberRequest,
         ];
     }
 }
