@@ -1,0 +1,47 @@
+kind: pipeline
+type: docker
+name: laravel-ci
+
+steps:
+  - name: install-dependencies
+    image: composer:2
+    commands:
+      - cp .env.example .env
+      - composer install --no-interaction --prefer-dist --optimize-autoloader
+      - php artisan key:generate
+
+  - name: run-tests
+    image: php:8.2
+    environment:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /tmp/database.sqlite
+    commands:
+      - apt-get update && apt-get install -y zip unzip libzip-dev libsqlite3-dev
+      - docker-php-ext-install pdo pdo_sqlite zip
+      - touch /tmp/database.sqlite
+      - php artisan migrate --force
+      - php artisan test
+
+  - name: npm-build
+    image: node:18
+    commands:
+      - npm ci
+      - npm run build
+
+  # Optional: build Docker image
+  - name: docker-build
+    image: plugins/docker
+    settings:
+      repo: your-dockerhub-username/your-laravel-app
+      tags: latest
+      dockerfile: Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+
+# Optional: only run on pushes to main
+trigger:
+  branch:
+    - main
+    - ci/drone
