@@ -23,7 +23,9 @@ class RecommendationController extends Controller
         protected FertilizerRepo $repo,
         protected ApiRequestRepo $apiRequestRepo,
         protected PlumberService $service
-    ) {}
+    )
+    {
+    }
 
     /**
      * Processes the computation of fertilizer recommendations based on the provided request data.
@@ -35,7 +37,7 @@ class RecommendationController extends Controller
      * Adjusts the area unit in the request to standardized values for further processing.
      * Sends the request to the computation service and returns the original request data, the computed response, and the final request sent to the service.
      *
-     * @param  ComputeRequest  $request  The incoming compute request containing user data, computation details, and a list of fertilizers.
+     * @param ComputeRequest $request The incoming compute request containing user data, computation details, and a list of fertilizers.
      * @return array An associative array containing:
      *               - 'droidRequest': The original request data extracted from the incoming ComputeRequest.
      *               - 'plumberResponse': The response returned from the computation service.
@@ -50,6 +52,8 @@ class RecommendationController extends Controller
         $userInfo = Arr::get($droidRequest, 'user_info');
         $computeRequest = Arr::get($droidRequest, 'compute_request');
         $fertilizerList = Arr::get($droidRequest, 'fertilizer_list');
+
+        $deviceToken = Arr::get($userInfo, 'device_token', 'NA');
 
         $userInfoData = UserInfoData::from($userInfo);
         $computeRequest = ComputeRequestData::from($computeRequest);
@@ -112,23 +116,26 @@ class RecommendationController extends Controller
             $plumberRequest->areaUnit = 'ha';
         }
 
-        $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
-
-        // now log all these to the database
         $requestData = [
-            'request_id' => Arr::get($userInfo, 'device_token'),
+            'request_id' => $deviceToken,
             'droid_request' => $droidRequest,
-            'plumber_response' => $plumberResp,
             'plumber_request' => $plumberRequest,
         ];
 
-        return $requestData;
         $result = $this->apiRequestRepo->create($requestData);
 
+        $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
+        $plumberData = Arr::get($plumberResp, 'data');
+
+
+        $this->apiRequestRepo->update(
+            id: $result->id,
+            data: [
+                'plumber_response' => $plumberData
+            ]);
+
         return [
-            'droidRequest' => $droidRequest,
-            'plumberResponse' => $plumberResp,
-            'plumberRequest' => $plumberRequest,
+            'recommendation' => Arr::get($plumberData, 'recommendation'),
         ];
     }
 }
