@@ -24,21 +24,25 @@ class PlumberService
     /**
      * Sends a compute request to the configured endpoint with the given plumber compute data.
      *
-     * @param  array  $plumberComputeData  The data to be sent in the compute request.
+     * @param array $plumberComputeData The data to be sent in the compute request.
      * @return mixed The JSON-decoded response from the endpoint.
      *
      * @throws ConnectionException
-     * @throws RequestException If the HTTP request fails.
      */
     public function sendComputeRequest(PlumberComputeData $plumberComputeData): mixed
     {
-        $response = Http::timeout($this->timeout)
-            ->retry(3, 100)
-            ->acceptJson()
-            ->post($this->endpoint, $plumberComputeData->toArray());
+        try {
+            $response = Http::timeout($this->timeout)
+                ->retry(3, 100)
+                ->acceptJson()
+                ->post($this->endpoint, $plumberComputeData->toArray());
 
-        $response->throw();
+            return $response->json();
 
-        return $response->json();
+        } catch (RequestException $ex) {
+            return $ex->response->json();
+        }
+
+
     }
 }
