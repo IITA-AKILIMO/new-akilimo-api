@@ -2,7 +2,7 @@ name: "fuelrod-new"
 
 services:
     api:
-        image: iit/akilimo-api:${AKILIMO_TAG:-latest}
+        image: iita/akilimo-api:${AKILIMO_TAG:-latest}
         container_name: api
         restart: unless-stopped
         build:
