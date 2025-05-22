@@ -9,16 +9,16 @@ use Illuminate\Support\Facades\Http;
 
 class PlumberService
 {
+    protected string $baseUrl;
     protected string $endpoint;
 
     protected int $timeout = 5;
 
     public function __construct()
     {
-        $endpoint = config('services.plumbr.endpoint');
-        $timeout = config('services.plumbr.timeout');
-        $this->endpoint = $endpoint;
-        $this->timeout = $timeout;
+        $this->baseUrl = config('services.plumbr.base_url');
+        $this->endpoint = config('services.plumbr.rec_endpoint');
+        $this->timeout = config('services.plumbr.request_timeout');
     }
 
     /**
@@ -31,8 +31,10 @@ class PlumberService
      */
     public function sendComputeRequest(PlumberComputeData $plumberComputeData): mixed
     {
+
         try {
-            $response = Http::timeout($this->timeout)
+            $response = Http::baseUrl($this->baseUrl)
+                ->timeout($this->timeout)
                 ->retry(3, 100)
                 ->acceptJson()
                 ->post($this->endpoint, $plumberComputeData->toArray());
