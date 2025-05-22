@@ -5,10 +5,14 @@ namespace App\Repositories;
 use App\Models\ApiRequest;
 
 /**
- * @extends \App\Repositories\BaseRepository<ApiRequest>
+ * @extends BaseRepository<ApiRequest>
  */
-class ApiRequestRepo extends \App\Repositories\BaseRepository
+class ApiRequestRepo extends BaseRepository
 {
+
+    /**
+     * @return class-string<ApiRequest>
+     */
     protected function model(): string
     {
         return ApiRequest::class;
