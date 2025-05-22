@@ -9,12 +9,16 @@ use App\Data\UserInfoData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
 use App\Repositories\FertilizerRepo;
+use App\Service\PlumberService;
 use Illuminate\Support\Arr;
 
 class RecommendationController extends Controller
 {
-    public function __construct(protected FertilizerRepo $repo)
+//    protected PlumberService $service;
+
+    public function __construct(protected FertilizerRepo $repo, protected PlumberService $service)
     {
+
     }
 
     public function computeRecommendations(ComputeRequest $request)
@@ -87,8 +91,10 @@ class RecommendationController extends Controller
         }
 
         $data = $data->toArray();
-        //        ksort($data);
 
+        $resp = $this->service->sendComputeRequest(plumberComputeData: $data);
+
+        return $resp;
         return [
             //            'user'=>$userInfoData,
             //            'computeRequest' => $computeRequest,
