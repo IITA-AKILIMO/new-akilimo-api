@@ -74,7 +74,10 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
         ],
-        "dev": "@php artisan serve --port=8600",
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan serve --port=8600"
+        ],
         "meta:helper": "@php artisan ide-helper:generate",
         "meta:ide": "@php artisan ide-helper:meta",
         "model:gen": "@php artisan code:models && @php artisan ide-helper:models --write && pint --dirty",
