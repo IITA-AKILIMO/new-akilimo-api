@@ -12,7 +12,7 @@ jobs:
     uses: ./.github/workflows/check-tag-job.yml
     with:
       dockerfile: Dockerfile
-      image_name: masgeek/fuelrod-service
+      image_name: iita/akilimo-api
       specific_tag: ${{ inputs.tag }}
       force_rebuild: true
     secrets:

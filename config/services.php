@@ -36,8 +36,8 @@ return [
     ],
 
     'plumbr' => [
-        'endpoint' => env('PLUMBR_ENDPOINT', 'https://plumbr.akilimo.org'),
-        'timeout' => env('PLUMBR_TIMEOUT', 10),
+        'endpoint' => env('PLUMBR_ENDPOINT', 'https://plumbr.akilimo.org/api/v1/dst/recommendation/compute'),
+        'timeout' => env('PLUMBR_TIMEOUT', 120),
     ],
 
 ];

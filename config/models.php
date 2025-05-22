@@ -265,6 +265,9 @@ return [
 
         'casts' => [
             '*_json' => 'json',
+            'droid_request' => 'json',
+            'plumber_request' => 'json',
+            'plumber_response' => 'json',
         ],
 
         /*
@@ -290,6 +293,7 @@ return [
             'password_resets',
             'personal_access_tokens',
             'password_reset_tokens',
+            'cache*',
         ],
 
         /*

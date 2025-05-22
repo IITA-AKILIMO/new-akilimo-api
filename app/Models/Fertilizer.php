@@ -6,6 +6,7 @@ use App\Models\Base\Fertilizer as BaseFertilizer;
 
 /**
  * @property int $id
+ * @property string|null $fertilizer_label
  * @property string $name
  * @property string $type
  * @property string|null $fertilizer_key
@@ -24,6 +25,7 @@ use App\Models\Base\Fertilizer as BaseFertilizer;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCountry($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereFertilizerKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereFertilizerLabel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereSortOrder($value)
@@ -34,4 +36,7 @@ use App\Models\Base\Fertilizer as BaseFertilizer;
  *
  * @mixin \Eloquent
  */
-class Fertilizer extends BaseFertilizer {}
+class Fertilizer extends BaseFertilizer
+{
+    // Helo
+}

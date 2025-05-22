@@ -1,66 +1,226 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AKILIMO API - Laravel Implementation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The AKILIMO API is a Standardized RESTful Web Service API built with Laravel that provides computational and retrieval capabilities for agricultural recommendations across various agronomic practices including fertilizer application, intercropping, scheduled planting and harvesting, and optimal planting practices.
 
-## About Laravel
+## API Architecture
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The AKILIMO API is structured into three distinct endpoints to accommodate different application requirements and user interaction levels:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Advanced Endpoint
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Designed for comprehensive data collection scenarios, this endpoint accepts the most extensive set of parameters. It is optimized for applications with rich user interfaces such as mobile applications, web dashboards, and desktop software where detailed user input is feasible and beneficial.
 
-## Learning Laravel
+**Use Cases:**
+- Mobile agricultural advisory apps
+- Web-based farm management systems
+- Desktop agricultural software
+- Research platforms requiring detailed input parameters
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Intermediate Endpoint
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+This endpoint strikes a balance between data comprehensiveness and user experience, accepting a moderate number of input parameters. It is ideal for applications that require meaningful recommendations without overwhelming the user with extensive data entry requirements.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Use Cases:**
+- Chatbot integrations
+- Survey-style applications
+- SMS-based advisory services
+- Progressive web applications
 
-## Laravel Sponsors
+### 3. Basic Endpoint
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The streamlined endpoint requires only essential information to generate valuable recommendations. It is specifically designed for constrained environments where minimal user input is preferred or technically necessary.
 
-### Premium Partners
+**Use Cases:**
+- USSD applications
+- Voice response systems (IVR)
+- SMS services
+- Basic mobile interfaces
+- IoT device integrations
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Quick Start Guide
 
-## Contributing
+### Prerequisites
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP 8.3 or higher
+- Composer dependency manager
+- Laravel 10+ framework
+- MySQL 8.0+ or PostgreSQL 13+
 
-## Code of Conduct
+### Getting Started
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **API Access Registration**
+   Register for API access through the [user portal] to obtain your unique API key and authentication credentials.
 
-## Security Vulnerabilities
+2. **Documentation Review**
+   Familiarize yourself with the comprehensive API documentation available on [GitHub] and interactive [Swagger] documentation.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Endpoint Selection**
+   Choose the appropriate API endpoint (Advanced, Intermediate, or Basic) based on your application's requirements and user experience goals.
 
-## License
+4. **Laravel Integration**
+   Implement the selected API endpoint into your Laravel application using the provided SDK or direct HTTP client integration.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Laravel-Specific Implementation
+
+### Installation
+
+```bash
+composer require akilimo/laravel-sdk
+```
+
+### Configuration
+
+Add your API credentials to your Laravel `.env` file:
+
+```env
+AKILIMO_API_KEY=your_api_key_here
+AKILIMO_BASE_URL=https://api.akilimo.org
+AKILIMO_TIMEOUT=30
+```
+
+Publish the configuration file:
+
+```bash
+php artisan vendor:publish --provider="Akilimo\LaravelSdk\AkilimoServiceProvider"
+```
+
+### Service Container Integration
+
+The package automatically registers the AKILIMO service in Laravel's service container, making it available for dependency injection:
+
+```php
+use Akilimo\LaravelSdk\AkilimoService;
+
+class RecommendationController extends Controller
+{
+    public function __construct(private AkilimoService $akilimo)
+    {
+    }
+    
+    public function getRecommendations(Request $request)
+    {
+        $recommendations = $this->akilimo
+            ->advanced()
+            ->recommendations($request->validated());
+            
+        return response()->json($recommendations);
+    }
+}
+```
+
+### Middleware Integration
+
+Utilize Laravel middleware for API authentication and rate limiting:
+
+```php
+// In routes/api.php
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    Route::post('/recommendations/advanced', [RecommendationController::class, 'advanced']);
+    Route::post('/recommendations/intermediate', [RecommendationController::class, 'intermediate']);
+    Route::post('/recommendations/basic', [RecommendationController::class, 'basic']);
+});
+```
+
+### Form Request Validation
+
+Create dedicated form request classes for each endpoint:
+
+```php
+php artisan make:request AdvancedRecommendationRequest
+php artisan make:request IntermediateRecommendationRequest
+php artisan make:request BasicRecommendationRequest
+```
+
+## Build Status & Quality Metrics
+
+### Continuous Integration
+
+**Tests**
+
+[![Tests](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml)
+
+**Docker Build**
+
+[![Build](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml)
+
+**Code Quality Assessment**
+
+[![codebeat badge](https://codebeat.co/badges/ba1363f9-5713-458c-bb1d-05fd1bb8b0fa)](https://codebeat.co/projects/github-com-iita-akilimo-new-akilimo-api-develop)
+
+## Development Environment Setup
+
+### System Requirements
+
+- **PHP Version:** 8.3 or higher with required extensions
+- **Framework:** Laravel 10+ with Octane support for enhanced performance
+- **Database:** MySQL 8.0+ or PostgreSQL 13+
+- **Cache:** Redis 6+ for session and cache management
+- **Queue:** Redis or database-driven queue for background processing
+
+### Development Tools
+
+- **Dependency Management:** Composer 2.5+
+- **Asset Compilation:** Vite (Laravel's default)
+- **Testing Framework:** PHPUnit 10+ with Laravel's testing utilities
+- **Code Quality:** PHP CS Fixer, PHPStan, Larastan
+- **API Documentation:** Swagger/OpenAPI 3.0
+
+### Local Development Setup
+
+1. **Clone and Install Dependencies**
+```bash
+git clone https://github.com/IITA-AKILIMO/akilimo-api.git
+cd akilimo-api
+composer install
+npm install
+```
+
+2. **Environment Configuration**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+3. **Database Setup**
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+4. **Start Development Server**
+```bash
+php artisan serve
+# Or with Laravel Sail for Docker environment
+./vendor/bin/sail up
+```
+
+### Testing
+
+Run the comprehensive test suite:
+
+```bash
+php artisan test
+# Or with coverage
+php artisan test --coverage
+```
+
+### Code Quality Checks
+
+```bash
+# PHP CS Fixer
+./vendor/bin/php-cs-fixer fix
+
+# PHPStan Static Analysis
+./vendor/bin/phpstan analyse
+
+# Laravel Pint (Code Styling)
+./vendor/bin/pint
+```
+
+## Performance Considerations
+
+- Implement API response caching using Laravel's cache system
+- Utilize Laravel Octane for enhanced performance in production
+- Configure proper database indexing for recommendation queries
+- Implement queue-based processing for intensive computational tasks
+- Use Laravel Horizon for queue monitoring and management
