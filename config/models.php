@@ -265,6 +265,9 @@ return [
 
         'casts' => [
             '*_json' => 'json',
+            'droid_request' => 'json',
+            'plumber_request' => 'json',
+            'plumber_response' => 'json',
         ],
 
         /*
