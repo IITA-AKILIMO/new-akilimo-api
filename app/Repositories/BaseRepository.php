@@ -4,18 +4,20 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\Repository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TModel of Model
+ * @implements Repository<TModel>
  */
 abstract class BaseRepository implements Repository
 {
     /**
      * @var TModel
      */
-    protected Model $model;
+    protected $model;
 
     /**
      * BaseRepository constructor.
@@ -26,87 +28,149 @@ abstract class BaseRepository implements Repository
     }
 
     /**
+     * Get the model class name.
+     *
      * @return class-string<TModel>
      */
     abstract protected function model(): string;
 
     /**
      * Instantiate the model.
+     *
+     * @return TModel
      */
-    protected function getModelInstance(): Model
+    protected function getModelInstance()
     {
         return app($this->model());
     }
 
-    public function all(): Collection
+    /**
+     * Get a new query builder for the model.
+     *
+     * @return Builder|TModel
+     */
+    protected function query(): Builder
     {
-        return $this->model->all();
-    }
-
-    public function find(int|string $id): ?Model
-    {
-        return $this->model->find($id);
+        return $this->model->newQuery();
     }
 
     /**
-     * Retrieves records based on the specified conditions.
+     * Get all records.
      *
-     * @param  array  $conditions  An associative array of conditions for filtering the records.
-     * @param  array  $columns  Optional array of columns to select, with support for aliases.
-     *                          Examples:
-     *                          - ['name', 'email']
-     *                          - ['name as username', 'email as user_email']
-     * @return Collection A collection of retrieved records.
+     * @return Collection<int, TModel>
+     */
+    public function all(): Collection
+    {
+        return $this->query()->get();
+    }
+
+    /**
+     * Find a record by ID.
+     *
+     * @param int|string $id
+     * @return TModel|null
+     */
+    public function find(int|string $id): ?Model
+    {
+        return $this->query()->find($id);
+    }
+
+    /**
+     * Find a record by ID or fail.
+     *
+     * @param int|string $id
+     * @return TModel
+     */
+    public function findOrFail(int|string $id): Model
+    {
+        return $this->query()->findOrFail($id);
+    }
+
+    /**
+     * Retrieve records matching conditions.
+     *
+     * @param array $conditions
+     * @param array $columns
+     * @return Collection<int, TModel>
      */
     public function selectByCondition(array $conditions, array $columns = ['*']): Collection
     {
-        return $this->model->where($conditions)->select($columns)->get();
+        return $this->query()
+            ->where($conditions)
+            ->select($columns)->get();
     }
 
     /**
-     * Retrieve a single record matching the given conditions.
+     * Retrieve a single record matching conditions.
      *
-     * @param  array  $conditions  Conditions to filter the query.
-     * @param  array  $columns  Columns to select in the query. Defaults to all columns.
-     * @return Model|null The matching model instance or null if no match is found.
+     * @param array $conditions
+     * @param array $columns
+     * @return Model|null
      */
     public function selectOne(array $conditions, array $columns = ['*']): ?Model
     {
-        return $this->model->where($conditions)->select($columns)->first();
+        return $this->query()
+            ->where($conditions)
+            ->select($columns)->first();
     }
 
+    /**
+     * Create a new record.
+     *
+     * @param array $data
+     * @return TModel
+     */
     public function create(array $data): Model
     {
         return $this->model->create($data);
     }
 
-    public function update(int|string $id, array $data): ?Model
+    /**
+     * Update a record.
+     *
+     * @param int|string $id
+     * @param array $data
+     * @return Model
+     */
+    public function update(int|string $id, array $data): Model
     {
-        $model = $this->find($id);
+        $model = $this->query()->findOrFail($id);
 
-        if ($model) {
-            $model->update($data);
-        }
+        $model->update($data);
 
         return $model;
     }
 
+    /**
+     * Delete a record.
+     *
+     * @param int|string $id
+     * @return bool
+     */
     public function delete(int|string $id): bool
     {
-        $model = $this->find($id);
-
-        return $model ? $model->delete() : false;
+        return $this->query()->findOrFail($id)->delete();
     }
 
+    /**
+     * Paginate with sorting and optional filters.
+     *
+     * @param int $perPage
+     * @param string $sortBy
+     * @param string $direction
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
     public function paginateWithSort(
-        int $perPage = 50,
+        int    $perPage = 50,
         string $sortBy = 'created_at',
         string $direction = 'desc',
-        array $filters = []
-    ): LengthAwarePaginator {
-        $query = $this->model->newQuery();
+        array  $filters = []
+    ): LengthAwarePaginator
+    {
+        $query = $this->query();
 
-        if (! empty($filters)) {
+        if (!empty($filters)) {
             $query->where($filters);
         }
 
