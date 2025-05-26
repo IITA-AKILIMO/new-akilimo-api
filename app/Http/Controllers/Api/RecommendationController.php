@@ -125,7 +125,7 @@ class RecommendationController extends Controller
         $result = $this->apiRequestRepo->create($requestData);
 
         $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
-        $plumberData = Arr::get($plumberResp, 'data');
+        $plumberData = Arr::get($plumberResp, 'data', '{}');
 
 
         $this->apiRequestRepo->update(
