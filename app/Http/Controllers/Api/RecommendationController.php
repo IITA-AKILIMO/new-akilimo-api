@@ -123,6 +123,7 @@ class RecommendationController extends Controller
         ];
 
         $result = $this->apiRequestRepo->create($requestData);
+        $plumberRequest->areaUnit = "809808";
 
         $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
         $plumberData = Arr::get($plumberResp, 'data', '{}');
@@ -135,6 +136,8 @@ class RecommendationController extends Controller
             ]);
 
         return [
+            'data'=>$plumberData,
+            'rec_type' => Arr::get($plumberData, 'rec_type'),
             'recommendation' => Arr::get($plumberData, 'recommendation'),
         ];
     }
