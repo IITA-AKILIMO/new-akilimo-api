@@ -49,9 +49,9 @@ class RecommendationController extends Controller
     public function computeRecommendations(ComputeRequest $request)
     {
         $droidRequest = $request->array();
-        $userInfo = Arr::get($droidRequest, 'user_info');
-        $computeRequest = Arr::get($droidRequest, 'compute_request');
-        $fertilizerList = Arr::get($droidRequest, 'fertilizer_list');
+        $userInfo = Arr::get($droidRequest, 'user_info', '{}');
+        $computeRequest = Arr::get($droidRequest, 'compute_request', '{}');
+        $fertilizerList = Arr::get($droidRequest, 'fertilizer_list', '[]');
 
         $deviceToken = Arr::get($userInfo, 'device_token', 'NA');
 
@@ -125,7 +125,7 @@ class RecommendationController extends Controller
         $result = $this->apiRequestRepo->create($requestData);
 
         $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
-        $plumberData = Arr::get($plumberResp, 'data');
+        $plumberData = Arr::get($plumberResp, 'data', '{}');
 
 
         $this->apiRequestRepo->update(

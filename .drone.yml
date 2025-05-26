@@ -40,8 +40,8 @@ steps:
       password:
         from_secret: docker_password
 
-# Optional: only run on pushes to main
-trigger:
-  branch:
-    - main
-    - ci/drone
+## Optional: only run on pushes to main
+#trigger:
+#  branch:
+#    - main
+#    - ci/drone
