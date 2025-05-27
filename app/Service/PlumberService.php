@@ -35,7 +35,6 @@ class PlumberService
 
         $response = Http::baseUrl($this->baseUrl)
             ->timeout($this->timeout)
-            ->retry(3, 100)
             ->acceptJson()
             ->post($this->endpoint, $plumberComputeData->toArray());
 
