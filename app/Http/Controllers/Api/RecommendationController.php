@@ -2,28 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Data\ComputeRequestData;
-use App\Data\FertilizerData;
-use App\Data\PlumberComputeData;
-use App\Data\UserInfoData;
-use App\Exceptions\RecommendationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
-use App\Repositories\ApiRequestRepo;
-use App\Repositories\FertilizerRepo;
-use App\Service\PlumberService;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Arr;
+use App\Service\RecommendationService;
 
 class RecommendationController extends Controller
 {
-    //    protected PlumberService $service;
 
     public function __construct(
-        protected FertilizerRepo $repo,
-        protected ApiRequestRepo $apiRequestRepo,
-        protected PlumberService $service
+        protected RecommendationService $recommendationService,
     )
     {
     }
@@ -44,121 +31,9 @@ class RecommendationController extends Controller
      *               - 'plumberResponse': The response returned from the computation service.
      *               - 'plumberRequest': The final formatted request sent to the computation service.
      *
-     * @throws ConnectionException
-     * @throws RequestException
-     * @throws RecommendationException
      */
-    public function computeRecommendations(ComputeRequest $request)
+    public function computeRecommendations(ComputeRequest $request): array
     {
-        $droidRequest = $request->array();
-        $userInfo = Arr::get($droidRequest, 'user_info', '{}');
-        $computeRequest = Arr::get($droidRequest, 'compute_request', '{}');
-        $fertilizerList = Arr::get($droidRequest, 'fertilizer_list', '[]');
-
-        $deviceToken = Arr::get($userInfo, 'device_token', 'NA');
-
-        $userInfoData = UserInfoData::from($userInfo);
-        $computeRequest = ComputeRequestData::from($computeRequest);
-
-        $conditions = [
-            'country' => $computeRequest->countryCode,
-            'available' => true,
-        ];
-
-        $columns = [
-            'fertilizer_label as fertilizer_label',
-            'name as name',
-            'weight as weight',
-            'fertilizer_key as key',
-            'type as fertilizer_type',
-        ];
-        $availableFertilizers = $this->repo->selectByCondition(
-            conditions: $conditions,
-            columns: $columns,
-        );
-
-        $allFertilizers = FertilizerData::collect($availableFertilizers);
-        $fertilizerResult = FertilizerData::collect($fertilizerList);
-
-        // Index fertilizerResult by key for quick lookup
-        $fertilizerResultMap = [];
-        foreach ($fertilizerResult as $result) {
-            $fertilizerResultMap[$result->key] = $result;
-        }
-
-        $fertilizers = [];
-        foreach ($allFertilizers as $fertilizer) {
-            /** @var FertilizerData $fertilizer */
-            $key = $fertilizer->key;
-            $label = $fertilizer->label;
-
-            // Default values
-            $selected = $fertilizer->selected;
-            $weight = $fertilizer->weight;
-            $pricePerBag = $fertilizer->pricePerBag;
-
-            // If there's a result entry for this label, update the values
-            if (isset($fertilizerResultMap[$key])) {
-                $result = $fertilizerResultMap[$key];
-                $selected = $result->selected;
-                $weight = $result->weight;
-                $pricePerBag = $result->pricePerBag;
-            }
-
-            $fertilizers["{$label}available"] = $selected;
-            $fertilizers["{$label}BagWt"] = $weight;
-            $fertilizers["{$label}CostperBag"] = $pricePerBag;
-        }
-
-        $plumberRequest = PlumberComputeData::from($computeRequest, $userInfoData, $fertilizers);
-        // Area unit translation
-        if (strcasecmp($plumberRequest->areaUnit, 'ekari') === 0) {
-            $plumberRequest->areaUnit = 'acre';
-        } elseif (strcasecmp($plumberRequest->areaUnit, 'hekta') === 0) {
-            $plumberRequest->areaUnit = 'ha';
-        }
-
-        $requestData = [
-            'request_id' => $deviceToken,
-            'droid_request' => $droidRequest,
-            'plumber_request' => $plumberRequest,
-        ];
-
-        $result = $this->apiRequestRepo->create($requestData);
-
-        try {
-            $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
-            $plumberData = Arr::get($plumberResp, 'data', '{}');
-
-            $this->apiRequestRepo->update(
-                id: $result->id,
-                data: [
-                    'plumber_response' => $plumberData
-                ]);
-            return [
-                'rec_type' => Arr::get($plumberData, 'rec_type'),
-                'recommendation' => Arr::get($plumberData, 'recommendation'),
-            ];
-
-        } catch (RecommendationException $ex) {
-            $this->apiRequestRepo->update(
-                id: $result->id,
-                data: [
-                    'plumber_response' => $ex->body
-                ]);
-
-            throw $ex;
-        } catch (\Exception $ex) {
-
-            $this->apiRequestRepo->update(
-                id: $result->id,
-                data: [
-                    'plumber_response' => [
-                        'message' => $ex->getMessage()
-                    ]
-                ]);
-
-            throw $ex;
-        }
+        return $this->recommendationService->compute(droidRequest: $request->toArray());
     }
 }
