@@ -10,18 +10,23 @@ use App\Exceptions\RecommendationException;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
 use Exception;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class RecommendationService
 {
+    // Cache TTL as a Carbon interval (e.g. 10 minutes from now)
+    protected int|\DateTimeInterface $cacheTTL;
+
     public function __construct(
         protected FertilizerRepo $fertilizerRepo,
         protected ApiRequestRepo $apiRequestRepo,
         protected PlumberService $plumberService,
     )
     {
+        $this->cacheTTL = Carbon::now()->addDays(7);
     }
 
     /**
@@ -30,10 +35,29 @@ class RecommendationService
      * @param array $droidRequest The parsed request payload.
      * @return array Contains 'rec_type' and 'recommendation'.
      *
-     * @throws ConnectionException
-     * @throws RecommendationException
      */
     public function compute(array $droidRequest): array
+    {
+        $cacheKey = $this->generateCacheKey($droidRequest);
+
+        // Try to get a cached result first
+        return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
+            // The existing compute logic (extracted as a private method for clarity)
+            return $this->performComputation($droidRequest);
+        });
+    }
+
+
+    /**
+     * Performs computation based on the droid request data.
+     *
+     * @param array $droidRequest The input data containing user information, compute request, and fertilizer list.
+     * @return array An array containing the recommended type and recommendations.
+     *
+     * @throws RecommendationException If there is an error specific to the recommendation process.
+     * @throws Exception If a general exception occurs during the computation process.
+     */
+    private function performComputation(array $droidRequest): array
     {
         $userInfoArray = Arr::get($droidRequest, 'user_info', []);
         $computeRequestArray = Arr::get($droidRequest, 'compute_request', []);
@@ -78,6 +102,24 @@ class RecommendationService
     }
 
     /**
+     * Generates a unique cache key based on the droidRequest payload.
+     *
+     * @param array $droidRequest
+     * @return string
+     */
+    private function generateCacheKey(array $droidRequest): string
+    {
+        // Pick the parts that affect the result, then hash to make the key shorter
+        $relevantData = [
+            'user_info' => Arr::get($droidRequest, 'user_info', []),
+            'compute_request' => Arr::get($droidRequest, 'compute_request', []),
+            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
+        ];
+
+        return 'recommendation:' . md5(json_encode($relevantData));
+    }
+
+    /**
      * Retrieves available fertilizers for a specific country.
      *
      * @param string $countryCode
@@ -103,11 +145,11 @@ class RecommendationService
     /**
      * Maps fertilizers to the external service format.
      *
-     * @param array $availableFertilizers
+     * @param Collection $availableFertilizers
      * @param Collection $fertilizerMap
      * @return array
      */
-    private function mapFertilizersToExternalFormat(array $availableFertilizers, Collection $fertilizerMap): array
+    private function mapFertilizersToExternalFormat(Collection $availableFertilizers, Collection $fertilizerMap): array
     {
         $computedFertilizers = [];
 
