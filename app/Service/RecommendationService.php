@@ -40,9 +40,7 @@ class RecommendationService
     {
         $cacheKey = $this->generateCacheKey($droidRequest);
 
-        // Try to get a cached result first
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
-            // The existing compute logic (extracted as a private method for clarity)
             return $this->performComputation($droidRequest);
         });
     }
