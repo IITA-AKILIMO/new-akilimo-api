@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\RecommendationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
 use App\Service\RecommendationService;
-use Illuminate\Http\Client\ConnectionException;
 
 class RecommendationController extends Controller
 {
@@ -33,8 +31,6 @@ class RecommendationController extends Controller
      *               - 'plumberResponse': The response returned from the computation service.
      *               - 'plumberRequest': The final formatted request sent to the computation service.
      *
-     * @throws ConnectionException
-     * @throws RecommendationException
      */
     public function computeRecommendations(ComputeRequest $request): array
     {
