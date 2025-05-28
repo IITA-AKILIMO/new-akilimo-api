@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Data\PlumberComputeData;
+use App\Exceptions\RecommendationException;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 class PlumberService
@@ -28,23 +28,27 @@ class PlumberService
      * @return mixed The JSON-decoded response from the endpoint.
      *
      * @throws ConnectionException
+     * @throws RecommendationException
      */
     public function sendComputeRequest(PlumberComputeData $plumberComputeData): mixed
     {
 
-        try {
-            $response = Http::baseUrl($this->baseUrl)
-                ->timeout($this->timeout)
-                ->retry(3, 100)
-                ->acceptJson()
-                ->post($this->endpoint, $plumberComputeData->toArray());
+        $response = Http::baseUrl($this->baseUrl)
+            ->timeout($this->timeout)
+            ->acceptJson()
+            ->post($this->endpoint, $plumberComputeData->toArray());
 
+
+        $body = $response->json();
+        $statusCode = $response->getStatusCode();
+        if ($response->successful()) {
             return $response->json();
-
-        } catch (RequestException $ex) {
-            return $ex->response->json();
         }
 
-
+        throw new RecommendationException(
+            "Failed to call Akilimo API",
+            $statusCode,
+            $body
+        );
     }
 }

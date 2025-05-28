@@ -6,6 +6,7 @@ use App\Data\ComputeRequestData;
 use App\Data\FertilizerData;
 use App\Data\PlumberComputeData;
 use App\Data\UserInfoData;
+use App\Exceptions\RecommendationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
 use App\Repositories\ApiRequestRepo;
@@ -45,6 +46,7 @@ class RecommendationController extends Controller
      *
      * @throws ConnectionException
      * @throws RequestException
+     * @throws RecommendationException
      */
     public function computeRecommendations(ComputeRequest $request)
     {
@@ -124,18 +126,39 @@ class RecommendationController extends Controller
 
         $result = $this->apiRequestRepo->create($requestData);
 
-        $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
-        $plumberData = Arr::get($plumberResp, 'data', '{}');
+        try {
+            $plumberResp = $this->service->sendComputeRequest(plumberComputeData: $plumberRequest);
+            $plumberData = Arr::get($plumberResp, 'data', '{}');
 
+            $this->apiRequestRepo->update(
+                id: $result->id,
+                data: [
+                    'plumber_response' => $plumberData
+                ]);
+            return [
+                'rec_type' => Arr::get($plumberData, 'rec_type'),
+                'recommendation' => Arr::get($plumberData, 'recommendation'),
+            ];
 
-        $this->apiRequestRepo->update(
-            id: $result->id,
-            data: [
-                'plumber_response' => $plumberData
-            ]);
+        } catch (RecommendationException $ex) {
+            $this->apiRequestRepo->update(
+                id: $result->id,
+                data: [
+                    'plumber_response' => $ex->body
+                ]);
 
-        return [
-            'recommendation' => Arr::get($plumberData, 'recommendation'),
-        ];
+            throw $ex;
+        } catch (\Exception $ex) {
+
+            $this->apiRequestRepo->update(
+                id: $result->id,
+                data: [
+                    'plumber_response' => [
+                        'message' => $ex->getMessage()
+                    ]
+                ]);
+
+            throw $ex;
+        }
     }
 }
