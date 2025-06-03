@@ -1,7 +1,6 @@
 name: DockerBuild
 
 on:
-  merge_group:
   push:
     branches:
       - 'main'
