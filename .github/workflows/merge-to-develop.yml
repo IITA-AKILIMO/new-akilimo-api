@@ -1,6 +1,7 @@
 name: Create PR to develop
 
 on:
+  merge_group:
   workflow_dispatch:
   push:
     branches-ignore:

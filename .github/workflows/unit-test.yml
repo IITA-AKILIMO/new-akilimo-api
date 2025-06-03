@@ -1,6 +1,7 @@
 name: UnitTests
 
 on:
+  merge_group:
   push:
   workflow_dispatch:
 
@@ -23,9 +24,7 @@ jobs:
           php-version: '8.3'
 
       - name: Install dependencies
-        run: |
-          composer install
+        run:  composer install
 
       - name: Run Unit Tests
-        run: |
-          composer test
+        run: composer test
