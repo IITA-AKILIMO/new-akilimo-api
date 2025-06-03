@@ -1,0 +1,50 @@
+name: "Sonar Quality checks"
+
+on:
+  workflow_dispatch:
+  merge_group:
+  push:
+    branches:
+      - develop
+
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-24.04
+    concurrency:
+      cancel-in-progress: true
+      group: quality-checks-${{ github.ref }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run PEST tests
+        env:
+          XDEBUG_MODE: coverage
+        run: composer pest:coverage-xml
+
+      - name: Run Unit Tests
+        run: composer test
+
+      - name: sonar checks
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: sonar gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
