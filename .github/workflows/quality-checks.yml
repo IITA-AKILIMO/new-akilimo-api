@@ -9,7 +9,7 @@ on:
 
 
 jobs:
-  build:
+  sonar-checks:
     name: Build and analyze
     runs-on: ubuntu-24.04
     concurrency:

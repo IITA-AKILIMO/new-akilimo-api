@@ -23,7 +23,7 @@ on:
         required: true
 
 jobs:
-  check-and-build:
+  check-and-build-tag:
     runs-on: ubuntu-24.04
     concurrency:
       cancel-in-progress: true
