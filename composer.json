@@ -85,7 +85,10 @@
         "lint:fix": "./vendor/bin/pint --dirty",
         "lint:check": "pint --test",
         "test": "@php artisan test",
-        "tests": "pest tests"
+        "tests": "pest tests",
+        "pest:test": "./vendor/bin/pest",
+        "pest:coverage": "./vendor/bin/pest --coverage",
+        "pest:coverage-xml": "vendor/bin/pest --coverage-clover=storage/coverage/coverage.xml"
     },
     "extra": {
         "laravel": {

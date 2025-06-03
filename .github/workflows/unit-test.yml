@@ -1,6 +1,7 @@
 name: UnitTests
 
 on:
+  merge_group:
   push:
   workflow_dispatch:
 
