@@ -5,9 +5,8 @@ on:
     branches:
      - 'develop'
 jobs:
-  action-pull-request:
+  next-release-pr:
     runs-on: ubuntu-24.04
-
     concurrency:
       cancel-in-progress: true
       group: release-${{ github.ref }}

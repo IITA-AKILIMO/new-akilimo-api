@@ -8,7 +8,7 @@ on:
       - completed
 
 jobs:
-  check-and-build:
+  build-tags:
     uses: ./.github/workflows/check-tag-job.yml
     with:
       dockerfile: Dockerfile
