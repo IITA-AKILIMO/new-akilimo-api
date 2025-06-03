@@ -10,7 +10,6 @@ on:
 
 jobs:
   sonar-checks:
-    name: Build and analyze
     runs-on: ubuntu-24.04
     concurrency:
       cancel-in-progress: true
