@@ -31,6 +31,7 @@ class FertilizerController extends Controller
             sortBy: $orderBy,
             direction: $sort);
 
+
         return FertilizerResourceCollection::make($availableFertilizers);
     }
 
