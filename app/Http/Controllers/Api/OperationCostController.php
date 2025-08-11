@@ -36,7 +36,7 @@ class OperationCostController extends Controller
 
         $operationCosts = $this->repo->paginateWithSort(
             perPage: $perPage,
-            sortBy: $orderBy,
+            orderBy: $orderBy,
             direction: $sort,
             filters: $filters);
 

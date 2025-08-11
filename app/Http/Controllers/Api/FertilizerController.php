@@ -28,7 +28,7 @@ class FertilizerController extends Controller
 
         $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
             perPage: $perPage,
-            sortBy: $orderBy,
+            orderBy: $orderBy,
             direction: $sort);
 
 
@@ -61,7 +61,7 @@ class FertilizerController extends Controller
 
         $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
             perPage: $perPage,
-            sortBy: $orderBy,
+            orderBy: $orderBy,
             direction: $sort,
             filters: $filters);
 
