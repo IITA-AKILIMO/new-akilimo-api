@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @template TModel of Model
  * @implements Repository<TModel>
  */
-abstract class BaseRepository implements Repository
+abstract class BaseRepo implements Repository
 {
     /**
      * @var TModel

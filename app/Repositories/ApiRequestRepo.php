@@ -5,9 +5,9 @@ namespace App\Repositories;
 use App\Models\ApiRequest;
 
 /**
- * @extends BaseRepository<ApiRequest>
+ * @extends BaseRepo<ApiRequest>
  */
-class ApiRequestRepo extends BaseRepository
+class ApiRequestRepo extends BaseRepo
 {
 
     /**
