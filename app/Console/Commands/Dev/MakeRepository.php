@@ -40,7 +40,7 @@ $modelImport
 
 
 /**
- * @extends \App\Repositories\BaseRepository<$modelType>
+ * @extends \App\Repositories\BaseRepo<$modelType>
  */
 class {$name} extends \App\Repositories\BaseRepository
 {
