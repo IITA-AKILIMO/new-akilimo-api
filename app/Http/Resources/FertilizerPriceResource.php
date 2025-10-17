@@ -46,6 +46,7 @@ class FertilizerPriceResource extends JsonResource
             'fertilizer_key' => $fertilizerPrice->fertilizer_key,
             'fertilizer_country' => "{$fertilizerPrice->country}$fertilizerPrice->id",
             'country_code' => $fertilizerPrice->country,
+            'currency'=>$currency,
             'sort_order' => $fertilizerPrice->sort_order,
             'min_local_price' => $fertilizerPrice->min_price,
             'max_local_price' => $fertilizerPrice->max_price,
