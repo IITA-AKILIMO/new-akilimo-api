@@ -19,6 +19,7 @@ Route::prefix('v1/fertilizer-prices')->group(function () {
 
 
 Route::prefix('v1/investment-amounts')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\InvestmentAmountController::class, 'index']);
     Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\InvestmentAmountController::class, 'byCountry']);
 });
 
