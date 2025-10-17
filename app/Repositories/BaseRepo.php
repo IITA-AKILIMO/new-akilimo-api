@@ -224,7 +224,7 @@ abstract class BaseRepo implements Repository
         string $direction = 'desc',
         array  $filters = [],
         array  $with = [],
-    ): \Illuminate\Contracts\Pagination\CursorPaginator
+    ): \Illuminate\Pagination\LengthAwarePaginator
     {
         $query = $this->query($with);
 
@@ -232,6 +232,6 @@ abstract class BaseRepo implements Repository
             $query->where($filters);
         }
 
-        return $query->orderBy($orderBy, $direction)->cursorPaginate($perPage);
+        return $query->orderBy($orderBy, $direction)->paginate($perPage);
     }
 }
