@@ -27,8 +27,8 @@ class CurrencyResource extends JsonResource
             'currency_symbol' => $currency->currency_symbol,
             'currency_native_symbol' => $currency->currency_native_symbol,
             'currency_name_plural' => $currency->name_plural,
-            'created_at' => $currency->created_at,
-            'updated_at' => $currency->updated_at,
+//            'created_at' => $currency->created_at,
+//            'updated_at' => $currency->updated_at,
         ];
     }
 }
