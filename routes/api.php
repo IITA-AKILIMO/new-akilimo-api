@@ -32,6 +32,7 @@ Route::prefix('v1/recommendations')->group(function () {
 });
 
 Route::prefix('v1/starch-factories')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\StarchFactoryController::class, 'index']);
     Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\StarchFactoryController::class, 'byCountry']);
 });
 
