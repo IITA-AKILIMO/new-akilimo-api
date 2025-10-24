@@ -268,6 +268,7 @@ return [
             'droid_request' => 'json',
             'plumber_request' => 'json',
             'plumber_response' => 'json',
+            '*price' => 'float',
         ],
 
         /*
@@ -415,7 +416,7 @@ return [
          |
          | which can be slow, especially for large tables.
          */
-        'with_column_list' => false,
+        'with_column_list' => true,
 
         /*
         |--------------------------------------------------------------------------
@@ -469,7 +470,7 @@ return [
         | NOTE: This requires PHP 7.0 or later.
         |
         */
-        'enable_return_types' => false,
+        'enable_return_types' => true,
     ],
 
     /*

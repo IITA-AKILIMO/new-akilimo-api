@@ -10,7 +10,7 @@ class CassavaPriceRepo
     /**
      * Retrieves the minimum and maximum price entity for a given country code.
      *
-     * @param  string  $countryCode  The country code used to filter the prices.
+     * @param string $countryCode The country code used to filter the prices.
      * @return MinMaxPriceDto Contains the minimum and maximum local prices for the specified country.
      */
     public function findPriceBandsByCountryCode(string $countryCode): MinMaxPriceDto
@@ -21,6 +21,8 @@ class CassavaPriceRepo
 
         $maxPrice = CassavaPrice::whereCountry($countryCode)->max('max_local_price');
 
-        return new MinMaxPriceDto($minPrice, $maxPrice);
+        $price = new MinMaxPriceDto(minLocalPrice: (float)$minPrice, maxLocalPrice: (float)$maxPrice);
+
+        return $price;
     }
 }

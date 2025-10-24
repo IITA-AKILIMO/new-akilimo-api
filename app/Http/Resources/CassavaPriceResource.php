@@ -35,8 +35,8 @@ class CassavaPriceResource extends JsonResource
             'average_price' => $avgPrice,
             'exact_price' => $avgPrice === -1.0,
             'item_tag' => $tag,
-            'min_allowed_price' => $price->min_price,
-            'max_allowed_price' => $price->max_price,
+            'min_allowed_price' => $price->minPrice,
+            'max_allowed_price' => $price->maxPrice,
             'active' => $cassavaPrice->price_active,
             'sort_order' => $cassavaPrice->sort_order,
         ];
