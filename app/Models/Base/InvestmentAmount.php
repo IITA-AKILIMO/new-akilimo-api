@@ -39,6 +39,17 @@ class InvestmentAmount extends Model
 {
     protected $table = 'investment_amount';
 
+    protected $columns = [
+        'id',
+        'country',
+        'investment_amount',
+        'area_unit',
+        'price_active',
+        'sort_order',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'investment_amount' => 'float',
         'price_active' => 'bool',

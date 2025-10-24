@@ -39,6 +39,17 @@ class StarchFactory extends Model
 {
     protected $table = 'starch_factories';
 
+    protected $columns = [
+        'id',
+        'factory_name',
+        'factory_label',
+        'country',
+        'factory_active',
+        'sort_order',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'factory_active' => 'bool',
         'sort_order' => 'int',

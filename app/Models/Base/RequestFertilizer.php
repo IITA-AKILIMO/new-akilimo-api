@@ -38,6 +38,15 @@ class RequestFertilizer extends Model
 
     public $timestamps = false;
 
+    protected $columns = [
+        'fertilizer_id',
+        'request_id',
+        'fertilizer_type',
+        'available',
+        'price',
+        'weight',
+    ];
+
     protected $casts = [
         'request_id' => 'int',
         'available' => 'bool',

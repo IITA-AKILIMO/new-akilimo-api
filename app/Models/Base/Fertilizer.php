@@ -47,6 +47,21 @@ class Fertilizer extends Model
 {
     protected $table = 'fertilizers';
 
+    protected $columns = [
+        'id',
+        'fertilizer_label',
+        'name',
+        'type',
+        'fertilizer_key',
+        'weight',
+        'country',
+        'sort_order',
+        'use_case',
+        'available',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'weight' => 'int',
         'sort_order' => 'int',

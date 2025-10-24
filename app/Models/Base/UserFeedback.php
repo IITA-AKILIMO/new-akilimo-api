@@ -41,6 +41,18 @@ class UserFeedback extends Model
 {
     protected $table = 'user_feedback';
 
+    protected $columns = [
+        'id',
+        'akilimo_usage',
+        'user_type',
+        'akilimo_rec_rating',
+        'akilimo_useful_rating',
+        'language',
+        'device_token',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'akilimo_rec_rating' => 'int',
         'akilimo_useful_rating' => 'int',

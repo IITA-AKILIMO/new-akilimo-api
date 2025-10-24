@@ -43,6 +43,19 @@ class Currency extends Model
 {
     protected $table = 'currencies';
 
+    protected $columns = [
+        'id',
+        'country_code',
+        'country',
+        'currency_name',
+        'currency_code',
+        'currency_symbol',
+        'currency_native_symbol',
+        'name_plural',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $fillable = [
         'country_code',
         'country',

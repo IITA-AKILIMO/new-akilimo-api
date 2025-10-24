@@ -295,6 +295,8 @@ return [
             'personal_access_tokens',
             'password_reset_tokens',
             'cache*',
+            'DATABASECHANGE*',
+            'users_old',
         ],
 
         /*

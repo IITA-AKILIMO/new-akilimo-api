@@ -41,6 +41,18 @@ class OperationCost extends Model
 {
     protected $table = 'operation_costs';
 
+    protected $columns = [
+        'id',
+        'operation_name',
+        'operation_type',
+        'country_code',
+        'min_cost',
+        'max_cost',
+        'is_active',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'min_cost' => 'float',
         'max_cost' => 'float',

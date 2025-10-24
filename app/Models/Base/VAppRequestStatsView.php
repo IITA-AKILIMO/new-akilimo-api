@@ -55,6 +55,24 @@ class VAppRequestStatsView extends Model
 
     public $incrementing = false;
 
+    protected $columns = [
+        'id',
+        'request_date',
+        'device_token',
+        'country_code',
+        'lat',
+        'lon',
+        'full_names',
+        'gender_name',
+        'excluded',
+        'gender',
+        'phone_number',
+        'user_type',
+        'use_case',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'id' => 'int',
         'request_date' => 'datetime',

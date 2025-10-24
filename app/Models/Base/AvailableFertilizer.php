@@ -53,6 +53,24 @@ class AvailableFertilizer extends Model
 {
     protected $table = 'available_fertilizer';
 
+    protected $columns = [
+        'id',
+        'name',
+        'type',
+        'n_content',
+        'p_content',
+        'k_content',
+        'weight',
+        'price',
+        'country',
+        'use_case',
+        'available',
+        'custom',
+        'sort_order',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'n_content' => 'int',
         'p_content' => 'int',

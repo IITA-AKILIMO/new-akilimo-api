@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $max_local_price
  * @property float $min_usd
  * @property float $max_usd
- * @property bool $min_price
- * @property bool $max_price
+ * @property float $min_price
+ * @property float $max_price
  * @property bool|null $price_active
  * @property int $sort_order
  * @property Carbon|null $created_at
@@ -49,13 +49,29 @@ class MaizePrice extends Model
 {
     protected $table = 'maize_prices';
 
+    protected $columns = [
+        'id',
+        'country',
+        'min_local_price',
+        'max_local_price',
+        'min_usd',
+        'max_usd',
+        'min_price',
+        'max_price',
+        'price_active',
+        'sort_order',
+        'created_at',
+        'updated_at',
+        'produce_type',
+    ];
+
     protected $casts = [
         'min_local_price' => 'float',
         'max_local_price' => 'float',
         'min_usd' => 'float',
         'max_usd' => 'float',
-        'min_price' => 'bool',
-        'max_price' => 'bool',
+        'min_price' => 'float',
+        'max_price' => 'float',
         'price_active' => 'bool',
         'sort_order' => 'int',
     ];

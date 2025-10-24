@@ -41,6 +41,18 @@ class User extends Model
 {
     protected $table = 'users';
 
+    protected $columns = [
+        'id',
+        'name',
+        'username',
+        'email',
+        'email_verified_at',
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];

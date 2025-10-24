@@ -69,6 +69,31 @@ class YieldRequest extends Model
 
     public $incrementing = false;
 
+    protected $columns = [
+        'id',
+        'map_lat',
+        'map_long',
+        'cassava_unit_weight',
+        'cassava_unit_price',
+        'max_investment',
+        'field_area',
+        'planting_date',
+        'harvest_date',
+        'country',
+        'client',
+        'area_units',
+        'user_name',
+        'user_phone_code',
+        'user_phone_number',
+        'cassava_pd',
+        'field_description',
+        'user_email',
+        'processed',
+        'created_at',
+        'updated_at',
+        'recommendation_text',
+    ];
+
     protected $casts = [
         'id' => 'int',
         'map_lat' => 'float',

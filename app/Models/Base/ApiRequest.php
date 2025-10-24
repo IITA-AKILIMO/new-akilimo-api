@@ -37,6 +37,16 @@ class ApiRequest extends Model
 {
     protected $table = 'api_requests';
 
+    protected $columns = [
+        'id',
+        'request_id',
+        'droid_request',
+        'plumber_request',
+        'plumber_response',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $casts = [
         'droid_request' => 'json',
         'plumber_request' => 'json',
