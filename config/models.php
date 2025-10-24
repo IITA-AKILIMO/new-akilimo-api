@@ -354,7 +354,6 @@ return [
         */
 
         'model_names' => [
-            'v_app_request_stats_view' => 'AppRequestStats',
         ],
 
         /*

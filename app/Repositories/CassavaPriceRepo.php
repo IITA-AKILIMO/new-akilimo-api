@@ -21,8 +21,6 @@ class CassavaPriceRepo
 
         $maxPrice = CassavaPrice::whereCountry($countryCode)->max('max_local_price');
 
-        $price = new MinMaxPriceDto(minLocalPrice: (float)$minPrice, maxLocalPrice: (float)$maxPrice);
-
-        return $price;
+        return new MinMaxPriceDto(minLocalPrice: (float)$minPrice, maxLocalPrice: (float)$maxPrice);
     }
 }
