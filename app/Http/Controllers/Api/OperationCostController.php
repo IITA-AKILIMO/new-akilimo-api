@@ -14,6 +14,34 @@ class OperationCostController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return OperationCostResourceCollection
+     */
+    public function index(Request $request): OperationCostResourceCollection
+    {
+        $perPage = $request->input('per_page', 50);
+        $orderBy = $request->input('order_by', 'max_cost');
+        $operationName = $request->input('operation_name');
+        $operationType = $request->input('operation_type');
+        $sort = $request->input('sort', 'asc');
+
+        $filters = [
+            'operation_name' => strtolower(trim($operationName)),
+            'operation_type' => strtolower(trim($operationType)),
+            'is_active' => true
+        ];
+
+
+        $operationCosts = $this->repo->paginateWithSort(
+            perPage: $perPage,
+            orderBy: $orderBy,
+            direction: $sort,
+            filters: $filters);
+
+        return OperationCostResourceCollection::make($operationCosts);
+    }
+
+    /**
      * @param string $countryCode
      * @param Request $request
      * @return OperationCostResourceCollection
