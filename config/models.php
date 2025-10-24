@@ -354,7 +354,7 @@ return [
         */
 
         'model_names' => [
-
+            'v_app_request_stats_view' => 'AppRequestStats',
         ],
 
         /*
@@ -418,7 +418,7 @@ return [
          |
          | which can be slow, especially for large tables.
          */
-        'with_column_list' => true,
+        'with_column_list' => false,
 
         /*
         |--------------------------------------------------------------------------
