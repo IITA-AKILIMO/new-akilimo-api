@@ -13,15 +13,16 @@ use Illuminate\Database\Eloquent\Model;
  * Class FertilizerPrice
  *
  * @property int $id
- * @property float $min_usd
- * @property float $max_usd
+ * @property string|null $country
+ * @property string|null $fertilizer_key
+ * @property float $min_price
+ * @property float $max_price
  * @property float $price_per_bag
  * @property bool|null $price_active
  * @property int $sort_order
  * @property string|null $desc
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $country
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice newQuery()
@@ -29,9 +30,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereCountry($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereDesc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereFertilizerKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereMaxUsd($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereMinUsd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereMaxPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereMinPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice wherePriceActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice wherePricePerBag($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FertilizerPrice whereSortOrder($value)
@@ -44,20 +46,21 @@ class FertilizerPrice extends Model
     protected $table = 'fertilizer_prices';
 
     protected $casts = [
-        'min_usd' => 'float',
-        'max_usd' => 'float',
+        'min_price' => 'float',
+        'max_price' => 'float',
         'price_per_bag' => 'float',
         'price_active' => 'bool',
         'sort_order' => 'int',
     ];
 
     protected $fillable = [
-        'min_usd',
-        'max_usd',
+        'country',
+        'fertilizer_key',
+        'min_price',
+        'max_price',
         'price_per_bag',
         'price_active',
         'sort_order',
         'desc',
-        'country',
     ];
 }
