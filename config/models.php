@@ -295,6 +295,8 @@ return [
             'personal_access_tokens',
             'password_reset_tokens',
             'cache*',
+            'DATABASECHANGE*',
+            'users_old',
         ],
 
         /*
@@ -352,7 +354,6 @@ return [
         */
 
         'model_names' => [
-
         ],
 
         /*
@@ -416,7 +417,7 @@ return [
          |
          | which can be slow, especially for large tables.
          */
-        'with_column_list' => true,
+        'with_column_list' => false,
 
         /*
         |--------------------------------------------------------------------------
