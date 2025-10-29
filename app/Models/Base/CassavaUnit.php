@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property float $unit_weight
+ * @property float $sort_order
  * @property string $label
  * @property string|null $description
  * @property bool $is_active
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereSortOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereUnitWeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CassavaUnit whereUpdatedAt($value)
  *
@@ -39,11 +41,13 @@ class CassavaUnit extends Model
 
     protected $casts = [
         'unit_weight' => 'float',
+        'sort_order' => 'float',
         'is_active' => 'bool',
     ];
 
     protected $fillable = [
         'unit_weight',
+        'sort_order',
         'label',
         'description',
         'is_active',

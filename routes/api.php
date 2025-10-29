@@ -17,7 +17,6 @@ Route::prefix('v1/fertilizer-prices')->group(function () {
     Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\FertilizerPriceController::class, 'byCountry']);
 });
 
-
 Route::prefix('v1/investment-amounts')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\InvestmentAmountController::class, 'index']);
     Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\InvestmentAmountController::class, 'byCountry']);
@@ -31,6 +30,10 @@ Route::prefix('v1/operation-costs')->group(function () {
 Route::prefix('v1/starch-factories')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\StarchFactoryController::class, 'index']);
     Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\StarchFactoryController::class, 'byCountry']);
+});
+
+Route::prefix('v1/cassava-units')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\CassavaUnitsController::class, 'index']);
 });
 
 Route::prefix('v1/cassava-prices')->group(function () {
@@ -51,4 +54,3 @@ Route::prefix('v1/maize-prices')->group(function () {
 Route::prefix('v1/recommendations')->group(function () {
     Route::post('/compute', [\App\Http\Controllers\Api\RecommendationController::class, 'computeRecommendations']);
 });
-
