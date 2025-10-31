@@ -27,8 +27,7 @@ class FertilizerPriceController extends Controller
     public function byCountry(string $countryCode, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
-            'country' => strtoupper(trim($countryCode)),
-            'price_active' => true,
+            'country' => strtoupper(trim($countryCode))
         ]);
     }
 
@@ -38,8 +37,7 @@ class FertilizerPriceController extends Controller
     public function byFertilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
-            'fertilizer_key' => strtoupper(trim($fertilizerKey)),
-            'price_active' => true,
+            'fertilizer_key' => strtoupper(trim($fertilizerKey))
         ]);
     }
 

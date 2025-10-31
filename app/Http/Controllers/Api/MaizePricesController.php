@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class MaizePricesController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return MaizePriceResourceCollection
+     */
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
@@ -16,13 +20,17 @@ class MaizePricesController extends Controller
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
         $maizePrices = MaizePrice::query()
-            ->where('price_active', true)
             ->orderBy($orderBy, $sort)
             ->paginate($perPage);
 
         return MaizePriceResourceCollection::make($maizePrices);
     }
 
+    /**
+     * @param string $countryCode
+     * @param Request $request
+     * @return MaizePriceResourceCollection
+     */
     public function byCountry(string $countryCode, Request $request)
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
@@ -31,7 +39,6 @@ class MaizePricesController extends Controller
 
         $maizePrices = MaizePrice::query()
             ->where('country', strtoupper(trim($countryCode)))
-            ->where('price_active', true)
             ->orderBy($orderBy, $sort)
             ->paginate($perPage);
 

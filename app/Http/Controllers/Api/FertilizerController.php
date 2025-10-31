@@ -49,8 +49,7 @@ class FertilizerController extends Controller
 
 
         $filters = [
-            'country' => strtoupper($countryCode),
-            'available' => true
+            'country' => strtoupper($countryCode)
         ];
 
         $trimmed = Str::of($useCase)->trim();

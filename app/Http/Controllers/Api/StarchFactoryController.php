@@ -17,21 +17,17 @@ class StarchFactoryController extends Controller
      * @param Request $request
      * @return StarchFactoryResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request): StarchFactoryResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
-        $filters = [
-            'factory_active' => true,
-        ];
 
         $starchFactory = $this->repo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
-            direction: $sort,
-            filters: $filters);
+            direction: $sort);
 
         return StarchFactoryResourceCollection::make($starchFactory);
     }
@@ -41,14 +37,13 @@ class StarchFactoryController extends Controller
      * @param Request $request
      * @return StarchFactoryResourceCollection
      */
-    public function byCountry(string $countryCode, Request $request)
+    public function byCountry(string $countryCode, Request $request): StarchFactoryResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
         $filters = [
-            'factory_active' => true,
             'country' => strtoupper(trim($countryCode)),
         ];
 

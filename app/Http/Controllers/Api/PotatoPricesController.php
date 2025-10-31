@@ -16,7 +16,6 @@ class PotatoPricesController extends Controller
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
         $cassavaPrices = PotatoPrice::query()
-            ->where('price_active', true)
             ->orderBy($orderBy, $sort)
             ->paginate($perPage);
 
@@ -31,7 +30,6 @@ class PotatoPricesController extends Controller
 
         $cassavaPrices = PotatoPrice::query()
             ->where('country', strtoupper(trim($countryCode)))
-            ->where('price_active', true)
             ->orderBy($orderBy, $sort)
             ->paginate($perPage);
 

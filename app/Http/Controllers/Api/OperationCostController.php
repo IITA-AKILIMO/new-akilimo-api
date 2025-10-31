@@ -27,8 +27,7 @@ class OperationCostController extends Controller
 
         $filters = [
             'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType)),
-            'is_active' => true
+            'operation_type' => strtolower(trim($operationType))
         ];
 
 
@@ -57,8 +56,7 @@ class OperationCostController extends Controller
         $filters = [
             'country_code' => $countryCode,
             'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType)),
-            'is_active' => true
+            'operation_type' => strtolower(trim($operationType))
         ];
 
 

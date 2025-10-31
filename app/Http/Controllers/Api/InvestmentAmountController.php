@@ -18,11 +18,7 @@ class InvestmentAmountController extends Controller
 
     public function index(Request $request): InvestmentAmountResourceCollection
     {
-        $filters = [
-            'price_active' => true,
-        ];
-
-        return $this->getPaginatedPrices($request, $filters);
+        return $this->getPaginatedPrices($request);
     }
 
     /**
