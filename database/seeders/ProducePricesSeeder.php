@@ -11,49 +11,49 @@ class ProducePricesSeeder extends Seeder
     {
         DB::table('produce_prices')->truncate();
 
-        // 1. Maize prices
-        $maize = DB::table('maize_prices')->select('country', 'min_local_price', 'max_local_price', 'price_active', 'sort_order', 'created_at')->get();
-        foreach ($maize as $row) {
-            DB::table('produce_prices')->insert([
-                'country' => $row->country,
-                'produce_name' => 'maize',
-                'min_price' => $row->min_local_price,
-                'max_price' => $row->max_local_price,
-                'is_active' => $row->price_active,
-                'sort_order' => $row->sort_order,
-                'created_at' => $row->created_at,
-                'updated_at' => now(),
-            ]);
-        }
+        $tables = [
+            'maize_prices' => 'maize',
+            'potato_prices' => 'potato',
+            'cassava_prices' => 'cassava',
+        ];
 
-        // 2. Potato prices
-        $potato = DB::table('potato_prices')->select('country', 'min_local_price', 'max_local_price', 'price_active', 'sort_order', 'created_at')->get();
-        foreach ($potato as $row) {
-            DB::table('produce_prices')->insert([
-                'country' => $row->country,
-                'produce_name' => 'potato',
-                'min_price' => $row->min_local_price,
-                'max_price' => $row->max_local_price,
-                'is_active' => $row->price_active,
-                'sort_order' => $row->sort_order,
-                'created_at' => $row->created_at,
-                'updated_at' => now(),
-            ]);
-        }
+        foreach ($tables as $table => $produce) {
+            $columns = DB::getSchemaBuilder()->getColumnListing($table);
 
-        // 3. Cassava prices
-        $cassava = DB::table('cassava_prices')->select('country', 'min_local_price', 'max_local_price', 'price_active', 'sort_order', 'created_at')->get();
-        foreach ($cassava as $row) {
-            DB::table('produce_prices')->insert([
-                'country' => $row->country,
-                'produce_name' => 'cassava',
-                'min_price' => $row->min_local_price,
-                'max_price' => $row->max_local_price,
-                'is_active' => $row->price_active,
-                'sort_order' => $row->sort_order,
-                'created_at' => $row->created_at,
-                'updated_at' => now(),
-            ]);
+            $rows = DB::table($table)
+                ->select(...array_intersect(
+                    $columns,
+                    [
+                        'country',
+                        'min_local_price',
+                        'max_local_price',
+                        'min_price',
+                        'max_price',
+                        'price_active',
+                        'sort_order',
+                        'created_at'
+                    ]
+                ))
+                ->get()
+                ->map(function ($r) use ($produce) {
+                    return [
+                        'country' => $r->country ?? 'NG',
+                        'produce_name' => $produce,
+                        'min_price' => $r->min_local_price ?? 0,
+                        'max_price' => $r->max_local_price ?? 0,
+                        'is_min_price' => (bool)($r->min_price ?? false),
+                        'is_max_price' => (bool)($r->max_price ?? false),
+                        'is_active' => (bool)($r->price_active ?? true),
+                        'sort_order' => $r->sort_order ?? 0,
+                        'created_at' => $r->created_at ?? now(),
+                        'updated_at' => now(),
+                    ];
+                })
+                ->toArray();
+
+            if (!empty($rows)) {
+                DB::table('produce_prices')->insert($rows);
+            }
         }
     }
 }
