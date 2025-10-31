@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property float $unit_weight
- * @property float $sort_order
  * @property string $label
+ * @property float $sort_order
  * @property string|null $description
  * @property bool $is_active
  * @property Carbon $created_at
@@ -47,8 +47,8 @@ class CassavaUnit extends Model
 
     protected $fillable = [
         'unit_weight',
-        'sort_order',
         'label',
+        'sort_order',
         'description',
         'is_active',
     ];
