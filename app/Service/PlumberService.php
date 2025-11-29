@@ -24,31 +24,42 @@ class PlumberService
     /**
      * Sends a compute request to the configured endpoint with the given plumber compute data.
      *
-     * @param array $plumberComputeData The data to be sent in the compute request.
-     * @return mixed The JSON-decoded response from the endpoint.
+     * @param PlumberComputeData $plumberComputeData The data to be sent in the compute request.
+     * @return array The JSON-decoded response from the endpoint.
      *
-     * @throws ConnectionException
-     * @throws RecommendationException
+     * @throws ConnectionException If the HTTP request fails due to network issues.
+     * @throws RecommendationException If the API responds with an error or non-success status.
      */
-    public function sendComputeRequest(PlumberComputeData $plumberComputeData): mixed
+    public function sendComputeRequest(PlumberComputeData $plumberComputeData): array
     {
-
-        $response = Http::baseUrl($this->baseUrl)
-            ->timeout($this->timeout)
-            ->acceptJson()
-            ->post($this->endpoint, $plumberComputeData->toArray());
-
+        try {
+            $response = Http::baseUrl($this->baseUrl)
+                ->timeout($this->timeout)
+                ->acceptJson()
+                ->post($this->endpoint, $plumberComputeData->toArray());
+        } catch (\Exception $e) {
+            // Network or connection error
+            throw new ConnectionException(
+                "Failed to connect to Akilimo API: " . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
 
         $body = $response->json();
         $statusCode = $response->getStatusCode();
+
         if ($response->successful()) {
-            return $response->json();
+            return $body;
         }
 
+        // API responded but with an error
+        $message = $body['message'] ?? "Failed to call Akilimo API";
         throw new RecommendationException(
-            "Failed to call Akilimo API",
+            $message,
             $statusCode,
             $body
         );
     }
+
 }
