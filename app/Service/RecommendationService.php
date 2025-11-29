@@ -94,24 +94,58 @@ class RecommendationService
                 'rec_type' => Arr::get($plumberData, 'rec_type'),
                 'recommendation' => Arr::get($plumberData, 'recommendation'),
             ];
-        } catch (Exception $ex) {
-            // Prepare a structured error body for logging and re-throw
-            $errorBody = $ex instanceof RecommendationException
-                ? $ex->body
-                : [
-                    'message' => $ex->getMessage(),
-                    'code' => $ex->getCode(),
-                ];
+        } catch (RecommendationException $ex) {
+            // Already a RecommendationException, just log and re-throw
+            $this->updateRequestLogResponse($requestLog->id, $ex->body);
+            throw $ex;
+        } catch (\Illuminate\Http\Client\ConnectionException $ex) {
+            // HTTP client connection failures (timeout, DNS, network issues)
+            $errorBody = [
+                'error' => 'Connection failed',
+                'message' => 'Unable to connect to recommendation service',
+                'details' => $ex->getMessage(),
+            ];
 
-            // Log the response
             $this->updateRequestLogResponse($requestLog->id, $errorBody);
 
-            // Always throw RecommendationException
-            throw new RecommendationException(
-                $ex->getMessage(),
-                $ex->getCode(),
+            throw RecommendationException::serviceUnavailable(
+                'Recommendation service is unreachable',
                 $errorBody,
-                $ex // keep original exception for stack trace
+                $ex
+            );
+        } catch (\Illuminate\Http\Client\RequestException $ex) {
+            // HTTP request failed (4xx, 5xx responses)
+            $statusCode = $ex->response?->status() ?? 500;
+            $errorBody = [
+                'error' => 'Service error',
+                'message' => $ex->getMessage(),
+                'status_code' => $statusCode,
+                'response' => $ex->response?->json() ?? null,
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                "Recommendation service returned error: {$ex->getMessage()}",
+                $statusCode,
+                $errorBody,
+                $ex
+            );
+        } catch (Exception $ex) {
+            // Catch-all for other unexpected exceptions
+            $errorBody = [
+                'error' => 'Unexpected error',
+                'message' => $ex->getMessage(),
+                'type' => get_class($ex),
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                $ex->getMessage() ?: 'Failed to compute recommendation',
+                500,
+                $errorBody,
+                $ex
             );
         }
 
