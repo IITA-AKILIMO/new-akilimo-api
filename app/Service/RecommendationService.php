@@ -69,18 +69,20 @@ class RecommendationService
 
 
         $computeRequest = ComputeRequestData::from($computeRequestArray);
-return [$computeRequest->toArray()];
-        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->countryCode));
+        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->farmInformation->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
         $fertilizerMap = collect($requestedFertilizers)->keyBy('key');
 
         $computedFertilizers = $this->mapFertilizersToExternalFormat($availableFertilizers, $fertilizerMap);
 
-        $plumberRequest = PlumberComputeData::from($computeRequest, $userInfo, $computedFertilizers);
+        $plumberRequest = PlumberComputeData::from($computeRequest->toArray(), $userInfo, $computedFertilizers);
+
 
         $plumberRequest->areaUnit = $this->normalizeAreaUnit($plumberRequest->areaUnit);
 
         $requestLog = $this->logRequest($deviceToken, $droidRequest, $plumberRequest);
+
+//        return [$plumberRequest];
 
         try {
             $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
@@ -92,15 +94,27 @@ return [$computeRequest->toArray()];
                 'rec_type' => Arr::get($plumberData, 'rec_type'),
                 'recommendation' => Arr::get($plumberData, 'recommendation'),
             ];
-        } catch (RecommendationException $ex) {
-            $this->updateRequestLogResponse($requestLog->id, $ex->body);
-            throw $ex;
         } catch (Exception $ex) {
-            $this->updateRequestLogResponse($requestLog->id, [
-                'message' => $ex->getMessage(),
-            ]);
-            throw $ex;
+            // Prepare a structured error body for logging and re-throw
+            $errorBody = $ex instanceof RecommendationException
+                ? $ex->body
+                : [
+                    'message' => $ex->getMessage(),
+                    'code' => $ex->getCode(),
+                ];
+
+            // Log the response
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            // Always throw RecommendationException
+            throw new RecommendationException(
+                $ex->getMessage(),
+                $ex->getCode(),
+                $errorBody,
+                $ex // keep original exception for stack trace
+            );
         }
+
     }
 
     /**
@@ -194,7 +208,7 @@ return [$computeRequest->toArray()];
         return match (strtolower($areaUnit)) {
             'ekari' => 'acre',
             'hekta' => 'ha',
-            default => $areaUnit,
+            default => strtolower($areaUnit),
         };
     }
 
