@@ -69,7 +69,7 @@ class RecommendationService
 
 
         $computeRequest = ComputeRequestData::from($computeRequestArray);
-return [$computeRequest];
+return [$computeRequest->toArray()];
         $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
         $fertilizerMap = collect($requestedFertilizers)->keyBy('key');
