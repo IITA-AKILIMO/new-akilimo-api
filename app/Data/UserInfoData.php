@@ -11,12 +11,13 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class UserInfoData extends Data
 {
     public string $deviceToken;
+
     public string $farmName;
     public string $firstName;
     public string $lastName;
 
-    public string $emailAddress;
-    public string $phoneNumber;
+    public ?string $emailAddress;
+    public ?string $phoneNumber;
     public string $gender;
     public bool $sendEmail;
     public bool $sendSms;
