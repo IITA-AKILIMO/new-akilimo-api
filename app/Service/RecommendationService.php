@@ -38,6 +38,8 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
+        return $this->performComputation($droidRequest);
+
         $cacheKey = $this->generateCacheKey($droidRequest);
 
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
@@ -64,8 +66,10 @@ class RecommendationService
         $deviceToken = Arr::get($userInfoArray, 'device_token', 'NA');
 
         $userInfo = UserInfoData::from($userInfoArray);
-        $computeRequest = ComputeRequestData::from($computeRequestArray);
 
+
+        $computeRequest = ComputeRequestData::from($computeRequestArray);
+return [$computeRequest];
         $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
         $fertilizerMap = collect($requestedFertilizers)->keyBy('key');

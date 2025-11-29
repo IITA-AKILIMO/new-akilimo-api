@@ -2,77 +2,128 @@
 
 namespace App\Data;
 
+namespace App\Data;
+
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Date;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
-#[MapInputName(SnakeCaseMapper::class)]
+//#[MapInputName(SnakeCaseMapper::class)]
 class ComputeRequestData extends Data
 {
-    public string $areaUnit;
-    public int $cassUpM1;
-    public int $cassUpM2;
-    public int $cassUpP1;
-    public int $cassUpP2;
-    public string $cassavaProduceType;
-    public float $cassavaUnitPrice;
-    public float $cassavaUnitWeight;
-    public string $costLmoAreaBasis;
-    public float $costManualHarrowing;
-    public float $costManualPloughing;
-    public float $costManualRidging;
-    public float $costTractorHarrowing;
-    public float $costTractorPloughing;
-    public float $costTractorRidging;
-    public float $costWeedingOne;
-    public float $costWeedingTwo;
+    public FarmLocationData $farmLocation;
+    public FarmInformationData $farmInformation;
+    public InterCroppingData $interCropping;
+    public RecommendationsData $recommendations;
+    public PlantingData $planting;
+    public FallowData $fallow;
+    public TractorCostsData $tractorCosts;
+    public ManualCostsData $manualCosts;
+    public WeedingCostsData $weedingCosts;
+    public OperationsDoneData $operationsDone;
+    public FarmMethodsData $methods;
+    public YieldInfoData $yieldInfo;
+    public CassavaData $cassava;
+    public MaizeData $maize;
+    public SweetPotatoData $sweetPotato;
 
-    public string $countryCode;
-    public string $currencyCode;
-    public float $currentFieldYield;
-    public float $currentMaizePerformance;
-    public bool $fallowGreen;
-    public float $fallowHeight;
-    public string $fallowType;
-    public bool $fertilizerRec;
-    public float $fieldSize;
-    public bool $harrowingDone;
-
-    public  \Illuminate\Support\Carbon $plantingDate;
-
-    public int $plantingDateWindow;
-
-    public \Illuminate\Support\Carbon $harvestDate;
-    public int $harvestDateWindow;
-    public string $interCroppedCrop;
-    public bool $interCroppingMaizeRec;
-    public bool $interCroppingPotatoRec;
-    public string $maizeProduceType;
-    public float $maizeUnitPrice;
-    public float $maizeUnitWeight;
-    public float $mapLat;
-    public float $mapLong;
     public float $maxInvestment;
-    public string $methodHarrowing;
-    public string $methodPloughing;
-    public string $methodRidging;
-    public string $methodWeeding;
-    public bool $plantingPracticesRec;
-    public bool $ploughingDone;
-    public bool $problemWeeds;
-    public bool $ridgingDone;
     public int $riskAttitude;
-    public bool $scheduledHarvestRec;
-    public bool $scheduledPlantingRec;
-    public bool $sellToStarchFactory;
-    public string $starchFactoryName;
-    public string $sweetPotatoProduceType;
-    public float $sweetPotatoUnitPrice;
-    public float $sweetPotatoUnitWeight;
-    public bool $tractorHarrow;
-    public bool $tractorPlough;
-    public bool $tractorRidger;
-    public string $useCase;
+
+    public function toArray(): array
+    {
+        return [
+            // FarmLocation
+            'countryCode' => $this->farmLocation->countryCode,
+            'useCase' => $this->farmLocation->useCase,
+            'mapLat' => $this->farmLocation->mapLat,
+            'mapLong' => $this->farmLocation->mapLong,
+
+            // FarmInformation
+            'fieldSize' => $this->farmInformation->fieldSize,
+            'areaUnit' => $this->farmInformation->areaUnit,
+
+            // InterCropping
+            'interCroppedCrop' => $this->interCropping->interCroppedCrop,
+            'interCroppingMaizeRec' => $this->interCropping->interCroppingMaizeRec,
+            'interCroppingPotatoRec' => $this->interCropping->interCroppingPotatoRec,
+
+            // Recommendations
+            'fertilizerRec' => $this->recommendations->fertilizerRec,
+            'plantingPracticesRec' => $this->recommendations->plantingPracticesRec,
+            'scheduledPlantingRec' => $this->recommendations->scheduledPlantingRec,
+            'scheduledHarvestRec' => $this->recommendations->scheduledHarvestRec,
+
+            // Planting
+            'plantingDate' => $this->planting->plantingDate instanceof Carbon ? $this->planting->plantingDate->toDateString() : null,
+            'plantingDateWindow' => $this->planting->plantingDateWindow,
+            'harvestDate' => $this->planting->harvestDate instanceof Carbon ? $this->planting->harvestDate->toDateString() : null,
+            'harvestDateWindow' => $this->planting->harvestDateWindow,
+
+            // Fallow
+            'fallowType' => $this->fallow->fallowType,
+            'fallowHeight' => $this->fallow->fallowHeight,
+            'fallowGreen' => $this->fallow->fallowGreen,
+
+            // TractorCosts
+            'tractorPlough' => $this->tractorCosts->tractorPlough,
+            'tractorHarrow' => $this->tractorCosts->tractorHarrow,
+            'tractorRidger' => $this->tractorCosts->tractorRidger,
+            'costLmoAreaBasis' => $this->tractorCosts->costLmoAreaBasis,
+            'costTractorPloughing' => $this->tractorCosts->costTractorPloughing,
+            'costTractorHarrowing' => $this->tractorCosts->costTractorHarrowing,
+            'costTractorRidging' => $this->tractorCosts->costTractorRidging,
+
+            // ManualCosts
+            'costManualPloughing' => $this->manualCosts->costManualPloughing,
+            'costManualHarrowing' => $this->manualCosts->costManualHarrowing,
+            'costManualRidging' => $this->manualCosts->costManualRidging,
+
+            // WeedingCosts
+            'costWeedingOne' => $this->weedingCosts->costWeedingOne,
+            'costWeedingTwo' => $this->weedingCosts->costWeedingTwo,
+
+            // OperationsDone
+            'ploughingDone' => $this->operationsDone->ploughingDone,
+            'harrowingDone' => $this->operationsDone->harrowingDone,
+            'ridgingDone' => $this->operationsDone->ridgingDone,
+
+            // Methods
+            'methodPloughing' => $this->methods->methodPloughing,
+            'methodHarrowing' => $this->methods->methodHarrowing,
+            'methodRidging' => $this->methods->methodRidging,
+            'methodWeeding' => $this->methods->methodWeeding,
+
+            // YieldInfo
+            'currentFieldYield' => $this->yieldInfo->currentFieldYield,
+            'currentMaizePerformance' => $this->yieldInfo->currentMaizePerformance,
+            'sellToStarchFactory' => $this->yieldInfo->sellToStarchFactory,
+            'starchFactoryName' => $this->yieldInfo->starchFactoryName,
+
+            // Cassava
+            'cassavaProduceType' => $this->cassava->produceType,
+            'cassavaUnitWeight' => $this->cassava->unitWeight,
+            'cassavaUnitPrice' => $this->cassava->unitPrice,
+            'cassUpM1' => $this->cassava->unitPriceMaize1,
+            'cassUpM2' => $this->cassava->unitPriceMaize2,
+            'cassUpP1' => $this->cassava->unitPricePotato1,
+            'cassUpP2' => $this->cassava->unitPricePotato2,
+
+            // Maize
+            'maizeProduceType' => $this->maize->produceType,
+            'maizeUnitWeight' => $this->maize->unitWeight,
+            'maizeUnitPrice' => $this->maize->unitPrice,
+
+            // SweetPotato
+            'sweetPotatoProduceType' => $this->sweetPotato->produceType,
+            'sweetPotatoUnitWeight' => $this->sweetPotato->unitWeight,
+            'sweetPotatoUnitPrice' => $this->sweetPotato->unitPrice,
+
+            // Top-level
+            'maxInvestment' => $this->maxInvestment,
+            'riskAttitude' => $this->riskAttitude,
+        ];
+    }
 }
+
