@@ -5,14 +5,11 @@ namespace App\Data;
 namespace App\Data;
 
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 //#[MapInputName(SnakeCaseMapper::class)]
 class ComputeRequestData extends Data
 {
-    public FarmLocationData $farmLocation;
     public FarmInformationData $farmInformation;
     public InterCroppingData $interCropping;
     public RecommendationsData $recommendations;
@@ -30,18 +27,15 @@ class ComputeRequestData extends Data
     public SweetPotatoData $sweetPotato;
 
     public float $maxInvestment;
-    public int $riskAttitude;
 
     public function toArray(): array
     {
         return [
-            // FarmLocation
-            'countryCode' => $this->farmLocation->countryCode,
-            'useCase' => $this->farmLocation->useCase,
-            'mapLat' => $this->farmLocation->mapLat,
-            'mapLong' => $this->farmLocation->mapLong,
-
             // FarmInformation
+            'countryCode' => $this->farmInformation->countryCode,
+            'useCase' => $this->farmInformation->useCase,
+            'mapLat' => $this->farmInformation->mapLat,
+            'mapLong' => $this->farmInformation->mapLong,
             'fieldSize' => $this->farmInformation->fieldSize,
             'areaUnit' => $this->farmInformation->areaUnit,
 
@@ -123,7 +117,6 @@ class ComputeRequestData extends Data
 
             // Top-level
             'maxInvestment' => $this->maxInvestment,
-            'riskAttitude' => $this->riskAttitude,
         ];
     }
 }
