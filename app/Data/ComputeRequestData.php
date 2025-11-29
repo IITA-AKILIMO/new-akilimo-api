@@ -22,6 +22,7 @@ class ComputeRequestData extends Data
     public ManualCostsData $manualCosts;
     public WeedingCostsData $weedingCosts;
     public OperationsDoneData $operationsDone;
+
     public FarmMethodsData $methods;
     public YieldInfoData $yieldInfo;
     public CassavaData $cassava;
