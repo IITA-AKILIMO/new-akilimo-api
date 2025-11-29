@@ -10,15 +10,13 @@ class ComputeFieldRules
         return [
             'compute_request' => ['required', 'array'],
 
-            // Farm Location
-            'compute_request.farmLocation.country_code' => ['required', 'string', 'size:2'],
-            'compute_request.farmLocation.use_case' => ['required', 'string', 'max:10'],
-            'compute_request.farmLocation.map_lat' => ['required', 'numeric', 'between:-90,90'],
-            'compute_request.farmLocation.map_long' => ['required', 'numeric', 'between:-180,180'],
-
             // Farm Information
+            'compute_request.farmInformation.country_code' => ['required', 'string', 'size:2'],
+            'compute_request.farmInformation.use_case' => ['required', 'string', 'max:10'],
+            'compute_request.farmInformation.map_lat' => ['required', 'numeric', 'between:-90,90'],
+            'compute_request.farmInformation.map_long' => ['required', 'numeric', 'between:-180,180'],
             'compute_request.farmInformation.field_size' => ['required', 'numeric', 'min:1'],
-            'compute_request.farmInformation.area_unit' => ['required', 'in:ACRE,HECTARE'],
+            'compute_request.farmInformation.area_unit' => ['required', "string"],
 
             // Intercropping
             'compute_request.interCropping.inter_cropped_crop' => ['nullable', 'string', 'max:255'],
@@ -104,9 +102,8 @@ class ComputeFieldRules
             'compute_request.sweetPotato.unit_price_potato_1' => ['numeric', 'min:0'],
             'compute_request.sweetPotato.unit_price_potato_2' => ['numeric', 'min:0'],
 
-            // Investment & Risk
+            // Investment
             'compute_request.maxInvestment' => ['numeric', 'min:0'],
-            'compute_request.riskAttitude' => ['integer', 'min:0'],
         ];
 
 
