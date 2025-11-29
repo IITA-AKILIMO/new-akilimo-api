@@ -3,7 +3,6 @@
 namespace App\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -22,4 +21,6 @@ class UserInfoData extends Data
     public bool $sendEmail;
     public bool $sendSms;
     public string $userName;
+
+    public int $riskAttitude;
 }
