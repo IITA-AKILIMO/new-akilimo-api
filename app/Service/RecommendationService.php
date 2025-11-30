@@ -25,8 +25,8 @@ class RecommendationService
         protected PlumberService $plumberService,
     )
     {
-//        $this->cacheTTL = Carbon::now()->addDays(7);
-        $this->cacheTTL = Carbon::now()->addSeconds(60);
+        $ttl = config('cache.ttl'); // e.g. "1d", "1h", "30m"
+        $this->cacheTTL = $this->parseTtl($ttl);
     }
 
     /**
@@ -38,7 +38,6 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
-
         $cacheKey = $this->generateCacheKey($droidRequest);
 
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
@@ -94,11 +93,10 @@ class RecommendationService
                 'recommendation' => Arr::get($plumberData, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
-            // Already a RecommendationException, just log and re-throw
             $this->updateRequestLogResponse($requestLog->id, $ex->body);
             throw $ex;
         } catch (\Illuminate\Http\Client\ConnectionException $ex) {
-            // HTTP client connection failures (timeout, DNS, network issues)
+            // Network/timeout/DNS failures
             $errorBody = [
                 'error' => 'Connection failed',
                 'message' => 'Unable to connect to recommendation service',
@@ -108,30 +106,30 @@ class RecommendationService
             $this->updateRequestLogResponse($requestLog->id, $errorBody);
 
             throw RecommendationException::serviceUnavailable(
-                'Recommendation service is unreachable',
-                $errorBody,
-                $ex
+                'Recommendation service is unreachable'
             );
         } catch (\Illuminate\Http\Client\RequestException $ex) {
-            // HTTP request failed (4xx, 5xx responses)
+            // HTTP errors (4xx, 5xx responses)
             $statusCode = $ex->response?->status() ?? 500;
+            $responseBody = $ex->response?->json() ?? [];
+
             $errorBody = [
-                'error' => 'Service error',
+                'error' => 'Service request failed',
                 'message' => $ex->getMessage(),
                 'status_code' => $statusCode,
-                'response' => $ex->response?->json() ?? null,
+                'response' => $responseBody,
             ];
 
             $this->updateRequestLogResponse($requestLog->id, $errorBody);
 
             throw new RecommendationException(
-                "Recommendation service returned error: {$ex->getMessage()}",
+                Arr::get($responseBody, 'message', 'Recommendation service returned an error'),
                 $statusCode,
                 $errorBody,
                 $ex
             );
         } catch (Exception $ex) {
-            // Catch-all for other unexpected exceptions
+            // Unexpected exceptions
             $errorBody = [
                 'error' => 'Unexpected error',
                 'message' => $ex->getMessage(),
@@ -274,5 +272,23 @@ class RecommendationService
         $this->apiRequestRepo->update($logId, [
             'plumber_response' => $responseData,
         ]);
+    }
+
+    private function parseTtl(string $ttl): \Carbon\Carbon
+    {
+        $now = \Carbon\Carbon::now();
+
+        if (preg_match('/^(\d+)([dhm])$/', $ttl, $matches)) {
+            $value = (int)$matches[1];
+            $unit = $matches[2];
+
+            return match ($unit) {
+                'd' => $now->addDays($value),
+                'h' => $now->addHours($value),
+                'm' => $now->addMinutes($value),
+                default => $now->addHour(), // fallback
+            };
+        }
+        return $now->addHour();
     }
 }
