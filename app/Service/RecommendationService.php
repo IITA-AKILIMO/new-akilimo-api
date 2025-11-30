@@ -9,9 +9,9 @@ use App\Data\UserInfoData;
 use App\Exceptions\RecommendationException;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -274,9 +274,22 @@ class RecommendationService
         ]);
     }
 
-    private function parseTtl(string $ttl): \Carbon\Carbon
+    /**
+     * Parses a TTL (time-to-live) string and converts it to a Carbon instance.
+     *
+     * @param string $ttl The TTL string to parse. It can be a numeric value in seconds
+     *                    or a string with a unit (e.g., "10d" for 10 days, "5h" for 5 hours, "30m" for 30 minutes).
+     * @return Carbon The calculated expiration time as a Carbon instance.
+     */
+    private function parseTtl(string $ttl): Carbon
     {
-        $now = \Carbon\Carbon::now();
+
+        $now = Carbon::now();
+
+        if (is_numeric($ttl)) {
+            return $now->addSeconds((int)$ttl);
+        }
+
 
         if (preg_match('/^(\d+)([dhm])$/', $ttl, $matches)) {
             $value = (int)$matches[1];
