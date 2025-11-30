@@ -13,7 +13,7 @@ class UserInfoRules
 
             'user_info.device_token' => ['required', 'uuid'],
             'user_info.risk_attitude' => ['required', 'numeric'],
-            'user_info.phone_number' => ['nullable', 'regex:/^[0-9]{10,15}$/'],
+            'user_info.phone_number' => ['nullable', 'string'],
             'user_info.user_name' => ['required', 'string', 'max:255'],
             'user_info.first_name' => ['required', 'string', 'max:255'],
             'user_info.last_name' => ['required', 'string', 'max:255'],
