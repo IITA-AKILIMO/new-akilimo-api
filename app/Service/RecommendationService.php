@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Cache;
 
 class RecommendationService
 {
-    // Cache TTL as a Carbon interval (e.g. 10 minutes from now)
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
@@ -26,7 +25,8 @@ class RecommendationService
         protected PlumberService $plumberService,
     )
     {
-        $this->cacheTTL = Carbon::now()->addDays(7);
+//        $this->cacheTTL = Carbon::now()->addDays(7);
+        $this->cacheTTL = Carbon::now()->addSeconds(60);
     }
 
     /**
@@ -38,7 +38,6 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
-        return $this->performComputation($droidRequest);
 
         $cacheKey = $this->generateCacheKey($droidRequest);
 
