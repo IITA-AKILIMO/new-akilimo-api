@@ -29,7 +29,7 @@ class FertilizerRules
      *
      * @return array
      */
-    public static function messages()
+    public static function messages(): array
     {
         return [
             'fertilizer_list.present' => 'Fertilizer list field must be present',

@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Cache;
 
 class RecommendationService
 {
-    // Cache TTL as a Carbon interval (e.g. 10 minutes from now)
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
@@ -26,7 +25,8 @@ class RecommendationService
         protected PlumberService $plumberService,
     )
     {
-        $this->cacheTTL = Carbon::now()->addDays(7);
+//        $this->cacheTTL = Carbon::now()->addDays(7);
+        $this->cacheTTL = Carbon::now()->addSeconds(60);
     }
 
     /**
@@ -38,6 +38,7 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
+
         $cacheKey = $this->generateCacheKey($droidRequest);
 
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
@@ -64,19 +65,23 @@ class RecommendationService
         $deviceToken = Arr::get($userInfoArray, 'device_token', 'NA');
 
         $userInfo = UserInfoData::from($userInfoArray);
-        $computeRequest = ComputeRequestData::from($computeRequestArray);
 
-        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->countryCode));
+
+        $computeRequest = ComputeRequestData::from($computeRequestArray);
+        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->farmInformation->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
         $fertilizerMap = collect($requestedFertilizers)->keyBy('key');
 
         $computedFertilizers = $this->mapFertilizersToExternalFormat($availableFertilizers, $fertilizerMap);
 
-        $plumberRequest = PlumberComputeData::from($computeRequest, $userInfo, $computedFertilizers);
+        $plumberRequest = PlumberComputeData::from($computeRequest->toArray(), $userInfo, $computedFertilizers);
+
 
         $plumberRequest->areaUnit = $this->normalizeAreaUnit($plumberRequest->areaUnit);
 
         $requestLog = $this->logRequest($deviceToken, $droidRequest, $plumberRequest);
+
+//        return [$plumberRequest];
 
         try {
             $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
@@ -89,14 +94,60 @@ class RecommendationService
                 'recommendation' => Arr::get($plumberData, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
+            // Already a RecommendationException, just log and re-throw
             $this->updateRequestLogResponse($requestLog->id, $ex->body);
             throw $ex;
-        } catch (Exception $ex) {
-            $this->updateRequestLogResponse($requestLog->id, [
+        } catch (\Illuminate\Http\Client\ConnectionException $ex) {
+            // HTTP client connection failures (timeout, DNS, network issues)
+            $errorBody = [
+                'error' => 'Connection failed',
+                'message' => 'Unable to connect to recommendation service',
+                'details' => $ex->getMessage(),
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw RecommendationException::serviceUnavailable(
+                'Recommendation service is unreachable',
+                $errorBody,
+                $ex
+            );
+        } catch (\Illuminate\Http\Client\RequestException $ex) {
+            // HTTP request failed (4xx, 5xx responses)
+            $statusCode = $ex->response?->status() ?? 500;
+            $errorBody = [
+                'error' => 'Service error',
                 'message' => $ex->getMessage(),
-            ]);
-            throw $ex;
+                'status_code' => $statusCode,
+                'response' => $ex->response?->json() ?? null,
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                "Recommendation service returned error: {$ex->getMessage()}",
+                $statusCode,
+                $errorBody,
+                $ex
+            );
+        } catch (Exception $ex) {
+            // Catch-all for other unexpected exceptions
+            $errorBody = [
+                'error' => 'Unexpected error',
+                'message' => $ex->getMessage(),
+                'type' => get_class($ex),
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                $ex->getMessage() ?: 'Failed to compute recommendation',
+                500,
+                $errorBody,
+                $ex
+            );
         }
+
     }
 
     /**
@@ -190,7 +241,7 @@ class RecommendationService
         return match (strtolower($areaUnit)) {
             'ekari' => 'acre',
             'hekta' => 'ha',
-            default => $areaUnit,
+            default => strtolower($areaUnit),
         };
     }
 
