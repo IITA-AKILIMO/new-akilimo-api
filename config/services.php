@@ -37,10 +37,10 @@ return [
 
     'plumbr' => [
         // Base URL for the Plumbr service (inside Docker network or external)
-        'base_url' => env('PLUMBR_BASE_URL', 'http://akilimo.compute'),
+        'base_url' => env('PLUMBR_BASE_URL', 'http://127.0.0.1:8000'),
 
         // Endpoint path for the recommendation compute API
-        'rec_endpoint' => env('PLUMBR_REC_ENDPOINT', '/api/v1/dst/recommendation/compute'),
+        'rec_endpoint' => env('PLUMBR_REC_ENDPOINT', '/compute'),
 
         // Request timeout in seconds
         'request_timeout' => env('PLUMBR_REQUEST_TIMEOUT', 120),
