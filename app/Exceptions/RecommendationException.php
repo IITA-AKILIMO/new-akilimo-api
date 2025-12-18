@@ -25,11 +25,12 @@ class RecommendationException extends Exception
      * @param Throwable|null $previous Previous exception for chaining
      */
     public function __construct(
-        string $message = "",
-        int $code = Response::HTTP_INTERNAL_SERVER_ERROR,
-        array $body = [],
+        string     $message = "",
+        int        $code = Response::HTTP_INTERNAL_SERVER_ERROR,
+        array      $body = [],
         ?Throwable $previous = null
-    ) {
+    )
+    {
         // Extract nested data if present, otherwise use body as-is
         $this->body = Arr::get($body, 'data', $body);
 
@@ -73,7 +74,7 @@ class RecommendationException extends Exception
         $response = [
             'error' => $this->getErrorType(),
             'message' => $this->getMessage(),
-            'status' => $status,
+            'status' => $status
         ];
 
         return response()->json($response, $status);
@@ -121,13 +122,14 @@ class RecommendationException extends Exception
      * @return static
      */
     public static function serviceUnavailable(
-        string $message = 'Recommendation service is currently unavailable',
-        array $body = [],
+        string     $message = 'Recommendation service is currently unavailable',
+        array      $body = [],
         ?Throwable $previous = null
     ): static
     {
         return new static($message, Response::HTTP_SERVICE_UNAVAILABLE, $body, $previous);
     }
+
     /**
      * Create an exception for invalid data.
      *
