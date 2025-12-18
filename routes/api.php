@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::prefix('health')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Web\HealthCheckController::class, 'check']);
+});
+
+
 Route::prefix('v1/currencies')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\CurrencyController::class, 'index']);
 });
