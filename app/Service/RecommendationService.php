@@ -38,6 +38,7 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
+        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
 
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
@@ -60,7 +61,6 @@ class RecommendationService
         $userInfoArray = Arr::get($droidRequest, 'user_info', []);
         $computeRequestArray = Arr::get($droidRequest, 'compute_request', []);
         $fertilizerList = Arr::get($droidRequest, 'fertilizer_list', []);
-
         $deviceToken = Arr::get($userInfoArray, 'device_token', 'NA');
 
         $userInfo = UserInfoData::from($userInfoArray);
@@ -80,7 +80,6 @@ class RecommendationService
 
         $requestLog = $this->logRequest($deviceToken, $droidRequest, $plumberRequest);
 
-//        return [$plumberRequest];
 
         try {
             $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
@@ -153,17 +152,26 @@ class RecommendationService
      *
      * @param array $droidRequest
      * @return string
+     * @throws \JsonException
      */
     private function generateCacheKey(array $droidRequest): string
     {
-        // Pick the parts that affect the result, then hash to make the key shorter
         $relevantData = [
             'user_info' => Arr::get($droidRequest, 'user_info', []),
             'compute_request' => Arr::get($droidRequest, 'compute_request', []),
             'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
         ];
 
-        return 'recommendation:' . md5(json_encode($relevantData));
+        // Sort recursively for consistent ordering
+        ksort($relevantData);
+        array_walk_recursive($relevantData, function (&$value, $key) {
+            if (is_array($value)) {
+                ksort($value);
+            }
+        });
+
+        // Use SHA-256 or xxHash (faster for non-crypto use)
+        return 'rec:' . hash('sha256', json_encode($relevantData, JSON_THROW_ON_ERROR));
     }
 
     /**
