@@ -38,7 +38,13 @@ class PlumberService
                 ->acceptJson()
                 ->post($this->endpoint, $plumberComputeData->toArray());
         } catch (\Exception $e) {
-            // Network or connection error
+            // Log the connection error
+            \Log::error('Akilimo API Connection Error', [
+                'endpoint' => $this->endpoint,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             throw new ConnectionException(
                 "Failed to connect to Akilimo API: " . $e->getMessage(),
                 $e->getCode(),
@@ -46,19 +52,56 @@ class PlumberService
             );
         }
 
+        $statusCode = $response->status();
         $body = $response->json();
-        $statusCode = $response->getStatusCode();
 
+        // Handle invalid JSON responses
+        if ($body === null) {
+            \Log::error('Akilimo API Invalid JSON Response', [
+                'status_code' => $statusCode,
+                'raw_body' => $response->body(),
+                'endpoint' => $this->endpoint
+            ]);
+
+            throw new RecommendationException(
+                "Invalid JSON response from Akilimo API",
+                $statusCode,
+                ['raw_response' => $response->body()]
+            );
+        }
+
+        // Success case
         if ($response->successful()) {
+            \Log::info('Akilimo API Request Successful', [
+                'endpoint' => $this->endpoint,
+                'status_code' => $statusCode
+            ]);
             return $body;
         }
 
-        // API responded but with an error
-        $message = $body['message'] ?? "Failed to call Akilimo API";
+        // Error case - extract message
+        $message = $body['message']
+            ?? $body['error']
+            ?? $body['error_message']
+            ?? $body['errorMessage']
+            ?? null;
+
+        // Validate message is not empty
+        if (empty($message) || !is_string($message) || trim($message) === '') {
+            $message = "Failed to call Akilimo API (HTTP {$statusCode})";
+        }
+
+        // Log the API error
+        \Log::error('Akilimo API Error Response', [
+            'status_code' => $statusCode,
+            'message' => $message,
+            'body' => $body,
+            'endpoint' => $this->endpoint
+        ]);
+
         throw new RecommendationException(
             $message,
             $statusCode,
-            $body
         );
     }
 
