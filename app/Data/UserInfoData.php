@@ -15,8 +15,8 @@ class UserInfoData extends Data
     public string $firstName;
     public string $lastName;
 
-    public ?string $emailAddress;
-    public ?string $phoneNumber;
+    public ?string $emailAddress = 'akilimo@cgiar.org';
+    public ?string $phoneNumber = '0000000000';
     public string $gender;
     public bool $sendEmail;
     public bool $sendSms;
