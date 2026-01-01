@@ -23,6 +23,23 @@ class ComputeRequest extends FormRequest
         );
     }
 
+    protected function prepareForValidation(): void
+    {
+        $userInfo = $this->input('user_info', []);
+
+        $this->merge([
+            'user_info' => array_merge($userInfo, [
+                'email_address' => filled($userInfo['email_address'] ?? null)
+                    ? $userInfo['email_address']
+                    : 'default@example.com',
+
+                'phone_number' => filled($userInfo['phone_number'] ?? null)
+                    ? $userInfo['phone_number']
+                    : '0000000000',
+            ]),
+        ]);
+    }
+
     public function messages(): array
     {
         return array_merge(
