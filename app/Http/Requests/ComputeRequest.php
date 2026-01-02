@@ -31,7 +31,7 @@ class ComputeRequest extends FormRequest
             'user_info' => array_merge($userInfo, [
                 'email_address' => filled($userInfo['email_address'] ?? null)
                     ? $userInfo['email_address']
-                    : 'default@example.com',
+                    : 'akilimo@cgiar.org',
 
                 'phone_number' => filled($userInfo['phone_number'] ?? null)
                     ? $userInfo['phone_number']
