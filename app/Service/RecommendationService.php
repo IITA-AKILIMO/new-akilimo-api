@@ -83,13 +83,14 @@ class RecommendationService
 
         try {
             $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
-            $plumberData = Arr::get($plumberResp, 'data', []);
 
-            $this->updateRequestLogResponse($requestLog->id, $plumberData);
+            $this->updateRequestLogResponse($requestLog->id, $plumberResp);
+
 
             return [
-                'rec_type' => Arr::get($plumberData, 'rec_type'),
-                'recommendation' => Arr::get($plumberData, 'recommendation'),
+                'version' => Arr::get($plumberResp, 'version'),
+                'rec_type' => Arr::get($plumberResp, 'rec_type'),
+                'recommendation' => Arr::get($plumberResp, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
             $this->updateRequestLogResponse($requestLog->id, $ex->body);
