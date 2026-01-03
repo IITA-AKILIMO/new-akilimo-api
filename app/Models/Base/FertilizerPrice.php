@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FertilizerPrice extends Model
 {
-    protected $table = 'fertilizer_price';
+    protected $table = 'fertilizer_prices';
 
     protected $casts = [
         'min_price' => 'float',

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\OperationCost;
 
 
-class OperationCostRepo extends BaseRepository
+class OperationCostRepo extends BaseRepo
 {
     protected function model(): string
     {

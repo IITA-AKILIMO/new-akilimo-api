@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Enums\EnumCountry;
+use App\Models\Currency;
 use App\Models\InvestmentAmount;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,10 +25,15 @@ class InvestmentAmountResource extends JsonResource
             $tag = 'exact';
         }
 
+        $currencyCode = EnumCountry::fromCode($model->country)->currency();
+        $currency = Currency::whereCurrencyCode($currencyCode)->first();
+        $currencyResource = CurrencyResource::make($currency);
+
         return [
             'id' => $model->id,
             'investment_amount' => $model->investment_amount,
             'country_code' => $model->country,
+            'currency' => $currencyResource,
             'exact_amount' => $model->investment_amount === 0.0,
             'item_tag' => $tag,
             'active' => $model->price_active,

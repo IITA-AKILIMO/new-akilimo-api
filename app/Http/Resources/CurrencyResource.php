@@ -22,13 +22,13 @@ class CurrencyResource extends JsonResource
             'id' => $currency->id,
             'country' => $currency->country ?? 'NA',
             'country_code' => $currency->country_code ?? 'NA',
-            'name' => $currency->currency_name,
+            'currency_name' => $currency->currency_name,
             'currency_code' => $currency->currency_code,
             'currency_symbol' => $currency->currency_symbol,
             'currency_native_symbol' => $currency->currency_native_symbol,
             'currency_name_plural' => $currency->name_plural,
-            'created_at' => $currency->created_at,
-            'updated_at' => $currency->updated_at,
+//            'created_at' => $currency->created_at,
+//            'updated_at' => $currency->updated_at,
         ];
     }
 }

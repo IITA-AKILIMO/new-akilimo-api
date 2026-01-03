@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\FertilizerPrice;
 
-class FertilizerPriceRepo extends BaseRepository
+class FertilizerPriceRepo extends BaseRepo
 {
     protected function model(): string
     {

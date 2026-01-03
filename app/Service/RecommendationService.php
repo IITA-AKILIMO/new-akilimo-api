@@ -9,15 +9,14 @@ use App\Data\UserInfoData;
 use App\Exceptions\RecommendationException;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class RecommendationService
 {
-    // Cache TTL as a Carbon interval (e.g. 10 minutes from now)
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
@@ -26,7 +25,8 @@ class RecommendationService
         protected PlumberService $plumberService,
     )
     {
-        $this->cacheTTL = Carbon::now()->addDays(7);
+        $ttl = config('cache.ttl'); // e.g. "1d", "1h", "30m"
+        $this->cacheTTL = $this->parseTtl($ttl);
     }
 
     /**
@@ -38,6 +38,7 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
+        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
 
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
@@ -60,43 +61,91 @@ class RecommendationService
         $userInfoArray = Arr::get($droidRequest, 'user_info', []);
         $computeRequestArray = Arr::get($droidRequest, 'compute_request', []);
         $fertilizerList = Arr::get($droidRequest, 'fertilizer_list', []);
-
         $deviceToken = Arr::get($userInfoArray, 'device_token', 'NA');
 
         $userInfo = UserInfoData::from($userInfoArray);
-        $computeRequest = ComputeRequestData::from($computeRequestArray);
 
-        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->countryCode));
+
+        $computeRequest = ComputeRequestData::from($computeRequestArray);
+        $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->farmInformation->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
         $fertilizerMap = collect($requestedFertilizers)->keyBy('key');
 
         $computedFertilizers = $this->mapFertilizersToExternalFormat($availableFertilizers, $fertilizerMap);
 
-        $plumberRequest = PlumberComputeData::from($computeRequest, $userInfo, $computedFertilizers);
+        $plumberRequest = PlumberComputeData::from($computeRequest->toArray(), $userInfo, $computedFertilizers);
+
 
         $plumberRequest->areaUnit = $this->normalizeAreaUnit($plumberRequest->areaUnit);
 
         $requestLog = $this->logRequest($deviceToken, $droidRequest, $plumberRequest);
 
+
         try {
             $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
-            $plumberData = Arr::get($plumberResp, 'data', []);
 
-            $this->updateRequestLogResponse($requestLog->id, $plumberData);
+            $this->updateRequestLogResponse($requestLog->id, $plumberResp);
+
 
             return [
-                'rec_type' => Arr::get($plumberData, 'rec_type'),
-                'recommendation' => Arr::get($plumberData, 'recommendation'),
+                'version' => Arr::get($plumberResp, 'version'),
+                'rec_type' => Arr::get($plumberResp, 'rec_type'),
+                'recommendation' => Arr::get($plumberResp, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
             $this->updateRequestLogResponse($requestLog->id, $ex->body);
             throw $ex;
-        } catch (Exception $ex) {
-            $this->updateRequestLogResponse($requestLog->id, [
+        } catch (\Illuminate\Http\Client\ConnectionException $ex) {
+            // Network/timeout/DNS failures
+            $errorBody = [
+                'error' => 'Connection failed',
+                'message' => 'Unable to connect to recommendation service',
+                'details' => $ex->getMessage(),
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw RecommendationException::serviceUnavailable(
+                'Recommendation service is unreachable'
+            );
+        } catch (\Illuminate\Http\Client\RequestException $ex) {
+            // HTTP errors (4xx, 5xx responses)
+            $statusCode = $ex->response?->status() ?? 500;
+            $responseBody = $ex->response?->json() ?? [];
+
+            $errorBody = [
+                'error' => 'Service request failed',
                 'message' => $ex->getMessage(),
-            ]);
-            throw $ex;
+                'status_code' => $statusCode,
+                'response' => $responseBody,
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                Arr::get($responseBody, 'message', 'Recommendation service returned an error'),
+                $statusCode,
+                $errorBody,
+                $ex
+            );
+        } catch (Exception $ex) {
+            // Unexpected exceptions
+            $errorBody = [
+                'error' => 'Unexpected error',
+                'message' => $ex->getMessage(),
+                'type' => get_class($ex),
+            ];
+
+            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+
+            throw new RecommendationException(
+                $ex->getMessage() ?: 'Failed to compute recommendation',
+                500,
+                $errorBody,
+                $ex
+            );
         }
+
     }
 
     /**
@@ -104,17 +153,26 @@ class RecommendationService
      *
      * @param array $droidRequest
      * @return string
+     * @throws \JsonException
      */
     private function generateCacheKey(array $droidRequest): string
     {
-        // Pick the parts that affect the result, then hash to make the key shorter
         $relevantData = [
             'user_info' => Arr::get($droidRequest, 'user_info', []),
             'compute_request' => Arr::get($droidRequest, 'compute_request', []),
             'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
         ];
 
-        return 'recommendation:' . md5(json_encode($relevantData));
+        // Sort recursively for consistent ordering
+        ksort($relevantData);
+        array_walk_recursive($relevantData, function (&$value, $key) {
+            if (is_array($value)) {
+                ksort($value);
+            }
+        });
+
+        // Use SHA-256 or xxHash (faster for non-crypto use)
+        return 'rec:' . hash('sha256', json_encode($relevantData, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -190,7 +248,7 @@ class RecommendationService
         return match (strtolower($areaUnit)) {
             'ekari' => 'acre',
             'hekta' => 'ha',
-            default => $areaUnit,
+            default => strtolower($areaUnit),
         };
     }
 
@@ -223,5 +281,36 @@ class RecommendationService
         $this->apiRequestRepo->update($logId, [
             'plumber_response' => $responseData,
         ]);
+    }
+
+    /**
+     * Parses a TTL (time-to-live) string and converts it to a Carbon instance.
+     *
+     * @param string $ttl The TTL string to parse. It can be a numeric value in seconds
+     *                    or a string with a unit (e.g., "10d" for 10 days, "5h" for 5 hours, "30m" for 30 minutes).
+     * @return Carbon The calculated expiration time as a Carbon instance.
+     */
+    private function parseTtl(string $ttl): Carbon
+    {
+
+        $now = Carbon::now();
+
+        if (is_numeric($ttl)) {
+            return $now->addSeconds((int)$ttl);
+        }
+
+
+        if (preg_match('/^(\d+)([dhm])$/', $ttl, $matches)) {
+            $value = (int)$matches[1];
+            $unit = $matches[2];
+
+            return match ($unit) {
+                'd' => $now->addDays($value),
+                'h' => $now->addHours($value),
+                'm' => $now->addMinutes($value),
+                default => $now->addHour(), // fallback
+            };
+        }
+        return $now->addHour();
     }
 }

@@ -2,15 +2,12 @@
 
 namespace App\Repositories;
 
-class CurrencyRepo
-{
-    public function all()
-    {
-        // TODO Implement logic
-    }
+use App\Models\Currency;
 
-    public function find($id)
+class CurrencyRepo extends BaseRepo
+{
+    protected function model(): string
     {
-        // TODO Implement logic
+        return Currency::class;
     }
 }

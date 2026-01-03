@@ -21,17 +21,18 @@ class HealthCheckController extends Controller
             'redis' => $this->checkRedis(),
             'cache' => $this->checkCache(),
             'storage' => $this->checkFileStorage(),
-            //            'queue' => $this->checkQueue(),
-            //            'mail' => $this->checkMailConnection(),
+            'queue' => $this->checkQueue(),
+            'mail' => $this->checkMailConnection(),
             'disk-space' => $this->checkDiskSpace(),
-            //                        'migrations' => $this->checkMigrations(),
-            //            'env-config' => $this->checkEnvironmentConfig(),
-            //                        'php-extensions' => $this->checkPHPExtensions(),
+            'migrations' => $this->checkMigrations(),
+            'env-config' => $this->checkEnvironmentConfig(),
+            'php-extensions' => $this->checkPHPExtensions(),
         ];
 
         $overallStatus = true;
         foreach ($healthChecks as $check) {
-            if (isset($check['status']) && $check['status'] === false) {
+            $status = Arr::get($check, 'status', 'DOWN');
+            if ($status === 'DOWN') {
                 $overallStatus = false;
                 break;
             }
@@ -40,12 +41,12 @@ class HealthCheckController extends Controller
         return response()->json([
             'status' => $overallStatus ? 'healthy' : 'unhealthy',
             'timestamp' => Carbon::now()->toIso8601String(),
+//            'server_info' => [
+//                'php_version' => PHP_VERSION,
+//                'laravel_version' => app()->version(),
+//                'environment' => app()->environment(),
+//            ],
             'checks' => $healthChecks,
-            //            'server_info' => [
-            //                'php_version' => PHP_VERSION,
-            //                'laravel_version' => app()->version(),
-            //                'environment' => app()->environment(),
-            //            ],
         ], $overallStatus ? 200 : 500);
     }
 
@@ -60,14 +61,14 @@ class HealthCheckController extends Controller
             $platform = $connection->getDriverName();
 
             return [
-                'status' => true,
+                'status' => 'UP',
                 'database' => $databaseName,
                 'database_type' => $platform,
                 'total_tables' => count($tableCount),
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -77,24 +78,26 @@ class HealthCheckController extends Controller
     {
         try {
             $redis = Redis::connection();
-            $ping = $redis->ping();
+            //            $ping = $redis->ping();
             $info = $redis->info();
+            $serviceName = $info['executable'] ?? 'NA';
 
             $memory = Arr::get($info, 'Memory', $info);
 
             return [
-                'status' => true,
+                'status' => 'UP',
                 'version' => $info['redis_version'],
-                'ping' => $ping,
+                'service' => $serviceName,
+                //                'ping' => $ping,
                 'memory' => [
                     'used' => $memory['used_memory_human'] ?? 'NA',
                     'peak' => $memory['used_memory_peak_human'] ?? 'NA',
                 ],
-                //                'info'=>$info,
+                //                'info' => $info,
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -103,18 +106,18 @@ class HealthCheckController extends Controller
     private function checkCache(): array
     {
         try {
-            $testKey = 'health_check_'.uniqid();
+            $testKey = 'health_check_' . uniqid();
             Cache::put($testKey, 'test', 60);
             $value = Cache::get($testKey);
             Cache::forget($testKey);
 
             return [
-                'status' => $value === 'test',
+                'status' => $value === 'test' ? 'UP' : 'DOWN',
                 'driver' => Cache::getDefaultDriver(),
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -123,19 +126,19 @@ class HealthCheckController extends Controller
     private function checkFileStorage(): array
     {
         try {
-            $testFile = 'health_check_'.uniqid().'.txt';
+            $testFile = 'health_check_' . uniqid() . '.txt';
             Storage::put($testFile, 'Storage health check');
             $fileExists = Storage::exists($testFile);
             Storage::delete($testFile);
 
             return [
-                'status' => $fileExists,
+                'status' => $fileExists ? 'UP' : 'DOWN',
                 'default_disk' => config('filesystems.default'),
                 'root_path' => Storage::getConfig('root'),
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -147,12 +150,12 @@ class HealthCheckController extends Controller
             $defaultQueue = config('queue.default');
 
             return [
-                'status' => true,
+                'status' => 'UP',
                 'default_connection' => $defaultQueue,
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -164,12 +167,12 @@ class HealthCheckController extends Controller
             $transport = Mail::getSymfonyTransport();
 
             return [
-                'status' => true,
+                'status' => 'UP',
                 'transport' => $transport,
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
+                'status' => 'DOWN',
                 'error' => $e->getMessage(),
             ];
         }
@@ -180,14 +183,14 @@ class HealthCheckController extends Controller
         $percentage = round((1 - disk_free_space('/') / disk_total_space('/')) * 100, 2);
 
         $diskSpaceReport = [
-            'status' => true,
+            'status' => 'UP',
             'total_space' => disk_total_space('/'),
             'free_space' => disk_free_space('/'),
             'used_percentage' => "{$percentage}%",
         ];
 
         if ($percentage > 90) {
-            $diskSpaceReport['status'] = false;
+            $diskSpaceReport['status'] = 'DOWN';
         }
 
         return $diskSpaceReport;
@@ -195,16 +198,25 @@ class HealthCheckController extends Controller
 
     private function checkMigrations(): array
     {
-        $pendingMigrations = DB::select('SELECT * FROM migrations');
+        try {
+            $pendingMigrations = DB::select('SELECT * FROM migrations');
 
-        return [
-            'total_migrations' => count($pendingMigrations),
-        ];
+            return [
+                'total_migrations' => count($pendingMigrations),
+                'status' => count($pendingMigrations) > 0 ? 'UP' : 'DOWN',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'DOWN',
+                'error' => $e->getMessage(),
+            ];
+        }
     }
 
     private function checkEnvironmentConfig(): array
     {
         return [
+            'status' => config('app.debug') ? 'DOWN' : 'UP',
             'debug_mode' => config('app.debug'),
             'timezone' => config('app.timezone'),
         ];
@@ -213,7 +225,13 @@ class HealthCheckController extends Controller
     private function checkPHPExtensions(): array
     {
         $requiredExtensions = [
-            'pdo', 'mbstring', 'tokenizer', 'xml', 'ctype', 'json', 'bcmath',
+            'pdo',
+            'mbstring',
+            'tokenizer',
+            'xml',
+            'ctype',
+            'json',
+            'bcmath',
         ];
 
         $extensionStatus = [];
@@ -221,6 +239,7 @@ class HealthCheckController extends Controller
             $extensionStatus[$ext] = extension_loaded($ext);
         }
 
+        $extensionStatus['status'] = count(array_filter($extensionStatus, fn($status) => $status === false)) === 0 ? 'UP' : 'DOWN';
         return $extensionStatus;
     }
 }

@@ -268,6 +268,7 @@ return [
             'droid_request' => 'json',
             'plumber_request' => 'json',
             'plumber_response' => 'json',
+            '*price' => 'float',
         ],
 
         /*
@@ -294,6 +295,8 @@ return [
             'personal_access_tokens',
             'password_reset_tokens',
             'cache*',
+            'DATABASECHANGE*',
+            'users_old',
         ],
 
         /*
@@ -351,7 +354,6 @@ return [
         */
 
         'model_names' => [
-
         ],
 
         /*
@@ -469,7 +471,7 @@ return [
         | NOTE: This requires PHP 7.0 or later.
         |
         */
-        'enable_return_types' => false,
+        'enable_return_types' => true,
     ],
 
     /*

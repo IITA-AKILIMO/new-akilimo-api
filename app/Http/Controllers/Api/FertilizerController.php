@@ -4,28 +4,35 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\FertilizerResourceCollection;
-use App\Models\Fertilizer;
+use App\Repositories\FertilizerRepo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FertilizerController extends Controller
 {
+    public function __construct(
+        protected FertilizerRepo $fertilizerRepo,
+    )
+    {
+        //empty constructor
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): FertilizerResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $country = $request->input('country_code');
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
 
-        $currencies = Fertilizer::query()
-            ->where('country', strtoupper(trim($country)))
-            ->where('available', true)
-            ->orderBy($orderBy, $sort)
-            ->paginate($perPage);
+        $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
+            perPage: $perPage,
+            orderBy: $orderBy,
+            direction: $sort);
 
-        return FertilizerResourceCollection::make($currencies);
+
+        return FertilizerResourceCollection::make($availableFertilizers);
     }
 
     /**
@@ -33,19 +40,32 @@ class FertilizerController extends Controller
      * @param Request $request
      * @return FertilizerResourceCollection
      */
-    public function byCountry(string $countryCode, Request $request)
+    public function byCountry(string $countryCode, Request $request): FertilizerResourceCollection
     {
         $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
         $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
         $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $useCase = $request->input('use_case');
 
-        $currencies = Fertilizer::query()
-            ->where('country', strtoupper(trim($countryCode)))
-            ->where('available', true)
-            ->orderBy($orderBy, $sort)
-            ->paginate($perPage);
 
-        return FertilizerResourceCollection::make($currencies);
+        $filters = [
+            'country' => strtoupper($countryCode)
+        ];
+
+        $trimmed = Str::of($useCase)->trim();
+        if ($trimmed->isNotEmpty()) {
+            $filters['use_case'] = $trimmed->upper()->toString();
+        }
+
+
+        $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
+            perPage: $perPage,
+            orderBy: $orderBy,
+            direction: $sort,
+            filters: $filters);
+
+
+        return FertilizerResourceCollection::make($availableFertilizers);
     }
 
 }

@@ -26,7 +26,7 @@ class FertilizerPriceResource extends JsonResource
         $conv = new CurrencyConversion();
         $currencyCode = EnumCountry::fromCode($fertilizerPrice->country)->currency();
         $currency = Currency::whereCurrencyCode($currencyCode)->first();
-
+        $currencyResource = CurrencyResource::make($currency);
 
         $minPrice = $repo->findBySortOrderAndFertilizerKey(1, $fertilizerPrice->fertilizer_key);
         $maxPrice = $repo->findBySortOrderAndFertilizerKey(4, $fertilizerPrice->fertilizer_key);
@@ -46,6 +46,7 @@ class FertilizerPriceResource extends JsonResource
             'fertilizer_key' => $fertilizerPrice->fertilizer_key,
             'fertilizer_country' => "{$fertilizerPrice->country}$fertilizerPrice->id",
             'country_code' => $fertilizerPrice->country,
+            'currency' => $currencyResource,
             'sort_order' => $fertilizerPrice->sort_order,
             'min_local_price' => $fertilizerPrice->min_price,
             'max_local_price' => $fertilizerPrice->max_price,

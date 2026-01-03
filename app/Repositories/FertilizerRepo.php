@@ -5,9 +5,9 @@ namespace App\Repositories;
 use App\Models\Fertilizer;
 
 /**
- * @extends \App\Repositories\BaseRepository<Fertilizer>
+ * @extends BaseRepo<Fertilizer>
  */
-class FertilizerRepo extends \App\Repositories\BaseRepository
+class FertilizerRepo extends BaseRepo
 {
     protected function model(): string
     {
