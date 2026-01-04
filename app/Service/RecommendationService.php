@@ -35,12 +35,11 @@ class RecommendationService
      * @param array $droidRequest The parsed request payload.
      * @return array Contains 'rec_type' and 'recommendation'.
      *
+     * @throws \JsonException
      */
     public function compute(array $droidRequest): array
     {
-        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
-
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
             return $this->performComputation($droidRequest);
         });
@@ -158,9 +157,9 @@ class RecommendationService
     private function generateCacheKey(array $droidRequest): string
     {
         $relevantData = [
-            'user_info' => Arr::get($droidRequest, 'user_info', []),
+//            'user_info' => Arr::get($droidRequest, 'user_info', []),
             'compute_request' => Arr::get($droidRequest, 'compute_request', []),
-            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
+//            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
         ];
 
         // Sort recursively for consistent ordering
