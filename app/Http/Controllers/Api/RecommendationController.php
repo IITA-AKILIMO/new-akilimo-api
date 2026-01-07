@@ -63,26 +63,4 @@ class RecommendationController extends Controller
         return $this->recommendationService->compute(droidRequest: $request->toArray());
     }
 
-    public function listFeedback(Request $request): UserFeedbackResourceCollection
-    {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'created_at'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
-
-
-        $feedbackData = $this->feedBackRepo->paginateWithSort(
-            perPage: $perPage,
-            orderBy: $orderBy,
-            direction: $sort);
-
-        return UserFeedbackResourceCollection::make($feedbackData);
-    }
-
-    public function feedBack(FeedBackRequest $request)
-    {
-        $data = $request->toPersistenceArray();
-        $feedBack = $this->feedBackRepo->create($data);
-        return Userfeedbackresource::make($feedBack);
-    }
-
 }
