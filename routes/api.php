@@ -59,6 +59,10 @@ Route::prefix('v1/maize-prices')->group(function () {
 Route::prefix('v1/recommendations')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\RecommendationController::class, 'index']);
     Route::get('/feedback', [\App\Http\Controllers\Api\RecommendationController::class, 'listFeedback']);
-    Route::post('/feedback', [\App\Http\Controllers\Api\RecommendationController::class, 'feedBack']);
     Route::post('/compute', [\App\Http\Controllers\Api\RecommendationController::class, 'computeRecommendations']);
+});
+
+Route::prefix('v1/user-feedback')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\UserFeedBackController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Api\UserFeedBackController::class, 'store']);
 });
