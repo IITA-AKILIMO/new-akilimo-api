@@ -20,7 +20,7 @@ class UserFeedBackController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 50);
-        $orderBy = $request->input('order_by', 'sort_order');
+        $orderBy = $request->input('order_by', 'created_at');
         $sort = $request->input('sort', 'asc');
 
         $userFeedbackData = $this->repo->paginateWithSort(
