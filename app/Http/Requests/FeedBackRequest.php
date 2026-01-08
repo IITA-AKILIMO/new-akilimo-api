@@ -48,6 +48,7 @@ class FeedBackRequest extends FormRequest
             'akilimo_usage' => $validated['akilimo_usage'],
             'user_type' => $this->mapUserType($validated['user_type']),
             'device_token' => $validated['device_token'],
+            'use_case' => $validated['use_case'],
             'language' => $validated['device_language'],
             'akilimo_rec_rating' => $validated['satisfaction_rating'],
             'akilimo_useful_rating' => $validated['nps_score'],

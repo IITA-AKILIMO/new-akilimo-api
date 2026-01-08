@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserFeedbackResource extends JsonResource
 {
-    public static $wrap = 'feedback';
+//    public static $wrap = 'feedback';
 
     public function toArray($request): array
     {
@@ -19,6 +19,7 @@ class UserFeedbackResource extends JsonResource
             'id' => $this->id,
             'recommendation_id' => $this->id,
             'akilimo_usage' => $this->akilimo_usage,
+            'use_case' => $this->use_case,
             'user_type' => $this->user_type,
             'recommendation_rating' => $this->akilimo_rec_rating,
             'useful_rating' => $this->akilimo_useful_rating,

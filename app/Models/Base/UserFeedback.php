@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $akilimo_usage
+ * @property string|null $use_case
  * @property string $user_type
  * @property int $akilimo_rec_rating
  * @property int $akilimo_useful_rating
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserFeedback whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserFeedback whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserFeedback whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserFeedback whereUseCase($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserFeedback whereUserType($value)
  *
  * @mixin \Eloquent
@@ -48,6 +50,7 @@ class UserFeedback extends Model
 
     protected $fillable = [
         'akilimo_usage',
+        'use_case',
         'user_type',
         'akilimo_rec_rating',
         'akilimo_useful_rating',
