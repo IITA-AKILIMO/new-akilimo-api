@@ -39,6 +39,7 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
+        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
         return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
             return $this->performComputation($droidRequest);
