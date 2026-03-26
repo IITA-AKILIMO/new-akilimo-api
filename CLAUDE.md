@@ -74,6 +74,75 @@ MariaDB in production/dev; SQLite in-memory for tests. Key tables:
 - Views: `v_app_request_stats_view`
 - Stored procedures: `exclusion_flag_evaluation_proc`, `process_rec_request_proc`
 
+### Fertilizer Data Flow
+
+Understanding this is essential before touching `RecommendationService`, `FertilizerData`, or `PlumberComputeData`.
+
+**Database schema** (`fertilizers` table — key columns):
+
+| column | example value | purpose |
+|---|---|---|
+| `fertilizer_key` | `urea` | Stable identifier; matched against `key` in the client's `fertilizer_list` |
+| `fertilizer_label` | `urea` | Prefix used to build Plumbr field names (see below) |
+| `name` | `Urea 46%` | Human-readable display name |
+| `weight` | `50` | Default bag weight in kg |
+| `country` | `NG` | Country the fertilizer is available in |
+
+**Client request** — the `fertilizer_list` array each item carries:
+```json
+{
+  "key":             "urea",
+  "name":            "Urea 46%",
+  "fertilizer_type": "STRAIGHT",
+  "weight":          50,
+  "price":           12000,
+  "selected":        true
+}
+```
+
+**Mapping step** — `RecommendationService::mapFertilizersToExternalFormat()`:
+
+1. Loads all `available=true` fertilizers for the request's country from the DB.
+2. For each DB fertilizer, checks whether its `fertilizer_key` appears in the client's `fertilizer_list`.
+3. If matched, the client-supplied `selected`, `weight`, and `price` override the DB defaults.
+4. Builds a flat array keyed by `{fertilizer_label}available`, `{fertilizer_label}BagWt`, `{fertilizer_label}CostperBag`.
+
+**Resulting array** passed to `PlumberComputeData` as `['fertilizers' => ...]`:
+```php
+[
+    'ureaavailable'       => true,   // bool  — was it selected by the farmer?
+    'ureaBagWt'           => 50,     // int   — kg per bag
+    'ureaCostperBag'      => 12000.0,// float — local currency per bag
+
+    'MOPavailable'        => false,
+    'MOPBagWt'            => 50,
+    'MOPCostperBag'       => 0.0,
+
+    'DAPavailable'        => false,
+    'DAPBagWt'            => 50,
+    'DAPCostperBag'       => 0.0,
+
+    // … one triplet per fertilizer row for that country
+]
+```
+
+**`PlumberComputeData::toArray()`** merges these keys directly into the top-level Plumbr payload — they must not be nested under a `fertilizers` key in the HTTP body. The override in `toArray()` handles this:
+```php
+public function toArray(): array
+{
+    $data = parent::toArray();           // all other DTO fields
+    $fertilizers = $data['fertilizers']; // the flat array above
+    unset($data['fertilizers']);
+    return array_merge($data, $fertilizers); // merged at root level
+}
+```
+
+**Adding a new fertilizer type** — only two steps needed:
+1. Insert a row into `fertilizers` with `fertilizer_label` set to the Plumbr field prefix (e.g. `NPK201010`).
+2. Ensure the client sends a matching `key` in `fertilizer_list` if the farmer selects it.
+
+No PHP code changes are required.
+
 ### Error Handling
 `RecommendationException` is the domain exception — carries HTTP status code and body. `PlumberService` converts HTTP client failures into `RecommendationException`. The `JsonFormatResponse` middleware forces all responses to `application/json`.
 
