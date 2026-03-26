@@ -157,9 +157,10 @@ class RecommendationService
     private function generateCacheKey(array $droidRequest): string
     {
         $relevantData = [
-//            'user_info' => Arr::get($droidRequest, 'user_info', []),
+            // user_info excluded intentionally: email, phone, and device_token do not affect
+            // the computation result and would prevent cache reuse across users with identical inputs.
             'compute_request' => Arr::get($droidRequest, 'compute_request', []),
-//            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
+            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
         ];
 
         // Sort recursively for consistent ordering

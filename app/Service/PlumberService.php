@@ -11,8 +11,7 @@ class PlumberService
 {
     protected string $baseUrl;
     protected string $endpoint;
-
-    protected int $timeout = 5;
+    protected int $timeout;
 
     public function __construct()
     {
