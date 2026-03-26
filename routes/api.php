@@ -62,12 +62,12 @@ Route::middleware('throttle:120,1')->group(function () {
     });
 
     Route::prefix('v1/user-feedback')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Api\UserFeedBackController::class, 'index']);
+        Route::get('/', [\App\Http\Controllers\Api\UserFeedbackController::class, 'index']);
     });
 });
 
 // Mutating / expensive endpoints — tighter limit
 Route::middleware('throttle:30,1')->group(function () {
     Route::post('v1/recommendations/compute', [\App\Http\Controllers\Api\RecommendationController::class, 'computeRecommendations']);
-    Route::post('v1/user-feedback', [\App\Http\Controllers\Api\UserFeedBackController::class, 'store']);
+    Route::post('v1/user-feedback', [\App\Http\Controllers\Api\UserFeedbackController::class, 'store']);
 });

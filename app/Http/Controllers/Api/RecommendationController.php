@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
-use App\Http\Requests\FeedBackRequest;
 use App\Http\Resources\ApiRequestResourceCollection;
-use App\Http\Resources\Collections\StarchFactoryResourceCollection;
-use App\Http\Resources\Collections\UserFeedbackResourceCollection;
-use App\Http\Resources\UserFeedbackResource;
+use App\Http\Resources\RecommendationResource;
 use App\Repositories\ApiRequestRepo;
-use App\Repositories\UserFeedBackRepo;
 use App\Service\RecommendationService;
 use Illuminate\Http\Request;
 
@@ -22,9 +18,7 @@ class RecommendationController extends Controller
     public function __construct(
         protected RecommendationService $recommendationService,
         protected ApiRequestRepo        $repo,
-        protected UserFeedBackRepo      $feedBackRepo
-    )
-    {
+    ) {
     }
 
     public function index(Request $request): ApiRequestResourceCollection
@@ -59,9 +53,10 @@ class RecommendationController extends Controller
      *
      * @throws \JsonException
      */
-    public function computeRecommendations(ComputeRequest $request): array
+    public function computeRecommendations(ComputeRequest $request): RecommendationResource
     {
-        return $this->recommendationService->compute(droidRequest: $request->toArray());
+        $result = $this->recommendationService->compute(droidRequest: $request->toArray());
+        return RecommendationResource::make($result);
     }
 
 }
