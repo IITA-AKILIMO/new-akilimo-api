@@ -8,6 +8,7 @@ class FeedBackRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // Public API — no authentication required by design.
         return true;
     }
 

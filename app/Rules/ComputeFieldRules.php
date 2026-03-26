@@ -16,7 +16,7 @@ class ComputeFieldRules
             'compute_request.farmInformation.map_lat' => ['required', 'numeric', 'between:-90,90'],
             'compute_request.farmInformation.map_long' => ['required', 'numeric', 'between:-180,180'],
             'compute_request.farmInformation.field_size' => ['required', 'numeric', 'min:1'],
-            'compute_request.farmInformation.area_unit' => ['required', "string"],
+            'compute_request.farmInformation.area_unit' => ['required', 'string', 'in:acre,ha,ekari,hekta'],
 
             // Intercropping
             'compute_request.interCropping.inter_cropped_crop' => ['nullable', 'string', 'max:255'],
