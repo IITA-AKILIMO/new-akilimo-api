@@ -13,13 +13,13 @@ class ApiRequestResource extends JsonResource
         /** @var ApiRequest $this */
 
         return [
-            'id' => $this->id,
-            'request_id' => $this->request_id,
-            'droid_request' => $this->droid_request,
-//            'plumber_request' => json_decode($this->plumber_request, true),
-//            'plumber_response' => json_decode($this->plumber_response, true),
-            'created_at' => $this->created_at?->toDateTimeString(),
-            'updated_at' => $this->updated_at?->toDateTimeString(),
+            'id'                  => $this->id,
+            'request_id'          => $this->request_id,
+            'device_token'        => $this->device_token,
+            'droid_request'       => $this->droid_request,
+            'request_duration_ms' => $this->request_duration_ms,
+            'created_at'          => $this->created_at?->toDateTimeString(),
+            'updated_at'          => $this->updated_at?->toDateTimeString(),
         ];
     }
 }
