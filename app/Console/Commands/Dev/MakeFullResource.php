@@ -46,7 +46,7 @@ class MakeFullResource extends Command
         // Generate fillable fields for toArray()
         $fields = $this->getFillableFields($model);
         $fieldLines = '';
-        if ($fields && count($fields)) {
+        if (!empty($fields)) {
             $fieldLines = collect($fields)->map(function ($field) {
                 return "            '{$field}' => \$model->{$field},";
             })->implode("\n");
