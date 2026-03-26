@@ -128,7 +128,16 @@ class RecommendationService
                 $ex
             );
         } catch (Exception $ex) {
-            // Unexpected exceptions
+            // Log the full trace so unexpected bugs surface in production rather than being
+            // silently swallowed. The client still receives a clean 500 response.
+            \Log::error('Unexpected exception during recommendation computation', [
+                'exception' => get_class($ex),
+                'message'   => $ex->getMessage(),
+                'file'      => $ex->getFile(),
+                'line'      => $ex->getLine(),
+                'trace'     => $ex->getTraceAsString(),
+            ]);
+
             $errorBody = [
                 'error' => 'Unexpected error',
                 'message' => $ex->getMessage(),

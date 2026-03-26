@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeedBackRequest;
 use App\Http\Resources\Collections\CassavaPriceResourceCollection;
@@ -13,15 +14,16 @@ use Illuminate\Http\Request;
 
 class UserFeedBackController extends Controller
 {
+    use HasPaginationParams;
     public function __construct(protected UserFeedBackRepo $repo)
     {
     }
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 50);
-        $orderBy = $request->input('order_by', 'created_at');
-        $sort = $request->input('sort', 'asc');
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'akilimo_usage'], 'created_at');
+        $sort    = $this->getSortDirection($request);
 
         $userFeedbackData = $this->repo->paginateWithSort(
             perPage: $perPage,

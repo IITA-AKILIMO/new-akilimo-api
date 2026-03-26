@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\MaizePriceResourceCollection;
 use App\Models\MaizePrice;
@@ -9,15 +10,16 @@ use Illuminate\Http\Request;
 
 class MaizePricesController extends Controller
 {
+    use HasPaginationParams;
     /**
      * @param Request $request
      * @return MaizePriceResourceCollection
      */
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
         $maizePrices = MaizePrice::query()
             ->orderBy($orderBy, $sort)
@@ -33,9 +35,9 @@ class MaizePricesController extends Controller
      */
     public function byCountry(string $countryCode, Request $request)
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
         $maizePrices = MaizePrice::query()
             ->where('country', strtoupper(trim($countryCode)))

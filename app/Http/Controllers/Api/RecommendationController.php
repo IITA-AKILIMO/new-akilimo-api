@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
 use App\Http\Requests\FeedBackRequest;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 
 class RecommendationController extends Controller
 {
+    use HasPaginationParams;
 
     public function __construct(
         protected RecommendationService $recommendationService,
@@ -27,10 +29,9 @@ class RecommendationController extends Controller
 
     public function index(Request $request): ApiRequestResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'created_at'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
-
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'request_id'], 'created_at');
+        $sort    = $this->getSortDirection($request);
 
         $recommendationData = $this->repo->paginateWithSort(
             perPage: $perPage,
