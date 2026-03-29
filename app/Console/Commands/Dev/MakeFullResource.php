@@ -183,7 +183,7 @@ PHP;
                     $return = $method->invoke($instance);
                     if ($return instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
                         $name = $method->getName();
-                        $isCollection = method_exists($return, 'getRelated') && in_array(class_basename($return), ['HasMany', 'BelongsToMany', 'MorphMany']);
+                        $isCollection = in_array(class_basename($return), ['HasMany', 'BelongsToMany', 'MorphMany']);
                         $relationships[$name] = $isCollection;
                     }
                 } catch (\Throwable $e) {
