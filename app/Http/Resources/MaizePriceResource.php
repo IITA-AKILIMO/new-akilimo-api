@@ -14,9 +14,6 @@ class MaizePriceResource extends JsonResource
         parent::__construct($resource);
     }
 
-    /**
-     * @var MaizePrice $this->resource
-     */
     public function toArray(Request $request): array
     {
         /** @var MaizePrice $model */
