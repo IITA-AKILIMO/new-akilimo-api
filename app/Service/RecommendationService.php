@@ -116,8 +116,8 @@ class RecommendationService
             );
         } catch (\Illuminate\Http\Client\RequestException $ex) {
             // HTTP errors (4xx, 5xx responses)
-            $statusCode = $ex->response?->status() ?? 500;
-            $responseBody = $ex->response?->json() ?? [];
+            $statusCode = $ex->response->status();
+            $responseBody = $ex->response->json() ?? [];
 
             $errorBody = [
                 'error' => 'Service request failed',
@@ -328,7 +328,6 @@ class RecommendationService
                 'd' => $now->addDays($value),
                 'h' => $now->addHours($value),
                 'm' => $now->addMinutes($value),
-                default => $now->addHour(), // fallback
             };
         }
         \Log::warning('Unrecognised CACHE_TTL value, defaulting to 1 hour', ['value' => $ttl]);
