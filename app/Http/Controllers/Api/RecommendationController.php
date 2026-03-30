@@ -46,11 +46,7 @@ class RecommendationController extends Controller
      * Sends the request to the computation service and returns the original request data, the computed response, and the final request sent to the service.
      *
      * @param ComputeRequest $request The incoming compute request containing user data, computation details, and a list of fertilizers.
-     * @return array An associative array containing:
-     *               - 'droidRequest': The original request data extracted from the incoming ComputeRequest.
-     *               - 'plumberResponse': The response returned from the computation service.
-     *               - 'plumberRequest': The final formatted request sent to the computation service.
-     *
+     * @return RecommendationResource
      * @throws \JsonException
      */
     public function computeRecommendations(ComputeRequest $request): RecommendationResource
