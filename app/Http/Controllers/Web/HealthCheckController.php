@@ -140,7 +140,7 @@ class HealthCheckController extends Controller
             return [
                 'status' => $fileExists ? 'UP' : 'DOWN',
                 'default_disk' => config('filesystems.default'),
-                'root_path' => Storage::getConfig('root'),
+                'root_path' => Storage::getConfig()['root'] ?? null,
             ];
         } catch (\Exception $e) {
             return [
