@@ -3,15 +3,13 @@
 namespace App\Http\Resources;
 
 use App\Models\ApiRequest;
-use App\Models\UserFeedback;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin ApiRequest */
 class ApiRequestResource extends JsonResource
 {
     public function toArray($request): array
     {
-        /** @var ApiRequest $this */
-
         return [
             'id'                  => $this->id,
             'request_id'          => $this->request_id,

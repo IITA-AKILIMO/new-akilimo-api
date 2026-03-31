@@ -2,8 +2,12 @@
 
 namespace App\Rules;
 
+use App\Http\Enums\EnumAreaUnit;
+use Illuminate\Validation\Rule;
+
 class ComputeFieldRules
 {
+
     public static function rules(): array
     {
 
@@ -16,7 +20,12 @@ class ComputeFieldRules
             'compute_request.farmInformation.map_lat' => ['required', 'numeric', 'between:-90,90'],
             'compute_request.farmInformation.map_long' => ['required', 'numeric', 'between:-180,180'],
             'compute_request.farmInformation.field_size' => ['required', 'numeric', 'min:1'],
-            'compute_request.farmInformation.area_unit' => ['required', 'string', 'in:acre,ha,ekari,hekta'],
+            'compute_request.farmInformation.area_unit' => [
+                'required',
+                'string',
+                new CaseInsensitiveIn(EnumAreaUnit::values()),
+            ],
+
 
             // Intercropping
             'compute_request.interCropping.inter_cropped_crop' => ['nullable', 'string', 'max:255'],
@@ -122,6 +131,8 @@ class ComputeFieldRules
             '*.date_format' => 'The :attribute must be in the format m/d/Y.',
             '*.between' => 'The :attribute must be between :min and :max.',
             '*.nullable' => 'The :attribute can be null.',
+            'compute_request.farmInformation.area_unit.in' =>
+                'The area unit :input must be one of: ' . implode(', ', EnumAreaUnit::values()) . '.',
         ];
     }
 }
