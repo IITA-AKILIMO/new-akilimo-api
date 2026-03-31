@@ -4,7 +4,28 @@ includes:
 parameters:
     paths:
         - app
+        - routes
 
+    # Level 5 is a solid baseline; raise to 6–8 once all errors are resolved
     level: 5
+
+    # Larastan: scan migrations for model property inference
+    databaseMigrationsPath:
+        - database/migrations
+
+    # Larastan: warn on collection methods that have native array equivalents
+    noUnnecessaryCollectionCall: true
+
+    # PHPStan: infer private property types from constructor assignments
+    inferPrivatePropertyTypeFromConstructor: true
+
+    # PHPStan: flag explicit `mixed` usage (good discipline before pushing level higher)
+    checkExplicitMixed: false
+
+    # PHPStan: unmatched ignoreErrors entries become errors (keeps the list clean)
+    reportUnmatchedIgnoredErrors: true
+
+    # PHPStan: treat phpdoc @var types as certain (consistent with strict mode)
+    treatPhpDocTypesAsCertain: true
 
     ignoreErrors: []
