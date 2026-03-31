@@ -11,14 +11,17 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 
 #[MapOutputName(SnakeCaseMapper::class)]
-class PlumberComputeData extends Data
+class AkilimoComputeData extends Data
 {
 
     /**
-     * CMP: Crop Management Practice code or identifier.
+     * CMP: Crop Current Maize Performance.
      */
     #[MapOutputName('CMP')]
     public float $currentMaizePerformance;
+
+    #[MapOutputName('lang')]
+    public string $recommendationLanguage;
 
     #[MapOutputName('FCY')]
     public int $currentFieldYield;

@@ -3,7 +3,7 @@
 use App\Service\RecommendationService;
 use App\Repositories\FertilizerRepo;
 use App\Repositories\ApiRequestRepo;
-use App\Service\PlumberService;
+use App\Service\AkilimoComputeService;
 use Illuminate\Support\Facades\Log;
 
 function makeTtlService(): RecommendationService
@@ -11,7 +11,7 @@ function makeTtlService(): RecommendationService
     return new RecommendationService(
         Mockery::mock(FertilizerRepo::class),
         Mockery::mock(ApiRequestRepo::class),
-        Mockery::mock(PlumberService::class),
+        Mockery::mock(AkilimoComputeService::class),
     );
 }
 

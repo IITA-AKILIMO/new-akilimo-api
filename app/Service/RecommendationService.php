@@ -4,9 +4,10 @@ namespace App\Service;
 
 use App\Data\ComputeRequestData;
 use App\Data\FertilizerData;
-use App\Data\PlumberComputeData;
+use App\Data\AkilimoComputeData;
 use App\Data\UserInfoData;
 use App\Exceptions\RecommendationException;
+use App\Http\Enums\EnumAreaUnit;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
 use Carbon\Carbon;
@@ -21,9 +22,9 @@ class RecommendationService
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
-        protected FertilizerRepo $fertilizerRepo,
-        protected ApiRequestRepo $apiRequestRepo,
-        protected PlumberService $plumberService,
+        protected FertilizerRepo        $fertilizerRepo,
+        protected ApiRequestRepo        $apiRequestRepo,
+        protected AkilimoComputeService $akilimoComputeService,
     )
     {
         $ttl = config('cache.ttl'); // e.g. "1d", "1h", "30m"
@@ -72,31 +73,29 @@ class RecommendationService
 
         $computedFertilizers = $this->mapFertilizersToExternalFormat($availableFertilizers, $fertilizerMap);
 
-        $plumberRequest = PlumberComputeData::from(
+        $akilimoComputeData = AkilimoComputeData::from(
             $computeRequest->toArray(),
             $userInfo,
             ['fertilizers' => $computedFertilizers],
         );
 
-        $plumberRequest->areaUnit = $this->normalizeAreaUnit($plumberRequest->areaUnit);
-
         // Generate a server-side UUID as the request correlation ID (#38).
         // The client-supplied device_token is stored separately for device-level queries.
-        $requestUuid = (string) Str::uuid();
-        $requestLog  = $this->logRequest($requestUuid, $deviceToken, $droidRequest, $plumberRequest);
+        $requestUuid = (string)Str::uuid();
+        $requestLog = $this->logRequest($requestUuid, $deviceToken, $droidRequest, $akilimoComputeData);
 
         $startedAt = now();
 
         try {
-            $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
+            $computeResp = $this->akilimoComputeService->compute($akilimoComputeData);
 
-            $this->updateRequestLogResponse($requestLog->id, $plumberResp, $startedAt);
+            $this->updateRequestLogResponse($requestLog->id, $computeResp, $startedAt);
 
             return [
-                'request_id'     => $requestUuid,
-                'version'        => Arr::get($plumberResp, 'version'),
-                'rec_type'       => Arr::get($plumberResp, 'rec_type'),
-                'recommendation' => Arr::get($plumberResp, 'recommendation'),
+                'request_id' => $requestUuid,
+                'version' => Arr::get($computeResp, 'version'),
+                'rec_type' => Arr::get($computeResp, 'rec_type'),
+                'recommendation' => Arr::get($computeResp, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
             $this->updateRequestLogResponse($requestLog->id, $ex->body, $startedAt);
@@ -111,9 +110,7 @@ class RecommendationService
 
             $this->updateRequestLogResponse($requestLog->id, $errorBody, $startedAt);
 
-            throw RecommendationException::serviceUnavailable(
-                'Recommendation service is unreachable'
-            );
+            throw RecommendationException::serviceUnavailable('Recommendation service is unreachable');
         } catch (\Illuminate\Http\Client\RequestException $ex) {
             // HTTP errors (4xx, 5xx responses)
             $statusCode = $ex->response->status();
@@ -139,10 +136,10 @@ class RecommendationService
             // silently swallowed. The client still receives a clean 500 response.
             \Log::error('Unexpected exception during recommendation computation', [
                 'exception' => get_class($ex),
-                'message'   => $ex->getMessage(),
-                'file'      => $ex->getFile(),
-                'line'      => $ex->getLine(),
-                'trace'     => $ex->getTraceAsString(),
+                'message' => $ex->getMessage(),
+                'file' => $ex->getFile(),
+                'line' => $ex->getLine(),
+                'trace' => $ex->getTraceAsString(),
             ]);
 
             $errorBody = [
@@ -253,34 +250,20 @@ class RecommendationService
         return $computedFertilizers;
     }
 
-    /**
-     * Normalizes area units to expected values.
-     *
-     * @param string $areaUnit
-     * @return string
-     */
-    private function normalizeAreaUnit(string $areaUnit): string
-    {
-        return match (strtolower($areaUnit)) {
-            'ekari' => 'acre',
-            'hekta' => 'ha',
-            default => strtolower($areaUnit),
-        };
-    }
 
     /**
      * Logs the incoming request to the database.
      *
      * @param string $deviceToken
      * @param array $droidRequest
-     * @param PlumberComputeData $plumberRequest
+     * @param AkilimoComputeData $plumberRequest
      * @return object The created log entry.
      */
-    private function logRequest(string $requestUuid, string $deviceToken, array $droidRequest, PlumberComputeData $plumberRequest): object
+    private function logRequest(string $requestUuid, string $deviceToken, array $droidRequest, AkilimoComputeData $plumberRequest): object
     {
         return $this->apiRequestRepo->create([
-            'request_id'    => $requestUuid,
-            'device_token'  => $deviceToken,
+            'request_id' => $requestUuid,
+            'device_token' => $deviceToken,
             'droid_request' => $droidRequest,
             'plumber_request' => $plumberRequest,
         ]);
@@ -297,9 +280,9 @@ class RecommendationService
     private function updateRequestLogResponse(int $logId, array $responseData, Carbon $startedAt): void
     {
         $this->apiRequestRepo->update($logId, [
-            'plumber_response'    => $responseData,
-            'request_started_at'  => $startedAt,
-            'request_duration_ms' => (int) $startedAt->diffInMilliseconds(now()),
+            'plumber_response' => $responseData,
+            'request_started_at' => $startedAt,
+            'request_duration_ms' => (int)$startedAt->diffInMilliseconds(now()),
         ]);
     }
 
