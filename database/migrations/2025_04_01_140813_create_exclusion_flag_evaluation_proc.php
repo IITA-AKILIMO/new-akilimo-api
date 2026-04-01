@@ -10,6 +10,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return; // Stored procedures are not supported by SQLite
+        }
+
         DB::unprepared("CREATE DEFINER=`akilimo`@`%` PROCEDURE `exclusion_flag_evaluation`(IN phone_number text, IN full_names text, out excluded TINYINT)
 BEGIN
 
