@@ -16,7 +16,7 @@ function validFeedbackPayload(): array
 it('stores valid feedback and returns the created record', function () {
     $response = $this->postJson('/api/v1/user-feedback', validFeedbackPayload());
 
-    $response->assertOk()->assertJsonStructure(['id']);
+    $response->assertCreated()->assertJsonStructure(['id']);
     $this->assertDatabaseCount('user_feedback', 1);
 });
 
