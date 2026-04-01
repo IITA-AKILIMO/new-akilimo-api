@@ -82,7 +82,7 @@ class ComputeFieldRules
             'compute_request.yieldInfo.current_field_yield' => ['numeric', 'min:0'],
             'compute_request.yieldInfo.current_maize_performance' => ['numeric', 'min:0'],
             'compute_request.yieldInfo.sell_to_starch_factory' => ['boolean'],
-            'compute_request.yieldInfo.starch_factory_name' => ['string', 'max:255'],
+            'compute_request.yieldInfo.starch_factory_name' => ['nullable', 'string', 'max:255'],
 
             // Cassava
             'compute_request.cassava.produce_type' => ['required', 'string', 'max:50'],
