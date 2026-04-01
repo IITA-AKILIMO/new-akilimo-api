@@ -253,23 +253,29 @@ class HealthCheckController extends Controller
 
     private function checkAkilimoCompute(): array
     {
-        $baseUrl = rtrim((string)config('akilimo-compute.base_url', ''), '/');
+        $baseUrl   = rtrim((string) config('akilimo-compute.base_url', ''), '/');
+        $healthUrl = $baseUrl ? $baseUrl . '/health' : null;
 
         $result = [
             'status' => 'DOWN',
-            'url' => $baseUrl,
+            'url'    => $healthUrl,
         ];
 
-        if (empty($baseUrl)) {
+        if (empty($healthUrl)) {
             $result['error'] = 'AKILIMO_COMPUTE_BASE_URL is not configured';
             return $result;
         }
 
         try {
-            $response = Http::timeout(5)->get($baseUrl);
+            $response = Http::timeout(5)->get($healthUrl);
 
-            $result['status'] = $response->successful() ? 'UP' : 'DOWN';
+            $result['status']      = $response->successful() ? 'UP' : 'DOWN';
             $result['http_status'] = $response->status();
+
+            // If the health endpoint returns JSON like {"status":"UP"}
+            if ($response->json('status')) {
+                $result['service_status'] = $response->json('status');
+            }
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             $result['error'] = 'Connection failed: ' . $e->getMessage();
         } catch (\Throwable $e) {
