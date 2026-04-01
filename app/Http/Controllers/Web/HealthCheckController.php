@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +34,7 @@ class HealthCheckController extends Controller
             'migrations' => $this->checkMigrations(),
             'env-config' => $this->checkEnvironmentConfig(),
             'php-extensions' => $this->checkPHPExtensions(),
+            'akilimo-compute' => $this->checkAkilimoCompute(),
         ];
 
         $overallStatus = true;
@@ -247,5 +249,39 @@ class HealthCheckController extends Controller
 
         $extensionStatus['status'] = count(array_filter($extensionStatus, fn($status) => $status === false)) === 0 ? 'UP' : 'DOWN';
         return $extensionStatus;
+    }
+
+    private function checkAkilimoCompute(): array
+    {
+        $baseUrl = rtrim((string) config('akilimo-compute.base_url', ''), '/');
+
+        if (empty($baseUrl)) {
+            return [
+                'status' => 'DOWN',
+                'error'  => 'AKILIMO_COMPUTE_BASE_URL is not configured',
+            ];
+        }
+
+        try {
+            $response = Http::timeout(5)->get($baseUrl);
+
+            return [
+                'status'       => $response->successful() ? 'UP' : 'DOWN',
+                'url'          => $baseUrl,
+                'http_status'  => $response->status(),
+            ];
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return [
+                'status' => 'DOWN',
+                'url'    => $baseUrl,
+                'error'  => 'Connection failed: ' . $e->getMessage(),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'status' => 'DOWN',
+                'url'    => $baseUrl,
+                'error'  => $e->getMessage(),
+            ];
+        }
     }
 }
