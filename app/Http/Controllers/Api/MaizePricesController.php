@@ -2,46 +2,44 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\MaizePriceResourceCollection;
-use App\Models\MaizePrice;
+use App\Repositories\MaizePriceRepo;
 use Illuminate\Http\Request;
 
 class MaizePricesController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return MaizePriceResourceCollection
-     */
-    public function index(Request $request)
+    use HasPaginationParams;
+
+    public function __construct(protected MaizePriceRepo $repo)
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
-
-        $maizePrices = MaizePrice::query()
-            ->orderBy($orderBy, $sort)
-            ->paginate($perPage);
-
-        return MaizePriceResourceCollection::make($maizePrices);
     }
 
-    /**
-     * @param string $countryCode
-     * @param Request $request
-     * @return MaizePriceResourceCollection
-     */
-    public function byCountry(string $countryCode, Request $request)
+    public function index(Request $request): MaizePriceResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
-        $maizePrices = MaizePrice::query()
-            ->where('country', strtoupper(trim($countryCode)))
-            ->orderBy($orderBy, $sort)
-            ->paginate($perPage);
+        return MaizePriceResourceCollection::make(
+            $this->repo->paginateWithSort(perPage: $perPage, orderBy: $orderBy, direction: $sort)
+        );
+    }
 
-        return MaizePriceResourceCollection::make($maizePrices);
+    public function byCountry(string $countryCode, Request $request): MaizePriceResourceCollection
+    {
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
+
+        return MaizePriceResourceCollection::make(
+            $this->repo->paginateWithSort(
+                perPage: $perPage,
+                orderBy: $orderBy,
+                direction: $sort,
+                filters: ['country' => strtoupper(trim($countryCode))],
+            )
+        );
     }
 }

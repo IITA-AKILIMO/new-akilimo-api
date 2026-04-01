@@ -12,8 +12,12 @@ class CassavaData extends Data
     public string $produceType;
     public float $unitWeight;
     public float $unitPrice;
-    public int $unitPriceMaize1;
-    public int $unitPriceMaize2;
-    public int $unitPricePotato1;
-    public int $unitPricePotato2;
+    #[MapInputName('unit_price_maize1')]
+    public float $unitPriceMaize1 = 0.0;
+    #[MapInputName('unit_price_maize2')]
+    public float $unitPriceMaize2 = 0.0;
+    #[MapInputName('unit_price_potato1')]
+    public float $unitPricePotato1 = 0.0;
+    #[MapInputName('unit_price_potato2')]
+    public float $unitPricePotato2 = 0.0;
 }

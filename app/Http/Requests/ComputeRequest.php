@@ -11,6 +11,7 @@ class ComputeRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // Public API — no authentication required by design.
         return true;
     }
 
@@ -25,19 +26,8 @@ class ComputeRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $userInfo = $this->input('user_info', []);
-
-        $this->merge([
-            'user_info' => array_merge($userInfo, [
-                'email_address' => filled($userInfo['email_address'] ?? null)
-                    ? $userInfo['email_address']
-                    : 'akilimo@cgiar.org',
-
-                'phone_number' => filled($userInfo['phone_number'] ?? null)
-                    ? $userInfo['phone_number']
-                    : '0000000000',
-            ]),
-        ]);
+        // No pre-processing needed; email_address and phone_number are optional
+        // and stored as-is (null when absent) so analytics queries stay accurate.
     }
 
     public function messages(): array

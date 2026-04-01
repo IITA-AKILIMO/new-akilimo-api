@@ -70,9 +70,14 @@ abstract class BaseRepo implements Repository
     }
 
     /**
-     * Find a record by ID.
+     * Find a record by its primary key.
      *
-     * @return TModel
+     * Use this when you already have the ID. It maps directly to a WHERE id = ?
+     * query and is the fastest lookup available.
+     *
+     * Prefer this over selectOne() whenever you are searching by primary key.
+     *
+     * @return TModel|null
      */
     public function find(int|string $id, array $with = []): ?Model
     {
@@ -109,9 +114,15 @@ abstract class BaseRepo implements Repository
     }
 
     /**
-     * Retrieve a single record matching condition.
+     * Find the first record matching an arbitrary set of column conditions.
      *
-     * @return TModel
+     * Use this when you need to search by something other than the primary key
+     * (e.g. ['email' => 'user@example.com'] or ['country' => 'NG', 'available' => true]).
+     *
+     * Prefer find() over this method when searching by primary key — it is faster
+     * and more explicit about intent.
+     *
+     * @return TModel|null
      */
     public function selectOne(array $conditions, array $columns = ['*'], array $with = []): ?Model
     {

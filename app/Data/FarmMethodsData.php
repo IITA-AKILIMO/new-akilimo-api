@@ -11,8 +11,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class FarmMethodsData extends Data
 {
-    public string $methodPloughing;
-    public string $methodHarrowing;
-    public string $methodRidging;
-    public string $methodWeeding;
+    public ?string $methodPloughing;
+    public ?string $methodHarrowing;
+    public ?string $methodRidging;
+    public ?string $methodWeeding;
 }

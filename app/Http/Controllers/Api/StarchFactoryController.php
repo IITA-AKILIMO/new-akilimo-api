@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\StarchFactoryResourceCollection;
 use App\Repositories\StarchFactoryRepo;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 class StarchFactoryController extends Controller
 {
+    use HasPaginationParams;
     public function __construct(protected StarchFactoryRepo $repo)
     {
     }
@@ -19,10 +21,9 @@ class StarchFactoryController extends Controller
      */
     public function index(Request $request): StarchFactoryResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
-
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
         $starchFactory = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -39,9 +40,9 @@ class StarchFactoryController extends Controller
      */
     public function byCountry(string $countryCode, Request $request): StarchFactoryResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
         $filters = [
             'country' => strtoupper(trim($countryCode)),

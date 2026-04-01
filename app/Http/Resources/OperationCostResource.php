@@ -7,11 +7,6 @@ use Illuminate\Support\Str;
 
 class OperationCostResource extends \Illuminate\Http\Resources\Json\JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @var OperationCost $this ->resource
-     */
     public function toArray($request): array
     {
         /** @var OperationCost $model */

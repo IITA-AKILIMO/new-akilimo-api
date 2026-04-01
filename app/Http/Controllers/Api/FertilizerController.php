@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Collections\FertilizerResourceCollection;
 use App\Repositories\FertilizerRepo;
@@ -10,6 +11,7 @@ use Illuminate\Support\Str;
 
 class FertilizerController extends Controller
 {
+    use HasPaginationParams;
     public function __construct(
         protected FertilizerRepo $fertilizerRepo,
     )
@@ -22,9 +24,9 @@ class FertilizerController extends Controller
      */
     public function index(Request $request): FertilizerResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
 
         $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
             perPage: $perPage,
@@ -42,9 +44,9 @@ class FertilizerController extends Controller
      */
     public function byCountry(string $countryCode, Request $request): FertilizerResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'sort_order'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
+        $sort    = $this->getSortDirection($request);
         $useCase = $request->input('use_case');
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 
 class HealthCheckController extends Controller
 {
+    public function index(Request $request)
+    {
+        // will not implement
+    }
+
     public function check(): \Illuminate\Http\JsonResponse
     {
         $healthChecks = [
@@ -134,7 +140,7 @@ class HealthCheckController extends Controller
             return [
                 'status' => $fileExists ? 'UP' : 'DOWN',
                 'default_disk' => config('filesystems.default'),
-                'root_path' => Storage::getConfig('root'),
+                'root_path' => Storage::getConfig()['root'] ?? null,
             ];
         } catch (\Exception $e) {
             return [

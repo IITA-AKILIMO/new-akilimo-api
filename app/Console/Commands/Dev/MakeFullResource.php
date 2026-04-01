@@ -46,7 +46,7 @@ class MakeFullResource extends Command
         // Generate fillable fields for toArray()
         $fields = $this->getFillableFields($model);
         $fieldLines = '';
-        if ($fields && count($fields)) {
+        if (!empty($fields)) {
             $fieldLines = collect($fields)->map(function ($field) {
                 return "            '{$field}' => \$model->{$field},";
             })->implode("\n");
@@ -183,7 +183,7 @@ PHP;
                     $return = $method->invoke($instance);
                     if ($return instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
                         $name = $method->getName();
-                        $isCollection = method_exists($return, 'getRelated') && in_array(class_basename($return), ['HasMany', 'BelongsToMany', 'MorphMany']);
+                        $isCollection = in_array(class_basename($return), ['HasMany', 'BelongsToMany', 'MorphMany']);
                         $relationships[$name] = $isCollection;
                     }
                 } catch (\Throwable $e) {

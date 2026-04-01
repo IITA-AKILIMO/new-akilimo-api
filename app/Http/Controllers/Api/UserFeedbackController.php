@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeedBackRequest;
-use App\Http\Resources\Collections\CassavaPriceResourceCollection;
 use App\Http\Resources\Collections\UserFeedbackResourceCollection;
 use App\Http\Resources\UserFeedbackResource;
-use App\Repositories\CassavaPriceRepo;
 use App\Repositories\UserFeedBackRepo;
 use Illuminate\Http\Request;
 
-class UserFeedBackController extends Controller
+class UserFeedbackController extends Controller
 {
+    use HasPaginationParams;
+
     public function __construct(protected UserFeedBackRepo $repo)
     {
     }
 
-    public function index(Request $request)
+    public function index(Request $request): UserFeedbackResourceCollection
     {
-        $perPage = $request->input('per_page', 50);
-        $orderBy = $request->input('order_by', 'created_at');
-        $sort = $request->input('sort', 'asc');
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'akilimo_usage'], 'created_at');
+        $sort    = $this->getSortDirection($request);
 
         $userFeedbackData = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -32,10 +33,10 @@ class UserFeedBackController extends Controller
         return UserFeedbackResourceCollection::make($userFeedbackData);
     }
 
-    public function store(FeedBackRequest $request)
+    public function store(FeedBackRequest $request): UserFeedbackResource
     {
-        $data = $request->toPersistenceArray();
+        $data     = $request->toPersistenceArray();
         $feedBack = $this->repo->create($data);
-        return Userfeedbackresource::make($feedBack);
+        return UserFeedbackResource::make($feedBack);
     }
 }
