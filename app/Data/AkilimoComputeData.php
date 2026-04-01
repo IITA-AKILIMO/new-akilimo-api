@@ -100,7 +100,7 @@ class AkilimoComputeData extends Data
     #[MapOutputName('harrowing')]
     public bool $harrowing;
     #[MapOutputName('intercrop')]
-    public string $interCroppedCrop;
+    public ?string $interCroppedCrop;
 
 
     #[MapOutputName('lat')]
@@ -126,14 +126,14 @@ class AkilimoComputeData extends Data
     public float $maxInvestment;
 
     #[MapOutputName('method_harrowing')]
-    public string $methodHarrowing;
+    public ?string $methodHarrowing;
     #[MapOutputName('method_ploughing')]
-    public string $methodPloughing;
+    public ?string $methodPloughing;
     #[MapOutputName('method_ridging')]
-    public string $methodRidging;
+    public ?string $methodRidging;
 
     #[MapOutputName('nameSF')]
-    public string $starchFactoryName;
+    public ?string $starchFactoryName;
 
     #[MapOutputName('ploughing')]
     public bool $ploughing;
