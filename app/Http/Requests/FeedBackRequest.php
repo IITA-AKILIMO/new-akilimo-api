@@ -8,19 +8,20 @@ class FeedBackRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // Public API — no authentication required by design.
         return true;
     }
 
     public function rules(): array
     {
         return [
-            'akilimo_usage' => ['required', 'string'],
-            'user_type' => ['required', 'string'],
-            'device_token' => ['required', 'string'],
+            'akilimo_usage' => ['required', 'string', 'max:255'],
+            'user_type' => ['required', 'string', 'max:50'],
+            'device_token' => ['required', 'string', 'max:255'],
             'device_language' => ['required', 'string', 'in:en,fr,sw'],
             'satisfaction_rating' => ['required', 'integer', 'between:1,5'],
             'nps_score' => ['required', 'integer', 'between:0,10'],
-            'use_case' => ['required', 'string'],
+            'use_case' => ['required', 'string', 'max:50'],
         ];
     }
 

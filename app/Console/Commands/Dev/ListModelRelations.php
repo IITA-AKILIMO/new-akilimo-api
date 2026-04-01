@@ -109,7 +109,7 @@ class ListModelRelations extends Command
 
             if ($method->getNumberOfParameters() === 0) {
                 $returnType = $method->getReturnType();
-                if ($returnType && is_subclass_of($returnType->getName(), Relation::class)) {
+                if ($returnType instanceof \ReflectionNamedType && is_subclass_of($returnType->getName(), Relation::class)) {
                     $relations[] = $method->name;
                 }
             }

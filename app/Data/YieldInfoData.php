@@ -12,5 +12,5 @@ class YieldInfoData extends Data
     public float $currentFieldYield;
     public float $currentMaizePerformance;
     public bool $sellToStarchFactory;
-    public string $starchFactoryName;
+    public ?string $starchFactoryName;
 }

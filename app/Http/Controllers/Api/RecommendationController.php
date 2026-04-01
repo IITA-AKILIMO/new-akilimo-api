@@ -2,35 +2,30 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
-use App\Http\Requests\FeedBackRequest;
 use App\Http\Resources\ApiRequestResourceCollection;
-use App\Http\Resources\Collections\StarchFactoryResourceCollection;
-use App\Http\Resources\Collections\UserFeedbackResourceCollection;
-use App\Http\Resources\UserFeedbackResource;
+use App\Http\Resources\RecommendationResource;
 use App\Repositories\ApiRequestRepo;
-use App\Repositories\UserFeedBackRepo;
 use App\Service\RecommendationService;
 use Illuminate\Http\Request;
 
 class RecommendationController extends Controller
 {
+    use HasPaginationParams;
 
     public function __construct(
         protected RecommendationService $recommendationService,
         protected ApiRequestRepo        $repo,
-        protected UserFeedBackRepo      $feedBackRepo
-    )
-    {
+    ) {
     }
 
     public function index(Request $request): ApiRequestResourceCollection
     {
-        $perPage = $request->input('per_page', 50); // Number of records per page, default is 50
-        $orderBy = $request->input('order_by', 'created_at'); // Default order by invoice_date
-        $sort = $request->input('sort', 'asc'); // Default sort order is ascending
-
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'request_id'], 'created_at');
+        $sort    = $this->getSortDirection($request);
 
         $recommendationData = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -51,16 +46,13 @@ class RecommendationController extends Controller
      * Sends the request to the computation service and returns the original request data, the computed response, and the final request sent to the service.
      *
      * @param ComputeRequest $request The incoming compute request containing user data, computation details, and a list of fertilizers.
-     * @return array An associative array containing:
-     *               - 'droidRequest': The original request data extracted from the incoming ComputeRequest.
-     *               - 'plumberResponse': The response returned from the computation service.
-     *               - 'plumberRequest': The final formatted request sent to the computation service.
-     *
+     * @return RecommendationResource
      * @throws \JsonException
      */
-    public function computeRecommendations(ComputeRequest $request): array
+    public function computeRecommendations(ComputeRequest $request): RecommendationResource
     {
-        return $this->recommendationService->compute(droidRequest: $request->toArray());
+        $result = $this->recommendationService->compute(droidRequest: $request->toArray());
+        return RecommendationResource::make($result);
     }
 
 }

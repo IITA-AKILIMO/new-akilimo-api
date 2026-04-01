@@ -4,6 +4,7 @@ namespace App\Data;
 
 namespace App\Data;
 
+use App\Http\Enums\EnumAreaUnit;
 use Carbon\Carbon;
 use Spatie\LaravelData\Data;
 
@@ -37,23 +38,26 @@ class ComputeRequestData extends Data
             'mapLat' => $this->farmInformation->mapLat,
             'mapLong' => $this->farmInformation->mapLong,
             'fieldSize' => $this->farmInformation->fieldSize,
-            'areaUnit' => $this->farmInformation->areaUnit,
+            'areaUnit' => EnumAreaUnit::normalize($this->farmInformation->areaUnit)->value,
 
             // InterCropping
             'interCroppedCrop' => $this->interCropping->interCroppedCrop,
             'interCroppingMaizeRec' => $this->interCropping->interCroppingMaizeRec,
             'interCroppingPotatoRec' => $this->interCropping->interCroppingPotatoRec,
+            'interCropRec' => $this->interCropping->isRecommended(),
 
             // Recommendations
+            'recommendationLanguage' => $this->recommendations->lang,
             'fertilizerRec' => $this->recommendations->fertilizerRec,
             'plantingPracticesRec' => $this->recommendations->plantingPracticesRec,
             'scheduledPlantingRec' => $this->recommendations->scheduledPlantingRec,
             'scheduledHarvestRec' => $this->recommendations->scheduledHarvestRec,
 
+
             // Planting
-            'plantingDate' => $this->planting->plantingDate instanceof Carbon ? $this->planting->plantingDate->toDateString() : null,
+            'plantingDate' => $this->planting->plantingDate->toDateString(),
             'plantingDateWindow' => $this->planting->plantingDateWindow,
-            'harvestDate' => $this->planting->harvestDate instanceof Carbon ? $this->planting->harvestDate->toDateString() : null,
+            'harvestDate' => $this->planting->harvestDate->toDateString(),
             'harvestDateWindow' => $this->planting->harvestDateWindow,
 
             // Fallow

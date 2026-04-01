@@ -2,7 +2,9 @@
 
 namespace App\Data;
 
+use App\Data\Transformers\LowercaseTransformer;
 use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -15,5 +17,7 @@ class FarmInformationData extends Data
     public float $mapLong;
 
     public float $fieldSize;
+
+    #[WithTransformer(LowercaseTransformer::class)]
     public string $areaUnit;
 }

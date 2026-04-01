@@ -2,73 +2,51 @@
 
 namespace App\Repositories;
 
-
 use App\Data\MinMaxPriceDto;
 use App\Models\MaizePrice;
 
-class MaizePriceRepo
+class MaizePriceRepo extends BaseRepo
 {
-    protected MaizePrice $model;
-
-    public function __construct()
+    protected function model(): string
     {
-        $this->model = new MaizePrice();
+        return MaizePrice::class;
     }
 
-
-    public function all()
+    public function findPriceBandsByCountryCode(string $countryCode, string $produceType): MinMaxPriceDto
     {
-        return $this->model->all();
-    }
-
-    public function find($id)
-    {
-        return $this->model->find($id);
-    }
-
-    public function selectOne(array $conditions)
-    {
-        return $this->model->where($conditions)->first();
-    }
-
-    public function update($id, array $data)
-    {
-        $record = $this->find($id);
-        if (!$record) {
-            return null;
-        }
-
-        $record->update($data);
-        return $record;
-    }
-
-    public function delete($id)
-    {
-        $record = $this->find($id);
-        if (!$record) {
-            return false;
-        }
-
-        return $record->delete();
-    }
-
-    /**
-     * Retrieves the minimum and maximum price entity for a given country code.
-     *
-     * @param string $countryCode The country code used to filter the prices.
-     * @return MinMaxPriceDto Contains the minimum and maximum local prices for the specified country.
-     */
-    public function findPriceBandsByCountryCode(string $countryCode,string $produceType): MinMaxPriceDto
-    {
-        $minPrice = $this->model->whereCountry($countryCode)
+        $minPrice = MaizePrice::whereCountry($countryCode)
             ->where('min_local_price', '>', 0)
             ->where('produce_type', $produceType)
             ->min('min_local_price');
 
-        $maxPrice = $this->model->whereCountry($countryCode)
+        $maxPrice = MaizePrice::whereCountry($countryCode)
             ->where('produce_type', $produceType)
             ->max('max_local_price');
 
-        return new MinMaxPriceDto($minPrice, $maxPrice);
+        return new MinMaxPriceDto((float) ($minPrice ?? 0), (float) ($maxPrice ?? 0));
+    }
+
+    /**
+     * Load price bands for all (country, produce_type) combinations in one query.
+     * Returns an array keyed by "country:produce_type".
+     *
+     * @return array<string, MinMaxPriceDto>
+     */
+    public function findPriceBandsBulk(): array
+    {
+        $results = MaizePrice::query()
+            ->selectRaw('country, produce_type, MIN(NULLIF(min_local_price, 0)) as min_price, MAX(max_local_price) as max_price')
+            ->groupBy('country', 'produce_type')
+            ->get();
+
+        $map = [];
+        foreach ($results as $row) {
+            $map["{$row->country}:{$row->produce_type}"] = new MinMaxPriceDto(
+                (float) ($row->min_price ?? 0),
+                (float) ($row->max_price ?? 0)
+            );
+        }
+
+        return $map;
     }
 }

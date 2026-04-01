@@ -13,4 +13,6 @@ class RecommendationsData extends Data
     public bool $plantingPracticesRec;
     public bool $scheduledPlantingRec;
     public bool $scheduledHarvestRec;
+
+    public string $lang = 'en';
 }

@@ -9,7 +9,12 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class InterCroppingData extends Data
 {
-    public string $interCroppedCrop;
+    public ?string $interCroppedCrop;
     public bool $interCroppingMaizeRec;
     public bool $interCroppingPotatoRec;
+
+    public function isRecommended(): bool
+    {
+        return $this->interCroppingMaizeRec || $this->interCroppingPotatoRec;
+    }
 }

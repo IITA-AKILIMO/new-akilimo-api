@@ -4,9 +4,10 @@ namespace App\Service;
 
 use App\Data\ComputeRequestData;
 use App\Data\FertilizerData;
-use App\Data\PlumberComputeData;
+use App\Data\AkilimoComputeData;
 use App\Data\UserInfoData;
 use App\Exceptions\RecommendationException;
+use App\Http\Enums\EnumAreaUnit;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
 use Carbon\Carbon;
@@ -14,15 +15,16 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class RecommendationService
 {
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
-        protected FertilizerRepo $fertilizerRepo,
-        protected ApiRequestRepo $apiRequestRepo,
-        protected PlumberService $plumberService,
+        protected FertilizerRepo        $fertilizerRepo,
+        protected ApiRequestRepo        $apiRequestRepo,
+        protected AkilimoComputeService $akilimoComputeService,
     )
     {
         $ttl = config('cache.ttl'); // e.g. "1d", "1h", "30m"
@@ -39,11 +41,15 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
-        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
-        return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
+        $result = Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
             return $this->performComputation($droidRequest);
         });
+
+        // Always assign a fresh request_id — each HTTP call is a distinct trace event
+        // even when the computation result is served from cache.
+        $result['request_id'] = (string) Str::uuid();
+        return $result;
     }
 
 
@@ -65,7 +71,6 @@ class RecommendationService
 
         $userInfo = UserInfoData::from($userInfoArray);
 
-
         $computeRequest = ComputeRequestData::from($computeRequestArray);
         $availableFertilizers = FertilizerData::collect($this->getAvailableFertilizers($computeRequest->farmInformation->countryCode));
         $requestedFertilizers = FertilizerData::collect($fertilizerList);
@@ -73,27 +78,32 @@ class RecommendationService
 
         $computedFertilizers = $this->mapFertilizersToExternalFormat($availableFertilizers, $fertilizerMap);
 
-        $plumberRequest = PlumberComputeData::from($computeRequest->toArray(), $userInfo, $computedFertilizers);
+        $akilimoComputeData = AkilimoComputeData::from(
+            $computeRequest->toArray(),
+            $userInfo,
+            ['fertilizers' => $computedFertilizers],
+        );
 
+        // Generate a server-side UUID as the request correlation ID (#38).
+        // The client-supplied device_token is stored separately for device-level queries.
+        $requestUuid = (string)Str::uuid();
+        $requestLog = $this->logRequest($requestUuid, $deviceToken, $droidRequest, $akilimoComputeData);
 
-        $plumberRequest->areaUnit = $this->normalizeAreaUnit($plumberRequest->areaUnit);
-
-        $requestLog = $this->logRequest($deviceToken, $droidRequest, $plumberRequest);
-
+        $startedAt = now();
 
         try {
-            $plumberResp = $this->plumberService->sendComputeRequest($plumberRequest);
+            $computeResp = $this->akilimoComputeService->compute($akilimoComputeData);
 
-            $this->updateRequestLogResponse($requestLog->id, $plumberResp);
-
+            $this->updateRequestLogResponse($requestLog->id, $computeResp, $startedAt);
 
             return [
-                'version' => Arr::get($plumberResp, 'version'),
-                'rec_type' => Arr::get($plumberResp, 'rec_type'),
-                'recommendation' => Arr::get($plumberResp, 'recommendation'),
+                'request_id' => $requestUuid,
+                'version' => Arr::get($computeResp, 'version'),
+                'rec_type' => Arr::get($computeResp, 'rec_type'),
+                'recommendation' => Arr::get($computeResp, 'recommendation'),
             ];
         } catch (RecommendationException $ex) {
-            $this->updateRequestLogResponse($requestLog->id, $ex->body);
+            $this->updateRequestLogResponse($requestLog->id, $ex->body, $startedAt);
             throw $ex;
         } catch (\Illuminate\Http\Client\ConnectionException $ex) {
             // Network/timeout/DNS failures
@@ -103,15 +113,13 @@ class RecommendationService
                 'details' => $ex->getMessage(),
             ];
 
-            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+            $this->updateRequestLogResponse($requestLog->id, $errorBody, $startedAt);
 
-            throw RecommendationException::serviceUnavailable(
-                'Recommendation service is unreachable'
-            );
+            throw RecommendationException::serviceUnavailable('Recommendation service is unreachable');
         } catch (\Illuminate\Http\Client\RequestException $ex) {
             // HTTP errors (4xx, 5xx responses)
-            $statusCode = $ex->response?->status() ?? 500;
-            $responseBody = $ex->response?->json() ?? [];
+            $statusCode = $ex->response->status();
+            $responseBody = $ex->response->json() ?? [];
 
             $errorBody = [
                 'error' => 'Service request failed',
@@ -120,7 +128,7 @@ class RecommendationService
                 'response' => $responseBody,
             ];
 
-            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+            $this->updateRequestLogResponse($requestLog->id, $errorBody, $startedAt);
 
             throw new RecommendationException(
                 Arr::get($responseBody, 'message', 'Recommendation service returned an error'),
@@ -129,14 +137,23 @@ class RecommendationService
                 $ex
             );
         } catch (Exception $ex) {
-            // Unexpected exceptions
+            // Log the full trace so unexpected bugs surface in production rather than being
+            // silently swallowed. The client still receives a clean 500 response.
+            \Log::error('Unexpected exception during recommendation computation', [
+                'exception' => get_class($ex),
+                'message' => $ex->getMessage(),
+                'file' => $ex->getFile(),
+                'line' => $ex->getLine(),
+                'trace' => $ex->getTraceAsString(),
+            ]);
+
             $errorBody = [
                 'error' => 'Unexpected error',
                 'message' => $ex->getMessage(),
                 'type' => get_class($ex),
             ];
 
-            $this->updateRequestLogResponse($requestLog->id, $errorBody);
+            $this->updateRequestLogResponse($requestLog->id, $errorBody, $startedAt);
 
             throw new RecommendationException(
                 $ex->getMessage() ?: 'Failed to compute recommendation',
@@ -158,9 +175,10 @@ class RecommendationService
     private function generateCacheKey(array $droidRequest): string
     {
         $relevantData = [
-//            'user_info' => Arr::get($droidRequest, 'user_info', []),
+            // user_info excluded intentionally: email, phone, and device_token do not affect
+            // the computation result and would prevent cache reuse across users with identical inputs.
             'compute_request' => Arr::get($droidRequest, 'compute_request', []),
-//            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
+            'fertilizer_list' => Arr::get($droidRequest, 'fertilizer_list', []),
         ];
 
         // Sort recursively for consistent ordering
@@ -237,49 +255,39 @@ class RecommendationService
         return $computedFertilizers;
     }
 
-    /**
-     * Normalizes area units to expected values.
-     *
-     * @param string $areaUnit
-     * @return string
-     */
-    private function normalizeAreaUnit(string $areaUnit): string
-    {
-        return match (strtolower($areaUnit)) {
-            'ekari' => 'acre',
-            'hekta' => 'ha',
-            default => strtolower($areaUnit),
-        };
-    }
 
     /**
      * Logs the incoming request to the database.
      *
      * @param string $deviceToken
      * @param array $droidRequest
-     * @param PlumberComputeData $plumberRequest
+     * @param AkilimoComputeData $plumberRequest
      * @return object The created log entry.
      */
-    private function logRequest(string $deviceToken, array $droidRequest, PlumberComputeData $plumberRequest): object
+    private function logRequest(string $requestUuid, string $deviceToken, array $droidRequest, AkilimoComputeData $plumberRequest): object
     {
         return $this->apiRequestRepo->create([
-            'request_id' => $deviceToken,
+            'request_id' => $requestUuid,
+            'device_token' => $deviceToken,
             'droid_request' => $droidRequest,
             'plumber_request' => $plumberRequest,
         ]);
     }
 
     /**
-     * Updates the log entry with the response from the external service.
+     * Updates the log entry with the Plumbr response and computed latency.
      *
      * @param int $logId
      * @param array $responseData
+     * @param \Carbon\Carbon $startedAt Time immediately before the Plumbr call
      * @return void
      */
-    private function updateRequestLogResponse(int $logId, array $responseData): void
+    private function updateRequestLogResponse(int $logId, array $responseData, Carbon $startedAt): void
     {
         $this->apiRequestRepo->update($logId, [
             'plumber_response' => $responseData,
+            'request_started_at' => $startedAt,
+            'request_duration_ms' => (int)$startedAt->diffInMilliseconds(now()),
         ]);
     }
 
@@ -308,9 +316,9 @@ class RecommendationService
                 'd' => $now->addDays($value),
                 'h' => $now->addHours($value),
                 'm' => $now->addMinutes($value),
-                default => $now->addHour(), // fallback
             };
         }
+        \Log::warning('Unrecognised CACHE_TTL value, defaulting to 1 hour', ['value' => $ttl]);
         return $now->addHour();
     }
 }

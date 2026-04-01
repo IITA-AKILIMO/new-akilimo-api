@@ -2,19 +2,16 @@
 
 namespace App\Http\Resources;
 
-use App\Models\StarchFactory;
 use App\Models\UserFeedback;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin UserFeedback */
 class UserFeedbackResource extends JsonResource
 {
-//    public static $wrap = 'feedback';
+    public static $wrap = null;
 
     public function toArray($request): array
     {
-        /** @var UserFeedback $this */
-
-
         return [
             'id' => $this->id,
             'recommendation_id' => $this->id,

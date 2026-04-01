@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class RecommendationException extends Exception
+final class RecommendationException extends Exception
 {
     /**
      * Structured error data returned from the API or service.
@@ -110,7 +110,7 @@ class RecommendationException extends Exception
      */
     public static function notFound(string $message = 'Recommendation not found'): static
     {
-        return new static($message, Response::HTTP_NOT_FOUND);
+        return new self($message, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -127,7 +127,7 @@ class RecommendationException extends Exception
         ?Throwable $previous = null
     ): static
     {
-        return new static($message, Response::HTTP_SERVICE_UNAVAILABLE, $body, $previous);
+        return new self($message, Response::HTTP_SERVICE_UNAVAILABLE, $body, $previous);
     }
 
     /**
@@ -139,6 +139,6 @@ class RecommendationException extends Exception
      */
     public static function invalidData(string $message = 'Invalid recommendation data', array $errors = []): static
     {
-        return new static($message, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
+        return new self($message, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
     }
 }

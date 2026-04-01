@@ -14,9 +14,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $request_id
+ * @property string|null $device_token
  * @property array $droid_request
  * @property array $plumber_request
  * @property array $plumber_response
+ * @property Carbon|null $request_started_at
+ * @property int|null $request_duration_ms
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -38,15 +41,19 @@ class ApiRequest extends Model
     protected $table = 'api_requests';
 
     protected $casts = [
-        'droid_request' => 'json',
-        'plumber_request' => 'json',
-        'plumber_response' => 'json',
+        'droid_request'       => 'json',
+        'plumber_request'     => 'json',
+        'plumber_response'    => 'json',
+        'request_started_at'  => 'datetime',
     ];
 
     protected $fillable = [
         'request_id',
+        'device_token',
         'droid_request',
         'plumber_request',
         'plumber_response',
+        'request_started_at',
+        'request_duration_ms',
     ];
 }
