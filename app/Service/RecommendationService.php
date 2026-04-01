@@ -41,11 +41,15 @@ class RecommendationService
      */
     public function compute(array $droidRequest): array
     {
-        return $this->performComputation($droidRequest);
         $cacheKey = $this->generateCacheKey($droidRequest);
-        return Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
+        $result = Cache::remember($cacheKey, $this->cacheTTL, function () use ($droidRequest) {
             return $this->performComputation($droidRequest);
         });
+
+        // Always assign a fresh request_id — each HTTP call is a distinct trace event
+        // even when the computation result is served from cache.
+        $result['request_id'] = (string) Str::uuid();
+        return $result;
     }
 
 
