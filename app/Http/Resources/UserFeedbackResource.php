@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin UserFeedback */
 class UserFeedbackResource extends JsonResource
 {
-//    public static $wrap = 'feedback';
+    public static $wrap = null;
 
     public function toArray($request): array
     {
