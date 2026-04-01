@@ -41,6 +41,9 @@ class AkilimoComputeService
         } catch (ConnectionException $e) {
             Log::error('AKILIMO Compute API Connection Error', ['endpoint' => $this->endpoint, 'error' => $e->getMessage()]);
             throw $e;
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            // HTTP-level error after retries — let the caller handle status code mapping
+            throw $e;
         } catch (\Throwable $e) {
             Log::error('AKILIMO API Unexpected Error', ['endpoint' => $this->endpoint, 'error' => $e->getMessage()]);
             throw new RecommendationException('Unexpected error calling AKILIMO Compute API', 500);
