@@ -14,8 +14,12 @@ Current baseline: **98 tests, 204 assertions** (all passing).
 |---|-----------|
 | 1 | Returns 200 with JSON body |
 | 2 | Response contains keys: `status`, `checks` (or equivalent top-level keys) |
-| 3 | `status` is `ok` when all services are reachable |
+| 3 | `status` is `healthy` when all services are reachable |
 | 4 | DB check passes (SQLite in-memory is present during tests) |
+| 5 | `checks.akilimo-compute.status` is `UP` when the compute service responds 200 (Http::fake) |
+| 6 | `checks.akilimo-compute.status` is `DOWN` and overall status is `unhealthy` when compute service is unreachable |
+| 7 | `checks.akilimo-compute.status` is `DOWN` when `AKILIMO_COMPUTE_BASE_URL` is empty |
+| 8 | `checks.akilimo-compute` includes `url` and `http_status` on a successful probe |
 
 ---
 

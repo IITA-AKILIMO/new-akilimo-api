@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +34,7 @@ class HealthCheckController extends Controller
             'migrations' => $this->checkMigrations(),
             'env-config' => $this->checkEnvironmentConfig(),
             'php-extensions' => $this->checkPHPExtensions(),
+            'akilimo-compute' => $this->checkAkilimoCompute(),
         ];
 
         $overallStatus = true;
@@ -247,5 +249,39 @@ class HealthCheckController extends Controller
 
         $extensionStatus['status'] = count(array_filter($extensionStatus, fn($status) => $status === false)) === 0 ? 'UP' : 'DOWN';
         return $extensionStatus;
+    }
+
+    private function checkAkilimoCompute(): array
+    {
+        $baseUrl   = rtrim((string) config('akilimo-compute.base_url', ''), '/');
+        $healthUrl = $baseUrl ? $baseUrl . '/health' : null;
+
+        $result = [
+            'status' => 'DOWN',
+            'url'    => $healthUrl,
+        ];
+
+        if (empty($healthUrl)) {
+            $result['error'] = 'AKILIMO_COMPUTE_BASE_URL is not configured';
+            return $result;
+        }
+
+        try {
+            $response = Http::timeout(5)->get($healthUrl);
+
+            $result['status']      = $response->successful() ? 'UP' : 'DOWN';
+            $result['http_status'] = $response->status();
+
+            // If the health endpoint returns JSON like {"status":"UP"}
+            if ($response->json('status')) {
+                $result['service_status'] = $response->json('status');
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $result['error'] = 'Connection failed: ' . $e->getMessage();
+        } catch (\Throwable $e) {
+            $result['error'] = $e->getMessage();
+        }
+
+        return $result;
     }
 }
