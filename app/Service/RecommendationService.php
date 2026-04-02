@@ -48,7 +48,7 @@ class RecommendationService
 
         // Always assign a fresh request_id — each HTTP call is a distinct trace event
         // even when the computation result is served from cache.
-        $result['request_id'] = (string) Str::uuid();
+        $result['request_id'] = (string)Str::uuid();
         return $result;
     }
 
@@ -308,11 +308,12 @@ class RecommendationService
         }
 
 
-        if (preg_match('/^(\d+)([dhm])$/', $ttl, $matches)) {
+        if (preg_match('/^(\d+)([sdhm])$/', $ttl, $matches)) {
             $value = (int)$matches[1];
             $unit = $matches[2];
 
             return match ($unit) {
+                's' => $now->addSeconds($value),
                 'd' => $now->addDays($value),
                 'h' => $now->addHours($value),
                 'm' => $now->addMinutes($value),
