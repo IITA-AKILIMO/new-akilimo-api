@@ -10,7 +10,6 @@ class UserInfoRules
 
         return [
             'user_info' => ['required', 'array'],
-
             'user_info.device_token' => ['required', 'uuid'],
             'user_info.risk_attitude' => ['required', 'numeric'],
             'user_info.phone_number' => ['nullable', 'string'],
