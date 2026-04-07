@@ -27,11 +27,10 @@ class OperationCostController extends Controller
         $operationName = $request->input('operation_name');
         $operationType = $request->input('operation_type');
 
-        $filters = [
-            'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType))
-        ];
-
+        $filters = array_filter([
+            'operation_name' => filled($operationName) ? strtolower(trim($operationName)) : null,
+            'operation_type' => filled($operationType) ? strtolower(trim($operationType)) : null,
+        ]);
 
         $operationCosts = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -55,11 +54,11 @@ class OperationCostController extends Controller
         $operationName = $request->input('operation_name');
         $operationType = $request->input('operation_type');
 
-        $filters = [
-            'country_code' => $countryCode,
-            'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType))
-        ];
+        $filters = array_filter([
+            'country_code'   => $countryCode,
+            'operation_name' => filled($operationName) ? strtolower(trim($operationName)) : null,
+            'operation_type' => filled($operationType) ? strtolower(trim($operationType)) : null,
+        ]);
 
 
         $operationCosts = $this->repo->paginateWithSort(
