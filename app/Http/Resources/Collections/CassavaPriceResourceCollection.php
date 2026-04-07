@@ -12,6 +12,11 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CassavaPriceResourceCollection extends ResourceCollection
 {
+    public function __construct($resource, private readonly CassavaPriceRepo $priceRepo)
+    {
+        parent::__construct($resource);
+    }
+
     /**
      * Transform the resource collection into an array.
      *
@@ -22,9 +27,10 @@ class CassavaPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        // One query for all price bands across countries
+        // One query scoped to the countries present on this page
+        $countries = $this->collection->pluck('country')->unique()->values()->all();
         /** @var array<string, MinMaxPriceDto> $priceBands */
-        $priceBands = app(CassavaPriceRepo::class)->findAllPriceBands();
+        $priceBands = $this->priceRepo->findPriceBandsForCountries($countries);
 
         // One query for all currencies needed on this page
         $currencyCodes = $this->collection

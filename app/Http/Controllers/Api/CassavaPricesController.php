@@ -31,7 +31,7 @@ class CassavaPricesController extends Controller
             direction: $sort,
         );
 
-        return CassavaPriceResourceCollection::make($cassavaPrices);
+        return CassavaPriceResourceCollection::make($cassavaPrices, $this->repo);
     }
 
     /**
@@ -54,6 +54,6 @@ class CassavaPricesController extends Controller
             direction: $sort,
             filters: $filters,
         );
-        return CassavaPriceResourceCollection::make($cassavaPrices);
+        return CassavaPriceResourceCollection::make($cassavaPrices, $this->repo);
     }
 }
