@@ -239,8 +239,9 @@ abstract class BaseRepo implements Repository
     {
         $query = $this->query($with);
 
-        if (!empty($filters)) {
-            $query->where($filters);
+        $cleanFilters = array_filter($filters, fn($v) => $v !== null && $v !== '');
+        if (!empty($cleanFilters)) {
+            $query->where($cleanFilters);
         }
 
         return $query->orderBy($orderBy, $direction)->paginate($perPage);
