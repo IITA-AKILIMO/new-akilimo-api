@@ -98,9 +98,14 @@ class RecommendationService
 
             return [
                 'request_id' => $requestUuid,
-                'version' => Arr::get($computeResp, 'version'),
-                'rec_type' => Arr::get($computeResp, 'rec_type'),
-                'recommendation' => Arr::get($computeResp, 'recommendation'),
+                'status'     => Arr::get($computeResp, 'status', 'success'),
+                'version'    => Arr::get($computeResp, 'version'),
+                'data'       => [
+                    'rec_type'         => Arr::get($computeResp, 'data.rec_type'),
+                    'recommendation'   => Arr::get($computeResp, 'data.recommendation'),
+                    'data'             => Arr::get($computeResp, 'data.data', []),
+                    'fertilizer_rates' => Arr::get($computeResp, 'data.fertilizer_rates', []),
+                ],
             ];
         } catch (RecommendationException $ex) {
             $this->updateRequestLogResponse($requestLog->id, $ex->body, $startedAt);
