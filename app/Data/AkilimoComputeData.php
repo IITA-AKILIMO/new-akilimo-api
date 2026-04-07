@@ -155,7 +155,7 @@ class AkilimoComputeData extends Data
     public bool $tractorRidger;
 
     #[MapOutputName('userEmail')]
-    public string $emailAddress;
+    public ?string $emailAddress;
 
     #[MapOutputName('userField')]
     public string $farmName;
@@ -167,7 +167,7 @@ class AkilimoComputeData extends Data
     public string $phoneCountryCode;
 
     #[MapOutputName('userPhoneNr')]
-    public string $phoneNumber;
+    public ?string $phoneNumber;
 
     /**
      * Fertilizer availability, weight, and price data keyed by the Plumbr-expected field name
@@ -175,8 +175,7 @@ class AkilimoComputeData extends Data
      *
      * Populated by RecommendationService::mapFertilizersToExternalFormat() and flattened
      * into the top-level payload by toArray(), so the Plumbr API contract is preserved exactly.
-     * Adding a new fertilizer type only requires a new entry in the fertilizers table — no DTO
-     * changes needed.
+     * Adding a new fertilizer type only requires a new entry in the fertilizer table — no DTO changes are needed.
      */
     public array $fertilizers = [];
 

@@ -13,6 +13,7 @@ class ComputeRequestData extends Data
 {
     public FarmInformationData $farmInformation;
     public InterCroppingData $interCropping;
+
     public RecommendationsData $recommendations;
     public PlantingData $planting;
     public FallowData $fallow;
