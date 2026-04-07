@@ -33,7 +33,7 @@ class ComputeFieldRules
             'compute_request.interCropping.inter_cropping_potato_rec' => ['boolean'],
 
             // Recommendations
-            'compute_request.recommendations.lang' => ['nullable', 'string', "max:2"],
+            'compute_request.recommendations.lang' => ['required', 'string', "min:2", "max:2"],
             'compute_request.recommendations.fertilizer_rec' => ['boolean'],
             'compute_request.recommendations.planting_practices_rec' => ['boolean'],
             'compute_request.recommendations.scheduled_planting_rec' => ['boolean'],

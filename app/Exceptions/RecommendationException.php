@@ -77,6 +77,10 @@ final class RecommendationException extends Exception
             'status' => $status
         ];
 
+        if (!empty($this->body['errors'])) {
+            $response['errors'] = $this->body['errors'];
+        }
+
         return response()->json($response, $status);
     }
 
@@ -108,7 +112,7 @@ final class RecommendationException extends Exception
      * @param string $message
      * @return static
      */
-    public static function notFound(string $message = 'Recommendation not found'): static
+    public static function notFound(string $message = 'Recommendation not found'): RecommendationException
     {
         return new self($message, Response::HTTP_NOT_FOUND);
     }
@@ -125,7 +129,7 @@ final class RecommendationException extends Exception
         string     $message = 'Recommendation service is currently unavailable',
         array      $body = [],
         ?Throwable $previous = null
-    ): static
+    ): RecommendationException
     {
         return new self($message, Response::HTTP_SERVICE_UNAVAILABLE, $body, $previous);
     }
@@ -140,5 +144,14 @@ final class RecommendationException extends Exception
     public static function invalidData(string $message = 'Invalid recommendation data', array $errors = []): static
     {
         return new self($message, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
+    }
+
+    public static function validationFailed(array $errors, string $message = 'Validation failed'): static
+    {
+        return new self(
+            $message,
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            ['errors' => $errors]
+        );
     }
 }
