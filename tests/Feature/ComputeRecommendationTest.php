@@ -124,9 +124,14 @@ function validComputePayload(): array
 function plumberSuccessResponse(): array
 {
     return [
-        'version'        => '1.0',
-        'rec_type'       => 'CASSAVA',
-        'recommendation' => ['FR' => ['data' => []]],
+        'status'  => 'success',
+        'version' => '20251228',
+        'data'    => [
+            'rec_type'         => 'FR',
+            'recommendation'   => 'We recommend applying 50 kg of Urea per hectare',
+            'data'             => [],
+            'fertilizer_rates' => [['type' => 'Urea', 'rate' => 50]],
+        ],
     ];
 }
 
@@ -142,7 +147,12 @@ it('returns a recommendation on a successful Plumbr response', function () {
     $response = $this->postJson('/api/v1/recommendations/compute', validComputePayload());
 
     $response->assertOk()
-        ->assertJsonStructure(['request_id', 'version', 'rec_type', 'recommendation']);
+        ->assertJsonStructure([
+            'request_id',
+            'status',
+            'version',
+            'data' => ['rec_type', 'recommendation', 'data', 'fertilizer_rates'],
+        ]);
 });
 
 it('includes a server-generated request_id in the response', function () {
