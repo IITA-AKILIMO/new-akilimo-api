@@ -11,6 +11,11 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class FertilizerPriceResourceCollection extends ResourceCollection
 {
+    public function __construct($resource, private readonly FertilizerPriceRepo $priceRepo)
+    {
+        parent::__construct($resource);
+    }
+
     /**
      * Transform the resource collection into an array.
      *
@@ -28,7 +33,7 @@ class FertilizerPriceResourceCollection extends ResourceCollection
             ->all();
 
         // Two queries: one for min bands, one for max bands
-        $priceBands = app(FertilizerPriceRepo::class)->findMinMaxBandsByKeys($fertilizerKeys);
+        $priceBands = $this->priceRepo->findMinMaxBandsByKeys($fertilizerKeys);
 
         // One query for all currencies needed on this page
         $currencyCodes = $this->collection
