@@ -18,80 +18,71 @@ export default function Login() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-900 px-4">
-            <div className="w-full max-w-sm">
-                {/* Brand */}
-                <div className="mb-8 text-center">
-                    <span className="text-3xl font-bold text-green-400">Akilimo</span>
-                    <span className="text-3xl font-light text-white"> Admin</span>
-                    <p className="mt-2 text-sm text-gray-400">Sign in to your account</p>
+        <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+            <div style={{ width: '100%', maxWidth: 420 }} className="px-3">
+                <div className="text-center mb-4">
+                    <div>
+                        <span className="fs-3 fw-bold text-success">Akilimo</span>
+                        <span className="fs-3 fw-light text-secondary ms-1">Admin</span>
+                    </div>
+                    <p className="text-muted small mt-1">Sign in to your account</p>
                 </div>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="rounded-xl bg-white p-8 shadow-xl"
-                >
-                    <div className="space-y-5">
-                        {/* Username */}
-                        <div>
-                            <label
-                                htmlFor="username"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Username or email
-                            </label>
-                            <input
-                                id="username"
-                                type="text"
-                                autoComplete="username"
-                                autoFocus
-                                value={data.username}
-                                onChange={(e) => setData('username', e.target.value)}
-                                className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-green-500 ${
-                                    errors.username
-                                        ? 'border-red-400 focus:ring-red-400'
-                                        : 'border-gray-300'
-                                }`}
-                            />
-                            {errors.username && (
-                                <p className="mt-1 text-xs text-red-600">{errors.username}</p>
-                            )}
-                        </div>
+                <div className="card shadow-sm">
+                    <div className="card-body p-4">
+                        <form onSubmit={handleSubmit} noValidate>
+                            <div className="mb-3">
+                                <label htmlFor="username" className="form-label fw-medium">
+                                    Username or email
+                                </label>
+                                <input
+                                    id="username"
+                                    type="text"
+                                    autoComplete="username"
+                                    autoFocus
+                                    value={data.username}
+                                    onChange={(e) => setData('username', e.target.value)}
+                                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
+                                />
+                                {errors.username && (
+                                    <div className="invalid-feedback">{errors.username}</div>
+                                )}
+                            </div>
 
-                        {/* Password */}
-                        <div>
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Password
-                            </label>
-                            <input
-                                id="password"
-                                type="password"
-                                autoComplete="current-password"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-green-500 ${
-                                    errors.password
-                                        ? 'border-red-400 focus:ring-red-400'
-                                        : 'border-gray-300'
-                                }`}
-                            />
-                            {errors.password && (
-                                <p className="mt-1 text-xs text-red-600">{errors.password}</p>
-                            )}
-                        </div>
+                            <div className="mb-4">
+                                <label htmlFor="password" className="form-label fw-medium">
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                />
+                                {errors.password && (
+                                    <div className="invalid-feedback">{errors.password}</div>
+                                )}
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="w-full rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-60"
-                        >
-                            {processing ? 'Signing in…' : 'Sign in'}
-                        </button>
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="btn btn-success w-100"
+                            >
+                                {processing && (
+                                    <span
+                                        className="spinner-border spinner-border-sm me-2"
+                                        role="status"
+                                        aria-hidden="true"
+                                    />
+                                )}
+                                Sign in
+                            </button>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     )

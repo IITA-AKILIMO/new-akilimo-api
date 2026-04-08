@@ -1,34 +1,42 @@
 import AdminLayout from '../layouts/AdminLayout'
 
 const statCards = [
-    { label: 'Total Requests', value: '—', description: 'All time compute requests' },
-    { label: 'Active Users', value: '—', description: 'Users with active tokens' },
-    { label: 'Fertilizers', value: '—', description: 'Available fertilizer records' },
-    { label: 'Countries', value: '—', description: 'Supported country codes' },
+    { label: 'Total Requests', value: '—', description: 'All time compute requests', color: 'success' },
+    { label: 'Active Users', value: '—', description: 'Users with active tokens', color: 'primary' },
+    { label: 'Fertilizers', value: '—', description: 'Available fertilizer records', color: 'info' },
+    { label: 'Countries', value: '—', description: 'Supported country codes', color: 'warning' },
 ]
 
 export default function Dashboard() {
     return (
         <AdminLayout title="Dashboard">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="row g-4 mb-4">
                 {statCards.map((card) => (
-                    <div
-                        key={card.label}
-                        className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
-                    >
-                        <p className="text-sm font-medium text-gray-500">{card.label}</p>
-                        <p className="mt-1 text-3xl font-bold text-gray-900">{card.value}</p>
-                        <p className="mt-1 text-xs text-gray-400">{card.description}</p>
+                    <div key={card.label} className="col-sm-6 col-xl-3">
+                        <div className="card shadow-sm h-100">
+                            <div className="card-body">
+                                <p className="text-muted small fw-medium text-uppercase mb-1">{card.label}</p>
+                                <p className={`fs-2 fw-bold text-${card.color} mb-1`}>{card.value}</p>
+                                <p className="text-muted small mb-0">{card.description}</p>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h2 className="text-sm font-semibold text-gray-700">Recent Activity</h2>
-                <p className="mt-3 text-sm text-gray-400">
-                    Live stats will be wired up in Phase 6 using the{' '}
-                    <code className="rounded bg-gray-100 px-1 text-xs">v_app_request_stats_view</code>.
-                </p>
+            <div className="card shadow-sm">
+                <div className="card-header bg-white py-3">
+                    <h6 className="mb-0 fw-semibold">Recent Activity</h6>
+                </div>
+                <div className="card-body text-center text-muted py-5">
+                    <svg className="mb-2" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <div className="small">
+                        Live stats will be wired up in Phase 6 using{' '}
+                        <code>v_app_request_stats_view</code>.
+                    </div>
+                </div>
             </div>
         </AdminLayout>
     )

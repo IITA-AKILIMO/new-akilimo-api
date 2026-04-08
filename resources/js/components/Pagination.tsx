@@ -23,75 +23,59 @@ function buildPageRange(current: number, last: number): (number | '…')[] {
 }
 
 export default function Pagination({ meta, onPageChange }: PaginationProps) {
-    const { current_page, last_page, per_page, total, from, to } = meta
+    const { current_page, last_page, total, from, to } = meta
     const pages = buildPageRange(current_page, last_page)
 
-    const btnBase =
-        'flex h-8 min-w-[2rem] items-center justify-center rounded-md px-2.5 text-sm font-medium transition-colors focus:outline-none'
-    const btnActive = 'bg-green-600 text-white shadow-sm'
-    const btnIdle = 'text-gray-600 hover:bg-gray-100'
-    const btnDisabled = 'cursor-not-allowed text-gray-300'
-
     return (
-        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-            {/* Count */}
-            <p className="text-sm text-gray-500">
+        <div className="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
+            <p className="text-muted small mb-0">
                 {from !== null && to !== null ? (
-                    <>
-                        Showing <span className="font-medium text-gray-700">{from}</span>–
-                        <span className="font-medium text-gray-700">{to}</span> of{' '}
-                        <span className="font-medium text-gray-700">{total}</span> results
-                    </>
+                    <>Showing <strong>{from}</strong>–<strong>{to}</strong> of <strong>{total}</strong> results</>
                 ) : (
                     'No results'
                 )}
             </p>
 
-            {/* Controls */}
-            <nav className="flex items-center gap-1" aria-label="Pagination">
-                {/* Previous */}
-                <button
-                    onClick={() => onPageChange(current_page - 1)}
-                    disabled={current_page === 1}
-                    className={`${btnBase} gap-1 ${current_page === 1 ? btnDisabled : btnIdle}`}
-                    aria-label="Previous page"
-                >
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M9.78 12.78a.75.75 0 0 1-1.06 0L4.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 1.06L6.06 8l3.72 3.72a.75.75 0 0 1 0 1.06z" />
-                    </svg>
-                    <span className="hidden sm:inline">Prev</span>
-                </button>
-
-                {/* Page numbers */}
-                {pages.map((page, i) =>
-                    page === '…' ? (
-                        <span key={`ellipsis-${i}`} className="px-1.5 text-sm text-gray-400">
-                            …
-                        </span>
-                    ) : (
+            <nav aria-label="Pagination">
+                <ul className="pagination pagination-sm mb-0">
+                    <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
                         <button
-                            key={page}
-                            onClick={() => onPageChange(page as number)}
-                            className={`${btnBase} ${page === current_page ? btnActive : btnIdle}`}
-                            aria-current={page === current_page ? 'page' : undefined}
+                            className="page-link"
+                            onClick={() => onPageChange(current_page - 1)}
+                            disabled={current_page === 1}
                         >
-                            {page}
+                            &lsaquo; Prev
                         </button>
-                    ),
-                )}
+                    </li>
 
-                {/* Next */}
-                <button
-                    onClick={() => onPageChange(current_page + 1)}
-                    disabled={current_page === last_page}
-                    className={`${btnBase} gap-1 ${current_page === last_page ? btnDisabled : btnIdle}`}
-                    aria-label="Next page"
-                >
-                    <span className="hidden sm:inline">Next</span>
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06z" />
-                    </svg>
-                </button>
+                    {pages.map((page, i) =>
+                        page === '…' ? (
+                            <li key={`ellipsis-${i}`} className="page-item disabled">
+                                <span className="page-link">…</span>
+                            </li>
+                        ) : (
+                            <li key={page} className={`page-item ${page === current_page ? 'active' : ''}`}>
+                                <button
+                                    className="page-link"
+                                    onClick={() => onPageChange(page as number)}
+                                    aria-current={page === current_page ? 'page' : undefined}
+                                >
+                                    {page}
+                                </button>
+                            </li>
+                        ),
+                    )}
+
+                    <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
+                        <button
+                            className="page-link"
+                            onClick={() => onPageChange(current_page + 1)}
+                            disabled={current_page === last_page}
+                        >
+                            Next &rsaquo;
+                        </button>
+                    </li>
+                </ul>
             </nav>
         </div>
     )

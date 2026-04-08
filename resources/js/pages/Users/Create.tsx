@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react'
+import type { FormEvent } from 'react'
 import FormField from '../../components/FormField'
 import ResourceForm from '../../components/ResourceForm'
 import AdminLayout from '../../layouts/AdminLayout'
@@ -20,14 +21,14 @@ export default function UsersCreate() {
         password_confirmation: '',
     })
 
-    function handleSubmit(e: React.FormEvent) {
+    function handleSubmit(e: FormEvent) {
         e.preventDefault()
         post('/admin/users')
     }
 
     return (
         <AdminLayout title="New User">
-            <div className="mx-auto max-w-2xl">
+            <div className="mx-auto" style={{ maxWidth: 640 }}>
                 <ResourceForm
                     title="Create User"
                     onSubmit={handleSubmit}
@@ -39,7 +40,7 @@ export default function UsersCreate() {
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                            className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                             placeholder="Full name"
                         />
                     </FormField>
@@ -49,7 +50,7 @@ export default function UsersCreate() {
                             type="text"
                             value={data.username}
                             onChange={(e) => setData('username', e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                            className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                             placeholder="username"
                             autoComplete="username"
                         />
@@ -60,7 +61,7 @@ export default function UsersCreate() {
                             type="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                             placeholder="user@example.com"
                             autoComplete="email"
                         />
@@ -71,7 +72,7 @@ export default function UsersCreate() {
                             type="password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                            className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                             autoComplete="new-password"
                         />
                     </FormField>
@@ -81,7 +82,7 @@ export default function UsersCreate() {
                             type="password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                            className={`form-control ${errors.password_confirmation ? 'is-invalid' : ''}`}
                             autoComplete="new-password"
                         />
                     </FormField>

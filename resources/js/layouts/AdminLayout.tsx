@@ -63,13 +63,7 @@ function FlashBanner() {
     if (!flash.success && !flash.error) return null
 
     return (
-        <div
-            className={`px-6 py-3 text-sm font-medium ${
-                flash.success
-                    ? 'bg-green-50 text-green-800 border-b border-green-200'
-                    : 'bg-red-50 text-red-800 border-b border-red-200'
-            }`}
-        >
+        <div className={flash.success ? 'flash-success' : 'flash-error'}>
             {flash.success ?? flash.error}
         </div>
     )
@@ -81,7 +75,7 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ title, children }: AdminLayoutProps) {
-    const { auth, url } = usePage<PageProps & { url: string }>().props
+    const { auth } = usePage<PageProps>().props
 
     function handleLogout() {
         router.post('/admin/logout')
@@ -90,33 +84,27 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
 
     return (
-        <div className="flex h-screen overflow-hidden bg-gray-50">
+        <div className="d-flex vh-100 overflow-hidden">
             {/* Sidebar */}
-            <aside className="flex w-64 flex-shrink-0 flex-col bg-gray-900 text-white">
+            <aside className="admin-sidebar d-flex flex-column bg-dark text-white flex-shrink-0">
                 {/* Brand */}
-                <div className="flex h-16 items-center px-6 border-b border-gray-700">
-                    <span className="text-lg font-bold tracking-tight text-green-400">Akilimo</span>
-                    <span className="ml-1 text-lg font-light text-gray-300">Admin</span>
+                <div className="px-3 py-3 border-bottom border-secondary">
+                    <span className="fs-5 fw-bold text-success">Akilimo</span>
+                    <span className="fs-5 fw-light text-white-50 ms-1">Admin</span>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto py-4 px-3">
+                <nav className="flex-grow-1 overflow-auto py-3 px-2">
                     {navigation.map((group) => (
-                        <div key={group.heading} className="mb-6">
-                            <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                {group.heading}
-                            </p>
+                        <div key={group.heading} className="mb-4">
+                            <div className="nav-group-label mb-1">{group.heading}</div>
                             {group.items.map((item) => {
                                 const active = currentPath === item.href || currentPath.startsWith(item.href + '/')
                                 return (
                                     <Link
                                         key={item.href}
                                         href={item.href}
-                                        className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                                            active
-                                                ? 'bg-green-700 text-white'
-                                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                                        }`}
+                                        className={`nav-link${active ? ' active' : ''}`}
                                     >
                                         {item.label}
                                     </Link>
@@ -126,22 +114,25 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                     ))}
                 </nav>
 
-                {/* User info */}
-                <div className="border-t border-gray-700 p-4">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
+                {/* User footer */}
+                <div className="border-top border-secondary p-3">
+                    <div className="d-flex align-items-center gap-2">
+                        <div
+                            className="d-flex align-items-center justify-content-center rounded-circle bg-success text-white fw-bold flex-shrink-0"
+                            style={{ width: 34, height: 34, fontSize: '0.85rem' }}
+                        >
                             {auth.user?.name?.charAt(0).toUpperCase()}
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium text-white">{auth.user?.name}</p>
-                            <p className="truncate text-xs text-gray-400">{auth.user?.username}</p>
+                        <div className="flex-grow-1 overflow-hidden">
+                            <div className="text-white text-truncate small fw-medium">{auth.user?.name}</div>
+                            <div className="text-white-50 text-truncate" style={{ fontSize: '0.75rem' }}>{auth.user?.username}</div>
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="rounded p-1 text-gray-400 hover:text-white transition-colors"
+                            className="btn btn-link p-1 text-white-50 text-decoration-none"
                             title="Sign out"
                         >
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                             </svg>
                         </button>
@@ -149,16 +140,16 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                 </div>
             </aside>
 
-            {/* Main content */}
-            <div className="flex flex-1 flex-col overflow-hidden">
+            {/* Main area */}
+            <div className="d-flex flex-column flex-grow-1 overflow-hidden">
                 {/* Top bar */}
-                <header className="flex h-16 flex-shrink-0 items-center border-b border-gray-200 bg-white px-6">
-                    <h1 className="text-lg font-semibold text-gray-800">{title ?? 'Dashboard'}</h1>
+                <header className="d-flex align-items-center border-bottom bg-white px-4" style={{ minHeight: 60 }}>
+                    <h1 className="h5 mb-0 fw-semibold">{title ?? 'Dashboard'}</h1>
                 </header>
 
                 <FlashBanner />
 
-                <main className="flex-1 overflow-y-auto p-6">
+                <main className="flex-grow-1 overflow-auto p-4">
                     {children}
                 </main>
             </div>
