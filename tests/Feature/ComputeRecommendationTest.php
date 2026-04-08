@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+
+beforeEach(fn() => $this->actingAsApiUser());
 
 // ---------------------------------------------------------------------------
 // Helpers

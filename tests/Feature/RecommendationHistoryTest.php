@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Http;
 
+beforeEach(fn() => $this->actingAsApiUser());
+
 it('returns an empty paginated list when no recommendations exist', function () {
     $this->getJson('/api/v1/recommendations')
         ->assertOk()

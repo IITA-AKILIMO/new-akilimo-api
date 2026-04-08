@@ -1,5 +1,7 @@
 <?php
 
+beforeEach(fn() => $this->actingAsApiUser());
+
 function validFeedbackPayload(): array
 {
     return [
