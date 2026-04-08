@@ -28,25 +28,25 @@ Each item links to its corresponding GitHub issue and contains a checklist for t
 
 ---
 
-### #34 · No rate limiting on any endpoint
+### #34 · ~~No rate limiting on any endpoint~~ ✅ Done
 **Risk:** Compute endpoint is unbounded — expensive external call + DB write per request.
 
-- [ ] Apply `throttle:30,1` to `POST /v1/recommendations/compute`
-- [ ] Apply `throttle:120,1` to all read-only list endpoints
-- [ ] Apply `throttle:30,1` to `POST /v1/user-feedback`
+- [x] Apply `throttle:30,1` to `POST /v1/recommendations/compute`
+- [x] Apply `throttle:120,1` to all read-only list endpoints
+- [x] Apply `throttle:30,1` to `POST /v1/user-feedback`
 - [ ] Verify `429 Too Many Requests` with `Retry-After` header is returned on breach
 - [ ] Add a test asserting 429 after the limit is exceeded
 
 ---
 
-### #35 · Unvalidated `per_page`, `order_by`, and `sort` parameters
+### #35 · ~~Unvalidated `per_page`, `order_by`, and `sort` parameters~~ ✅ Done
 **Risk:** Memory exhaustion; schema information leak via crafted sort values.
 
-- [ ] Cap `per_page` at 100 (or a config-defined max)
-- [ ] Validate `order_by` against a per-controller allowlist
-- [ ] Validate `sort` to `asc` / `desc` only
-- [ ] Apply to: `RecommendationController`, `FertilizerController`, `UserFeedBackController`, `OperationCostController`, `CurrencyController`
-- [ ] Return `422` with a clear message on invalid values
+- [x] Cap `per_page` at 100 via `HasPaginationParams::getPerPage()`
+- [x] Validate `order_by` against a per-controller allowlist via `HasPaginationParams::getOrderBy()`
+- [x] Validate `sort` to `asc` / `desc` only via `HasPaginationParams::getSortDirection()`
+- [x] Applied to all list controllers via the `HasPaginationParams` trait
+- [ ] Return `422` with a clear message on invalid values (currently falls back silently to default)
 
 ---
 
@@ -162,8 +162,8 @@ Each item links to its corresponding GitHub issue and contains a checklist for t
 |---|-------|----------|--------|
 | [#32](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/32) | Cache key excludes fertilizer + user info | Critical | Open |
 | [#33](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/33) | PlumberService timeout hardcoded to 5 s | Critical | Open |
-| [#34](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/34) | No rate limiting on any endpoint | Critical | Open |
-| [#35](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/35) | Unvalidated per_page / order_by / sort | Critical | Open |
+| [#34](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/34) | No rate limiting on any endpoint | Critical | ✅ Done |
+| [#35](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/35) | Unvalidated per_page / order_by / sort | Critical | ✅ Done |
 | [#36](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/36) | Generic catch hides real bugs | High | Open |
 | [#37](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/37) | No request latency tracking | High | Open |
 | [#38](https://github.com/IITA-AKILIMO/new-akilimo-api/issues/38) | device_token used as correlation ID | High | Open |

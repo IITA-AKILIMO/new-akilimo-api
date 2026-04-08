@@ -4,6 +4,44 @@ Current baseline: **98 tests, 204 assertions** (all passing).
 
 ---
 
+## Priority 0 — Authentication (new — must pass before merging auth work)
+
+### T0 · Login / Logout
+**File:** `tests/Feature/Auth/LoginTest.php`
+
+| # | Test case |
+|---|-----------|
+| 1 | `POST /v1/auth/login` with valid username returns 200, `token_type`, `token`, `expires_at`, `user` |
+| 2 | `POST /v1/auth/login` with valid email returns 200 |
+| 3 | `POST /v1/auth/login` with wrong password returns 401 |
+| 4 | `POST /v1/auth/login` with unknown username returns 401 |
+| 5 | `POST /v1/auth/login` missing `username` returns 422 |
+| 6 | `POST /v1/auth/login` missing `password` returns 422 |
+| 7 | `POST /v1/auth/logout` with valid bearer token returns 200 and deletes the token |
+| 8 | `POST /v1/auth/logout` without token returns 401 |
+| 9 | Token is not reusable after logout |
+
+---
+
+### T0b · API Key management
+**File:** `tests/Feature/Auth/ApiKeyTest.php`
+
+| # | Test case |
+|---|-----------|
+| 10 | `POST /v1/auth/api-keys` without auth returns 401 |
+| 11 | `POST /v1/auth/api-keys` with valid bearer token creates key, returns `key` in response |
+| 12 | `POST /v1/auth/api-keys` with `abilities` scoped to `['read']` stores abilities correctly |
+| 13 | `POST /v1/auth/api-keys` with invalid ability value returns 422 |
+| 14 | `POST /v1/auth/api-keys` with `expires_at` in the past returns 422 |
+| 15 | `GET /v1/auth/api-keys` returns only keys belonging to authenticated user |
+| 16 | Generated key can authenticate a request via `X-Api-Key` header |
+| 17 | Revoked key (`PATCH .../revoke`) returns 401 on subsequent requests |
+| 18 | Deleted key (`DELETE`) returns 401 on subsequent requests |
+| 19 | Expired key returns 401 |
+| 20 | Key with `abilities: ['read']` returns 403 on a route requiring `write` |
+
+---
+
 ## Priority 1 — High value (behaviour that can silently break)
 
 ### T1 · Health Check
@@ -161,6 +199,8 @@ These tests verify the shared pagination behaviour once, so we don't repeat it p
 
 | Priority | File | New tests |
 |----------|------|-----------|
+| P0 | `Auth/LoginTest.php` (new) | 9 |
+| P0 | `Auth/ApiKeyTest.php` (new) | 11 |
 | P1 | `HealthCheckTest.php` (new) | 4 |
 | P1 | `ComputeRecommendationTest.php` (extend) | 5 |
 | P1 | `RecommendationHistoryTest.php` (extend) | 3 |
@@ -171,7 +211,7 @@ These tests verify the shared pagination behaviour once, so we don't repeat it p
 | P2 | `ReferenceDataTest.php` (new) | 8 |
 | P3 | `PaginationContractTest.php` (new) | 5 |
 | P3 | `ResponseFormatTest.php` (new) | 3 |
-| **Total** | | **~52 new tests** |
+| **Total** | | **~72 new tests** |
 
 Implement in priority order. P1 items should land before any further feature work;
 P2 and P3 can be batched into a single PR once P1 is done.

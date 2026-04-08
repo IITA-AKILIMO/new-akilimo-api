@@ -30,23 +30,17 @@ The class property `protected int $timeout = 5` sets a 5-second timeout. `config
 
 ---
 
-### 3. No rate limiting on any endpoint
+### ~~3. No rate limiting on any endpoint~~ ✅ Fixed
 **File:** `routes/api.php`
 
-No `throttle` middleware is applied anywhere. The compute endpoint performs an external HTTP call and a database write on every request — it is expensive and currently unbounded. At minimum, apply Laravel's built-in throttle to the compute and feedback endpoints.
+Throttle middleware applied: `throttle:120,1` on all read-only reference data, `throttle:30,1` on compute and mutation endpoints, `throttle:10,1` on auth endpoints.
 
 ---
 
-### 4. `per_page` and sort parameters are unvalidated
-**File:** `app/Http/Controllers/Api/RecommendationController.php` and all other list controllers
+### ~~4. `per_page` and sort parameters are unvalidated~~ ✅ Fixed
+**File:** `app/Http/Concerns/HasPaginationParams.php`
 
-```php
-$perPage = $request->input('per_page', 50);   // no max
-$orderBy = $request->input('order_by', 'created_at');  // no allowlist
-$sort    = $request->input('sort', 'desc');    // no allowlist
-```
-
-A client can send `per_page=1000000`, exhausting memory. A crafted `order_by` value could cause a DB error or expose column names. Cap `per_page` (e.g., max 100) and validate `order_by` against an allowlist of safe column names.
+`HasPaginationParams` trait caps `per_page` at 100 via `getPerPage()`, validates `order_by` against a per-controller allowlist via `getOrderBy()`, and restricts `sort` to `asc`/`desc` via `getSortDirection()`. Applied to all list controllers.
 
 ---
 
@@ -188,11 +182,11 @@ Fertilizer and price endpoints return `JsonResource` / `ResourceCollection` obje
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | 4 |
-| High     | 6 |
-| Medium   | 7 |
-| Low      | 4 |
+| Severity | Count | Resolved |
+|----------|-------|---------|
+| Critical | 4 | 2 ✅ |
+| High     | 6 | 0 |
+| Medium   | 7 | 0 |
+| Low      | 4 | 0 |
 
-The largest structural risks are the **cache key bug** (can serve wrong recommendations), the **PlumberService timeout misconfiguration** (will time out real requests), and the **unvalidated pagination parameters** (resource exhaustion). These three should be addressed before any high-traffic usage.
+The remaining critical risks are the **cache key bug** (can serve wrong recommendations) and the **PlumberService timeout misconfiguration** (will time out real requests). These should be addressed before high-traffic production use.

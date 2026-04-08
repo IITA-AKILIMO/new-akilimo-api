@@ -1,226 +1,186 @@
-# AKILIMO API - Laravel Implementation
+# AKILIMO API
 
-The AKILIMO API is a Standardized RESTful Web Service API built with Laravel that provides computational and retrieval capabilities for agricultural recommendations across various agronomic practices including fertilizer application, intercropping, scheduled planting and harvesting, and optimal planting practices.
-
-## API Architecture
-
-The AKILIMO API is structured into three distinct endpoints to accommodate different application requirements and user interaction levels:
-
-### 1. Advanced Endpoint
-
-Designed for comprehensive data collection scenarios, this endpoint accepts the most extensive set of parameters. It is optimized for applications with rich user interfaces such as mobile applications, web dashboards, and desktop software where detailed user input is feasible and beneficial.
-
-**Use Cases:**
-- Mobile agricultural advisory apps
-- Web-based farm management systems
-- Desktop agricultural software
-- Research platforms requiring detailed input parameters
-
-### 2. Intermediate Endpoint
-
-This endpoint strikes a balance between data comprehensiveness and user experience, accepting a moderate number of input parameters. It is ideal for applications that require meaningful recommendations without overwhelming the user with extensive data entry requirements.
-
-**Use Cases:**
-- Chatbot integrations
-- Survey-style applications
-- SMS-based advisory services
-- Progressive web applications
-
-### 3. Basic Endpoint
-
-The streamlined endpoint requires only essential information to generate valuable recommendations. It is specifically designed for constrained environments where minimal user input is preferred or technically necessary.
-
-**Use Cases:**
-- USSD applications
-- Voice response systems (IVR)
-- SMS services
-- Basic mobile interfaces
-- IoT device integrations
-
-## Quick Start Guide
-
-### Prerequisites
-
-- PHP 8.3 or higher
-- Composer dependency manager
-- Laravel 10+ framework
-- MySQL 8.0+ or PostgreSQL 13+
-
-### Getting Started
-
-1. **API Access Registration**
-   Register for API access through the [user portal] to obtain your unique API key and authentication credentials.
-
-2. **Documentation Review**
-   Familiarize yourself with the comprehensive API documentation available on [GitHub] and interactive [Swagger] documentation.
-
-3. **Endpoint Selection**
-   Choose the appropriate API endpoint (Advanced, Intermediate, or Basic) based on your application's requirements and user experience goals.
-
-4. **Laravel Integration**
-   Implement the selected API endpoint into your Laravel application using the provided SDK or direct HTTP client integration.
-
-## Laravel-Specific Implementation
-
-### Installation
-
-```bash
-composer require akilimo/laravel-sdk
-```
-
-### Configuration
-
-Add your API credentials to your Laravel `.env` file:
-
-```env
-AKILIMO_API_KEY=your_api_key_here
-AKILIMO_BASE_URL=https://api.akilimo.org
-AKILIMO_TIMEOUT=30
-```
-
-Publish the configuration file:
-
-```bash
-php artisan vendor:publish --provider="Akilimo\LaravelSdk\AkilimoServiceProvider"
-```
-
-### Service Container Integration
-
-The package automatically registers the AKILIMO service in Laravel's service container, making it available for dependency injection:
-
-```php
-use Akilimo\LaravelSdk\AkilimoService;
-
-class RecommendationController extends Controller
-{
-    public function __construct(private AkilimoService $akilimo)
-    {
-    }
-    
-    public function getRecommendations(Request $request)
-    {
-        $recommendations = $this->akilimo
-            ->advanced()
-            ->recommendations($request->validated());
-            
-        return response()->json($recommendations);
-    }
-}
-```
-
-### Middleware Integration
-
-Utilize Laravel middleware for API authentication and rate limiting:
-
-```php
-// In routes/api.php
-Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
-    Route::post('/recommendations/advanced', [RecommendationController::class, 'advanced']);
-    Route::post('/recommendations/intermediate', [RecommendationController::class, 'intermediate']);
-    Route::post('/recommendations/basic', [RecommendationController::class, 'basic']);
-});
-```
-
-### Form Request Validation
-
-Create dedicated form request classes for each endpoint:
-
-```php
-php artisan make:request AdvancedRecommendationRequest
-php artisan make:request IntermediateRecommendationRequest
-php artisan make:request BasicRecommendationRequest
-```
-
-## Build Status & Quality Metrics
-
-### Continuous Integration
-
-**Tests**
+Laravel 12 RESTful API that computes and delivers agricultural recommendations (fertilizer application, intercropping, scheduled planting) based on detailed farm data. Acts as an orchestration layer between clients and an external **Plumbr** computation service.
 
 [![Tests](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml)
-
-**Docker Build**
-
 [![Build](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml)
-
-**Code Quality Assessment**
-
 [![codebeat badge](https://codebeat.co/badges/ba1363f9-5713-458c-bb1d-05fd1bb8b0fa)](https://codebeat.co/projects/github-com-iita-akilimo-new-akilimo-api-develop)
 
-## Development Environment Setup
+---
 
-### System Requirements
+## Requirements
 
-- **PHP Version:** 8.3 or higher with required extensions
-- **Framework:** Laravel 10+ with Octane support for enhanced performance
-- **Database:** MySQL 8.0+ or PostgreSQL 13+
-- **Cache:** Redis 6+ for session and cache management
-- **Queue:** Redis or database-driven queue for background processing
+| Dependency | Version |
+|---|---|
+| PHP | 8.3+ |
+| Laravel | 12.x |
+| MariaDB | 11.2+ |
+| Redis | 7.4+ |
 
-### Development Tools
+---
 
-- **Dependency Management:** Composer 2.5+
-- **Asset Compilation:** Vite (Laravel's default)
-- **Testing Framework:** PHPUnit 10+ with Laravel's testing utilities
-- **Code Quality:** PHP CS Fixer, PHPStan, Larastan
-- **API Documentation:** Swagger/OpenAPI 3.0
+## Local setup
 
-### Local Development Setup
-
-1. **Clone and Install Dependencies**
 ```bash
-git clone https://github.com/IITA-AKILIMO/akilimo-api.git
-cd akilimo-api
+git clone https://github.com/IITA-AKILIMO/new-akilimo-api.git
+cd new-akilimo-api
 composer install
-npm install
-```
 
-2. **Environment Configuration**
-```bash
 cp .env.example .env
 php artisan key:generate
-```
 
-3. **Database Setup**
-```bash
 php artisan migrate
-php artisan db:seed
+php artisan db:seed          # seeds reference data + admin user
 ```
 
-4. **Start Development Server**
+### Environment variables
+
+```env
+# External computation service
+PLUMBR_BASE_URL=
+PLUMBR_REC_ENDPOINT=/compute
+PLUMBR_REQUEST_TIMEOUT=120
+
+# Auth
+AUTH_TOKEN_TTL_DAYS=30       # bearer token lifetime in days
+DEFAULT_ADMIN_PASSWORD=      # used by AdminUserSeeder
+
+# Cache
+CACHE_STORE=redis
+CACHE_TTL=1h                 # recommendation cache TTL (e.g. 30m, 1h, 24h)
+
+APP_TIMEZONE=UTC             # affects ISO 8601 offsets in API responses
+```
+
+---
+
+## Common commands
+
 ```bash
-php artisan serve
-# Or with Laravel Sail for Docker environment
-./vendor/bin/sail up
+# Development
+composer dev           # start dev server on port 8600
+composer dev:all       # server + queue worker + Vite concurrently
+
+# Testing
+composer test          # run tests via artisan
+composer tests         # run tests via Pest
+composer pest:coverage # Pest with coverage report
+
+# Code quality
+composer lint:fix-all  # fix all code style issues (Pint / PSR-12)
+composer lint:check    # check without fixing
+
+# Models & IDE helpers
+composer model:gen     # regenerate models from DB schema (after migrations)
 ```
 
-### Testing
+---
 
-Run the comprehensive test suite:
+## Docker
 
 ```bash
-php artisan test
-# Or with coverage
-php artisan test --coverage
+docker compose up        # API + MariaDB + Redis + Dozzle
 ```
 
-### Code Quality Checks
+The API is exposed on port **8600**. The multi-stage `Dockerfile` builds frontend assets with Node 20 Alpine then runs PHP 8.3-FPM Alpine. Supervisor manages PHP-FPM and the Laravel queue worker.
+
+---
+
+## Authentication
+
+All write and domain endpoints require authentication. Two methods are supported and can be used interchangeably:
+
+### 1 · Bearer token (dynamic)
+
+```
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{ "username": "akilimo", "password": "..." }
+```
+
+Returns a token valid for `AUTH_TOKEN_TTL_DAYS` days. Use it in subsequent requests:
+
+```
+Authorization: Bearer <token>
+```
+
+Revoke with `POST /api/v1/auth/logout`.
+
+### 2 · API key (long-lived)
+
+Generate a key via `POST /api/v1/auth/api-keys` (requires an existing valid token). The full key is shown once and never stored.
+
+```
+X-Api-Key: ak_a1b2c3d4e5f6...
+```
+
+Keys support scoped abilities: `read`, `write`, `api-keys:manage`. A `null` abilities list grants everything (`*`).
+
+### Admin setup
+
+The `AdminUserSeeder` creates user `akilimo` / `akilimo@cgiar.org` and prints an initial wildcard API key to the console. To regenerate the key at any time:
 
 ```bash
-# PHP CS Fixer
-./vendor/bin/php-cs-fixer fix
-
-# PHPStan Static Analysis
-./vendor/bin/phpstan analyse
-
-# Laravel Pint (Code Styling)
-./vendor/bin/pint
+php artisan admin:regenerate-api-key
+php artisan admin:regenerate-api-key --force   # skip confirmation
 ```
 
-## Performance Considerations
+---
 
-- Implement API response caching using Laravel's cache system
-- Utilize Laravel Octane for enhanced performance in production
-- Configure proper database indexing for recommendation queries
-- Implement queue-based processing for intensive computational tasks
-- Use Laravel Horizon for queue monitoring and management
+## API routes
+
+### Public (no auth)
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Service health check |
+| `POST` | `/api/v1/auth/login` | Obtain bearer token |
+| `GET` | `/api/v1/currencies` | Currency reference data |
+| `GET` | `/api/v1/fertilizers` | Fertilizer catalogue |
+| `GET` | `/api/v1/fertilizer-prices` | Fertilizer prices |
+| `GET` | `/api/v1/investment-amounts` | Investment amount options |
+| `GET` | `/api/v1/operation-costs` | Operation cost options |
+| `GET` | `/api/v1/starch-factories` | Starch factory list |
+| `GET` | `/api/v1/starch-prices` | Starch prices |
+| `GET` | `/api/v1/default-prices` | Default produce prices |
+| `GET` | `/api/v1/cassava-units` | Cassava unit options |
+| `GET` | `/api/v1/cassava-prices` | Cassava prices |
+| `GET` | `/api/v1/potato-prices` | Potato prices |
+| `GET` | `/api/v1/maize-prices` | Maize prices |
+
+### Protected (requires `Authorization: Bearer` or `X-Api-Key`)
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/v1/auth/logout` | Revoke current token |
+| `GET` | `/api/v1/auth/api-keys` | List own API keys |
+| `POST` | `/api/v1/auth/api-keys` | Generate API key |
+| `PATCH` | `/api/v1/auth/api-keys/{id}/revoke` | Revoke API key |
+| `DELETE` | `/api/v1/auth/api-keys/{id}` | Delete API key |
+| `POST` | `/api/v1/recommendations/compute` | Compute recommendation |
+| `GET` | `/api/v1/recommendations` | Request history |
+| `GET` | `/api/v1/user-feedback` | List feedback |
+| `POST` | `/api/v1/user-feedback` | Submit feedback |
+| `GET` | `/api/v1/translations` | Translation strings |
+
+---
+
+## Scaffold command
+
+Generate a full API slice (controller + repository + resource + collection + route) in one command:
+
+```bash
+php artisan make:api-scaffold Translation
+php artisan make:api-scaffold StarchPrices --model=StarchPrice --prefix=starch-prices
+php artisan make:api-scaffold Currency --force    # overwrite existing files
+php artisan make:api-scaffold Currency --no-route # skip route registration
+```
+
+---
+
+## Code quality & CI
+
+- **CI:** GitHub Actions runs tests on every push (`unit-test.yml`) and builds the Docker image on `main`/`develop` (`docker-build.yml`).
+- **Coverage + SonarQube:** runs on `develop` via `quality-checks.yml`.
+- **Linting:** Laravel Pint (PSR-12). Run `composer lint:fix-all` before opening a PR.
