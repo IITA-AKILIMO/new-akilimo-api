@@ -235,13 +235,24 @@ abstract class BaseRepo implements Repository
         string $direction = 'desc',
         array  $filters = [],
         array  $with = [],
-    ): \Illuminate\Pagination\LengthAwarePaginator
-    {
+        array  $relationFilters = [],
+    ): \Illuminate\Pagination\LengthAwarePaginator {
         $query = $this->query($with);
 
+        // Apply direct filters
         $cleanFilters = array_filter($filters, fn($v) => $v !== null && $v !== '');
         if (!empty($cleanFilters)) {
             $query->where($cleanFilters);
+        }
+
+        // Apply relation filters only if values are provided
+        foreach ($relationFilters as $relation => $conditions) {
+            $conditions = array_filter($conditions, fn($v) => $v !== null && $v !== '');
+            if (!empty($conditions)) {
+                $query->whereHas($relation, function ($q) use ($conditions) {
+                    $q->where($conditions);
+                });
+            }
         }
 
         return $query->orderBy($orderBy, $direction)->paginate($perPage);

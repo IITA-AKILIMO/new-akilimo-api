@@ -38,6 +38,10 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/country/{countryCode}', [\App\Http\Controllers\Api\StarchFactoryController::class, 'byCountry']);
     });
 
+    Route::prefix('v1/starch-prices')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\StarchPricesController::class, 'index']);
+    });
+
     Route::prefix('v1/cassava-units')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\CassavaUnitsController::class, 'index']);
     });
