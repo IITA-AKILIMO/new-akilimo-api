@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\ApiKeyController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CassavaPricesController;
 use App\Http\Controllers\Api\CassavaUnitsController;
 use App\Http\Controllers\Api\CurrencyController;
@@ -13,18 +15,23 @@ use App\Http\Controllers\Api\PotatoPricesController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\StarchFactoryController;
 use App\Http\Controllers\Api\StarchPricesController;
-use App\Http\Controllers\Api\ApiKeyController;
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TranslationController;
 use App\Http\Controllers\Api\UserFeedbackController;
 use App\Http\Controllers\Web\HealthCheckController;
 use Illuminate\Support\Facades\Route;
 
+// ── Health ────────────────────────────────────────────────────────────────────
 Route::prefix('health')->group(function () {
     Route::get('/', [HealthCheckController::class, 'check']);
 });
 
-// Reference data — higher limit as these are cheap reads used by mobile clients on startup
+// ── Authentication ────────────────────────────────────────────────────────────
+Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.token');
+});
+
+// ── Public reference data — cheap reads used by mobile clients on startup ─────
 Route::middleware('throttle:120,1')->group(function () {
     Route::prefix('v1/currencies')->group(function () {
         Route::get('/', [CurrencyController::class, 'index']);
@@ -56,6 +63,14 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/country/{countryCode}', [StarchFactoryController::class, 'byCountry']);
     });
 
+    Route::prefix('v1/starch-prices')->group(function () {
+        Route::get('/', [StarchPricesController::class, 'index']);
+    });
+
+    Route::prefix('v1/default-prices')->group(function () {
+        Route::get('/', [DefaultPriceController::class, 'index']);
+    });
+
     Route::prefix('v1/cassava-units')->group(function () {
         Route::get('/', [CassavaUnitsController::class, 'index']);
     });
@@ -74,7 +89,10 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/', [MaizePricesController::class, 'index']);
         Route::get('/country/{countryCode}', [MaizePricesController::class, 'byCountry']);
     });
+});
 
+// ── Protected read endpoints ──────────────────────────────────────────────────
+Route::middleware(['throttle:120,1', 'auth.token'])->group(function () {
     Route::prefix('v1/recommendations')->group(function () {
         Route::get('/', [RecommendationController::class, 'index']);
     });
@@ -83,27 +101,12 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/', [UserFeedbackController::class, 'index']);
     });
 
-    Route::prefix('v1/starch-prices')->group(function () {
-        Route::get('/', [StarchPricesController::class, 'index']);
-    });
-
-    Route::prefix('v1/default-prices')->group(function () {
-        Route::get('/', [DefaultPriceController::class, 'index']);
-    });
-
-    
-    Route::prefix('v1/translations')->middleware('auth.token')->group(function () {
+    Route::prefix('v1/translations')->group(function () {
         Route::get('/', [TranslationController::class, 'index']);
     });
 });
 
-// Authentication
-Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.token');
-});
-
-// API key management — requires an existing valid token or key to authenticate
+// ── Protected API key management ──────────────────────────────────────────────
 Route::middleware(['throttle:30,1', 'auth.token'])->prefix('v1/auth')->group(function () {
     Route::get('/api-keys', [ApiKeyController::class, 'index']);
     Route::post('/api-keys', [ApiKeyController::class, 'store']);
@@ -111,8 +114,8 @@ Route::middleware(['throttle:30,1', 'auth.token'])->prefix('v1/auth')->group(fun
     Route::delete('/api-keys/{id}', [ApiKeyController::class, 'destroy']);
 });
 
-// Mutating / expensive endpoints — tighter limit
-Route::middleware('throttle:30,1')->group(function () {
+// ── Protected mutating endpoints ──────────────────────────────────────────────
+Route::middleware(['throttle:30,1', 'auth.token'])->group(function () {
     Route::post('v1/recommendations/compute', [RecommendationController::class, 'computeRecommendations']);
     Route::post('v1/user-feedback', [UserFeedbackController::class, 'store']);
 });
