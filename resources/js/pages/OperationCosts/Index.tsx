@@ -1,0 +1,38 @@
+import { Link, router } from '@inertiajs/react'
+import { useState } from 'react'
+import Badge from '../../components/Badge'
+import ConfirmDialog from '../../components/ConfirmDialog'
+import DataTable, { type Column } from '../../components/DataTable'
+import AdminLayout from '../../layouts/AdminLayout'
+import type { OperationCost, Paginated } from '../../types'
+
+interface Props { items: Paginated<OperationCost> }
+
+export default function OperationCostsIndex({ items }: Props) {
+    const [deleting, setDeleting] = useState<OperationCost | null>(null)
+    const [processing, setProcessing] = useState(false)
+    const columns: Column[] = [
+        { key: 'operation_name', label: 'Operation' },
+        { key: 'operation_type', label: 'Type' },
+        { key: 'country_code', label: 'Country' },
+        { key: 'min_cost', label: 'Min Cost' },
+        { key: 'max_cost', label: 'Max Cost' },
+        { key: 'is_active', label: 'Active', render: (v) => <Badge active={!!v} /> },
+    ]
+    function handlePageChange(page: number) { router.get('/admin/operation-costs', { page }, { preserveState: true }) }
+    function handleDelete() {
+        if (!deleting) return; setProcessing(true)
+        router.delete(`/admin/operation-costs/${deleting.id}`, { onFinish: () => { setProcessing(false); setDeleting(null) } })
+    }
+    return (
+        <AdminLayout title="Operation Costs">
+            <div className="d-flex align-items-center justify-content-between mb-3">
+                <span className="text-muted small">{items.meta.total} records</span>
+                <Link href="/admin/operation-costs/create" className="btn btn-success btn-sm">+ New</Link>
+            </div>
+            <DataTable columns={columns} data={items.data as Record<string, unknown>[]} pagination={items.meta} links={items.links} sortBy="" onSort={() => {}} onPageChange={handlePageChange}
+                actions={(row) => (<div className="d-flex gap-1 justify-content-end"><Link href={`/admin/operation-costs/${row.id}/edit`} className="btn btn-outline-secondary btn-sm">Edit</Link><button onClick={() => setDeleting(row as unknown as OperationCost)} className="btn btn-outline-danger btn-sm">Delete</button></div>)} />
+            <ConfirmDialog open={!!deleting} title="Delete operation cost" message={`Delete "${deleting?.operation_name}"? This cannot be undone.`} onConfirm={handleDelete} onCancel={() => setDeleting(null)} processing={processing} />
+        </AdminLayout>
+    )
+}
