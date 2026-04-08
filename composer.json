@@ -25,6 +25,7 @@
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "league/csv": "^9.28",
         "spatie/laravel-data": "^4.15"
     },
     "require-dev": {
