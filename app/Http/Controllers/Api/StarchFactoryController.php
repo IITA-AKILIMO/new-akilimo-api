@@ -11,19 +11,14 @@ use Illuminate\Http\Request;
 class StarchFactoryController extends Controller
 {
     use HasPaginationParams;
-    public function __construct(protected StarchFactoryRepo $repo)
-    {
-    }
 
-    /**
-     * @param Request $request
-     * @return StarchFactoryResourceCollection
-     */
+    public function __construct(protected StarchFactoryRepo $repo) {}
+
     public function index(Request $request): StarchFactoryResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $starchFactory = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -33,16 +28,11 @@ class StarchFactoryController extends Controller
         return StarchFactoryResourceCollection::make($starchFactory);
     }
 
-    /**
-     * @param string $countryCode
-     * @param Request $request
-     * @return StarchFactoryResourceCollection
-     */
     public function byCountry(string $countryCode, Request $request): StarchFactoryResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $filters = [
             'country' => strtoupper(trim($countryCode)),

@@ -10,7 +10,9 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class InterCroppingData extends Data
 {
     public ?string $interCroppedCrop;
+
     public bool $interCroppingMaizeRec;
+
     public bool $interCroppingPotatoRec;
 
     public function isRecommended(): bool

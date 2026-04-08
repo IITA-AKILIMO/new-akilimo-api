@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Http;
 
+beforeEach(fn () => $this->actingAsApiUser());
+
 // ---------------------------------------------------------------------------
 // Shared helper — different name to avoid collision with ComputeRecommendationTest
 // ---------------------------------------------------------------------------
@@ -202,12 +204,12 @@ it('rejects a fertilizer with negative price', function () {
     $payload = computePayload();
     $payload['fertilizer_list'] = [
         [
-            'name'            => 'Urea',
+            'name' => 'Urea',
             'fertilizer_type' => 'STRAIGHT',
-            'key'             => 'urea',
-            'weight'          => 50,
-            'price'           => -1,
-            'selected'        => true,
+            'key' => 'urea',
+            'weight' => 50,
+            'price' => -1,
+            'selected' => true,
         ],
     ];
 
@@ -220,12 +222,12 @@ it('rejects a fertilizer with negative weight', function () {
     $payload = computePayload();
     $payload['fertilizer_list'] = [
         [
-            'name'            => 'Urea',
+            'name' => 'Urea',
             'fertilizer_type' => 'STRAIGHT',
-            'key'             => 'urea',
-            'weight'          => -5,
-            'price'           => 1000,
-            'selected'        => true,
+            'key' => 'urea',
+            'weight' => -5,
+            'price' => 1000,
+            'selected' => true,
         ],
     ];
 

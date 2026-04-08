@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $device_token
  * @property array $droid_request
  * @property array $plumber_request
- * @property array $plumber_response
  * @property Carbon|null $request_started_at
  * @property int|null $request_duration_ms
+ * @property array $plumber_response
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -27,11 +27,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereDeviceToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereDroidRequest($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest wherePlumberRequest($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest wherePlumberResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereRequestDurationMs($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereRequestStartedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereUpdatedAt($value)
  *
  * @mixin \Eloquent
@@ -41,10 +44,11 @@ class ApiRequest extends Model
     protected $table = 'api_requests';
 
     protected $casts = [
-        'droid_request'       => 'json',
-        'plumber_request'     => 'json',
-        'plumber_response'    => 'json',
-        'request_started_at'  => 'datetime',
+        'droid_request' => 'json',
+        'plumber_request' => 'json',
+        'request_started_at' => 'datetime',
+        'request_duration_ms' => 'int',
+        'plumber_response' => 'json',
     ];
 
     protected $fillable = [
@@ -52,8 +56,8 @@ class ApiRequest extends Model
         'device_token',
         'droid_request',
         'plumber_request',
-        'plumber_response',
         'request_started_at',
         'request_duration_ms',
+        'plumber_response',
     ];
 }

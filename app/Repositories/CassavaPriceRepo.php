@@ -52,4 +52,30 @@ class CassavaPriceRepo extends BaseRepo
 
         return $map;
     }
+
+    /**
+     * Load price bands for a specific set of country codes in one query.
+     * Returns an array keyed by country code.
+     *
+     * @param  string[]  $countries
+     * @return array<string, MinMaxPriceDto>
+     */
+    public function findPriceBandsForCountries(array $countries): array
+    {
+        $results = CassavaPrice::query()
+            ->selectRaw('country, MIN(NULLIF(min_local_price, 0)) as min_price, MAX(max_local_price) as max_price')
+            ->whereIn('country', $countries)
+            ->groupBy('country')
+            ->get();
+
+        $map = [];
+        foreach ($results as $row) {
+            $map[$row->country] = new MinMaxPriceDto(
+                minLocalPrice: (float) ($row->min_price ?? 0),
+                maxLocalPrice: (float) ($row->max_price ?? 0)
+            );
+        }
+
+        return $map;
+    }
 }

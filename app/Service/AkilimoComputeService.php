@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Data\AkilimoComputeData;
 use App\Exceptions\RecommendationException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -13,11 +14,10 @@ class AkilimoComputeService
     public function __construct(
         protected string $baseUrl = '',
         protected string $endpoint = '',
-        protected int    $timeout = 120,
-        protected int    $retries = 3,
-        protected bool   $logging = true,
-    )
-    {
+        protected int $timeout = 120,
+        protected int $retries = 3,
+        protected bool $logging = true,
+    ) {
         $this->baseUrl = config('akilimo-compute.base_url');
         $this->endpoint = config('akilimo-compute.endpoint');
         $this->timeout = config('akilimo-compute.timeout');
@@ -41,7 +41,7 @@ class AkilimoComputeService
         } catch (ConnectionException $e) {
             Log::error('AKILIMO Compute API Connection Error', ['endpoint' => $this->endpoint, 'error' => $e->getMessage()]);
             throw $e;
-        } catch (\Illuminate\Http\Client\RequestException $e) {
+        } catch (RequestException $e) {
             // HTTP-level error after retries — let the caller handle status code mapping
             throw $e;
         } catch (\Throwable $e) {
@@ -57,11 +57,12 @@ class AkilimoComputeService
                 'raw_body' => $response->body(),
                 'endpoint' => $this->endpoint,
             ]);
-            throw new RecommendationException("Invalid JSON response from AKILIMO Compute API", $response->status());
+            throw new RecommendationException('Invalid JSON response from AKILIMO Compute API', $response->status());
         }
 
         if ($response->successful()) {
             $this->log('info', 'AKILIMO API Success', $response);
+
             return $body;
         }
 
@@ -78,7 +79,7 @@ class AkilimoComputeService
 
     protected function log(string $level, string $context, $response, ?string $message = null, ?array $body = null): void
     {
-        if (!$this->logging) {
+        if (! $this->logging) {
             return;
         }
 

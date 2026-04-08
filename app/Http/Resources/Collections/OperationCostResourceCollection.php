@@ -2,12 +2,15 @@
 
 namespace App\Http\Resources\Collections;
 
-class OperationCostResourceCollection extends \Illuminate\Http\Resources\Json\ResourceCollection
+use App\Http\Resources\OperationCostResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class OperationCostResourceCollection extends ResourceCollection
 {
     public function toArray($request): array
     {
         return [
-            'data' => \App\Http\Resources\OperationCostResource::collection($this->collection),
+            'data' => OperationCostResource::collection($this->collection),
         ];
     }
 }

@@ -10,14 +10,20 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class CassavaData extends Data
 {
     public string $produceType;
+
     public float $unitWeight;
+
     public float $unitPrice;
+
     #[MapInputName('unit_price_maize1')]
     public float $unitPriceMaize1 = 0.0;
+
     #[MapInputName('unit_price_maize2')]
     public float $unitPriceMaize2 = 0.0;
+
     #[MapInputName('unit_price_potato1')]
     public float $unitPricePotato1 = 0.0;
+
     #[MapInputName('unit_price_potato2')]
     public float $unitPricePotato2 = 0.0;
 }

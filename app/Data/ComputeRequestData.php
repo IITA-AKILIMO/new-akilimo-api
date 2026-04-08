@@ -5,26 +5,37 @@ namespace App\Data;
 namespace App\Data;
 
 use App\Http\Enums\EnumAreaUnit;
-use Carbon\Carbon;
 use Spatie\LaravelData\Data;
 
-//#[MapInputName(SnakeCaseMapper::class)]
+// #[MapInputName(SnakeCaseMapper::class)]
 class ComputeRequestData extends Data
 {
     public FarmInformationData $farmInformation;
+
     public InterCroppingData $interCropping;
+
     public RecommendationsData $recommendations;
+
     public PlantingData $planting;
+
     public FallowData $fallow;
+
     public TractorCostsData $tractorCosts;
+
     public ManualCostsData $manualCosts;
+
     public WeedingCostsData $weedingCosts;
+
     public OperationsDoneData $operationsDone;
 
     public FarmMethodsData $methods;
+
     public YieldInfoData $yieldInfo;
+
     public CassavaData $cassava;
+
     public MaizeData $maize;
+
     public SweetPotatoData $sweetPotato;
 
     public float $maxInvestment;
@@ -52,7 +63,6 @@ class ComputeRequestData extends Data
             'plantingPracticesRec' => $this->recommendations->plantingPracticesRec,
             'scheduledPlantingRec' => $this->recommendations->scheduledPlantingRec,
             'scheduledHarvestRec' => $this->recommendations->scheduledHarvestRec,
-
 
             // Planting
             'plantingDate' => $this->planting->plantingDate->toDateString(),
@@ -124,4 +134,3 @@ class ComputeRequestData extends Data
         ];
     }
 }
-

@@ -1,7 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
+use App\Models\ApiRequest;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+
+beforeEach(fn () => $this->actingAsApiUser());
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -11,61 +15,62 @@ function validComputePayload(): array
 {
     return [
         'user_info' => [
-            'device_token'  => fake()->uuid(),
+            'device_token' => fake()->uuid(),
             'risk_attitude' => 2,
-            'user_name'     => 'test_user',
-            'first_name'    => 'Test',
-            'last_name'     => 'User',
-            'gender'        => 'M',
-            'farm_name'     => 'Test Farm',
+            'user_name' => 'test_user',
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'gender' => 'M',
+            'farm_name' => 'Test Farm',
             'email_address' => 'test@example.com',
-            'send_sms'      => false,
-            'send_email'    => false,
+            'send_sms' => false,
+            'send_email' => false,
         ],
         'compute_request' => [
             'farmInformation' => [
                 'country_code' => 'NG',
-                'use_case'     => 'CASSAVA',
-                'map_lat'      => 7.4,
-                'map_long'     => 5.2,
-                'field_size'   => 1.0,
-                'area_unit'    => 'ha',
+                'use_case' => 'CASSAVA',
+                'map_lat' => 7.4,
+                'map_long' => 5.2,
+                'field_size' => 1.0,
+                'area_unit' => 'ha',
             ],
             'interCropping' => [
-                'inter_cropped_crop'        => null,
-                'inter_cropping_maize_rec'  => false,
+                'inter_cropped_crop' => null,
+                'inter_cropping_maize_rec' => false,
                 'inter_cropping_potato_rec' => false,
             ],
             'recommendations' => [
-                'fertilizer_rec'        => true,
+                'lang' => 'en',
+                'fertilizer_rec' => true,
                 'planting_practices_rec' => false,
                 'scheduled_planting_rec' => false,
-                'scheduled_harvest_rec'  => false,
+                'scheduled_harvest_rec' => false,
             ],
             'planting' => [
-                'planting_date'        => '2025-04-01',
-                'harvest_date'         => '2025-10-01',
+                'planting_date' => '2025-04-01',
+                'harvest_date' => '2025-10-01',
                 'planting_date_window' => 0,
-                'harvest_date_window'  => 0,
+                'harvest_date_window' => 0,
             ],
             'fallow' => [
-                'fallow_type'   => 'NONE',
+                'fallow_type' => 'NONE',
                 'fallow_height' => 0,
-                'fallow_green'  => false,
+                'fallow_green' => false,
             ],
             'tractorCosts' => [
-                'tractor_plough'          => false,
-                'tractor_harrow'          => false,
-                'tractor_ridger'          => false,
-                'cost_lmo_area_basis'     => 'ha',
-                'cost_tractor_ploughing'  => 0,
-                'cost_tractor_harrowing'  => 0,
-                'cost_tractor_ridging'    => 0,
+                'tractor_plough' => false,
+                'tractor_harrow' => false,
+                'tractor_ridger' => false,
+                'cost_lmo_area_basis' => 'ha',
+                'cost_tractor_ploughing' => 0,
+                'cost_tractor_harrowing' => 0,
+                'cost_tractor_ridging' => 0,
             ],
             'manualCosts' => [
                 'cost_manual_ploughing' => 0,
                 'cost_manual_harrowing' => 0,
-                'cost_manual_ridging'   => 0,
+                'cost_manual_ridging' => 0,
             ],
             'weedingCosts' => [
                 'cost_weeding_one' => 0,
@@ -74,44 +79,44 @@ function validComputePayload(): array
             'operationsDone' => [
                 'ploughing_done' => false,
                 'harrowing_done' => false,
-                'ridging_done'   => false,
+                'ridging_done' => false,
             ],
             'methods' => [
                 'method_ploughing' => null,
                 'method_harrowing' => null,
-                'method_ridging'   => null,
-                'method_weeding'   => null,
+                'method_ridging' => null,
+                'method_weeding' => null,
             ],
             'yieldInfo' => [
-                'current_field_yield'       => 10,
+                'current_field_yield' => 10,
                 'current_maize_performance' => 5,
-                'sell_to_starch_factory'    => false,
-                'starch_factory_name'       => '',
+                'sell_to_starch_factory' => false,
+                'starch_factory_name' => '',
             ],
             'cassava' => [
-                'produce_type'        => 'FRESH_TUBER',
-                'unit_weight'         => 100,
-                'unit_price'          => 5000,
-                'unit_price_maize_1'  => 0,
-                'unit_price_maize_2'  => 0,
+                'produce_type' => 'FRESH_TUBER',
+                'unit_weight' => 100,
+                'unit_price' => 5000,
+                'unit_price_maize_1' => 0,
+                'unit_price_maize_2' => 0,
                 'unit_price_potato_1' => 0,
                 'unit_price_potato_2' => 0,
             ],
             'maize' => [
-                'produce_type'        => 'DRY_GRAIN',
-                'unit_weight'         => 100,
-                'unit_price'          => 10000,
-                'unit_price_maize_1'  => 0,
-                'unit_price_maize_2'  => 0,
+                'produce_type' => 'DRY_GRAIN',
+                'unit_weight' => 100,
+                'unit_price' => 10000,
+                'unit_price_maize_1' => 0,
+                'unit_price_maize_2' => 0,
                 'unit_price_potato_1' => 0,
                 'unit_price_potato_2' => 0,
             ],
             'sweetPotato' => [
-                'produce_type'        => 'FRESH_TUBER',
-                'unit_weight'         => 100,
-                'unit_price'          => 3000,
-                'unit_price_maize_1'  => 0,
-                'unit_price_maize_2'  => 0,
+                'produce_type' => 'FRESH_TUBER',
+                'unit_weight' => 100,
+                'unit_price' => 3000,
+                'unit_price_maize_1' => 0,
+                'unit_price_maize_2' => 0,
                 'unit_price_potato_1' => 0,
                 'unit_price_potato_2' => 0,
             ],
@@ -124,9 +129,14 @@ function validComputePayload(): array
 function plumberSuccessResponse(): array
 {
     return [
-        'version'        => '1.0',
-        'rec_type'       => 'CASSAVA',
-        'recommendation' => ['FR' => ['data' => []]],
+        'status' => 'success',
+        'version' => '20251228',
+        'data' => [
+            'rec_type' => 'FR',
+            'recommendation' => 'We recommend applying 50 kg of Urea per hectare',
+            'data' => [],
+            'fertilizer_rates' => [['type' => 'Urea', 'rate' => 50]],
+        ],
     ];
 }
 
@@ -142,7 +152,12 @@ it('returns a recommendation on a successful Plumbr response', function () {
     $response = $this->postJson('/api/v1/recommendations/compute', validComputePayload());
 
     $response->assertOk()
-        ->assertJsonStructure(['request_id', 'version', 'rec_type', 'recommendation']);
+        ->assertJsonStructure([
+            'request_id',
+            'status',
+            'version',
+            'data' => ['rec_type', 'recommendation', 'data', 'fertilizer_rates'],
+        ]);
 });
 
 it('includes a server-generated request_id in the response', function () {
@@ -161,7 +176,7 @@ it('includes a server-generated request_id in the response', function () {
 it('logs the request to api_requests with device_token and duration', function () {
     Http::fake(['*' => Http::response(plumberSuccessResponse(), 200)]);
 
-    $payload              = validComputePayload();
+    $payload = validComputePayload();
     $payload['user_info']['device_token'] = $deviceToken = fake()->uuid();
 
     $this->postJson('/api/v1/recommendations/compute', $payload)->assertOk();
@@ -170,13 +185,13 @@ it('logs the request to api_requests with device_token and duration', function (
         'device_token' => $deviceToken,
     ]);
 
-    $record = \App\Models\ApiRequest::where('device_token', $deviceToken)->first();
+    $record = ApiRequest::where('device_token', $deviceToken)->first();
     expect($record)->not->toBeNull()
         ->and($record->request_duration_ms)->toBeInt()->toBeGreaterThanOrEqual(0);
 });
 
 it('returns 503 when Plumbr is unreachable', function () {
-    Http::fake(['*' => fn () => throw new \Illuminate\Http\Client\ConnectionException('timeout')]);
+    Http::fake(['*' => fn () => throw new ConnectionException('timeout')]);
 
     $this->postJson('/api/v1/recommendations/compute', validComputePayload())
         ->assertStatus(503);
@@ -209,16 +224,16 @@ it('does not share cache between requests with different fertilizer selections',
     Http::fake(['*' => Http::response(plumberSuccessResponse(), 200)]);
     Cache::flush();
 
-    $payload1               = validComputePayload();
-    $payload2               = validComputePayload();
+    $payload1 = validComputePayload();
+    $payload2 = validComputePayload();
     $payload2['fertilizer_list'] = [
         [
-            'name'            => 'Urea',
+            'name' => 'Urea',
             'fertilizer_type' => 'STRAIGHT',
-            'key'             => 'urea',
-            'weight'          => 50,
-            'price'           => 12000,
-            'selected'        => true,
+            'key' => 'urea',
+            'weight' => 50,
+            'price' => 12000,
+            'selected' => true,
         ],
     ];
 

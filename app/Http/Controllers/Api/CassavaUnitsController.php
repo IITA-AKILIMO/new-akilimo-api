@@ -11,19 +11,14 @@ use Illuminate\Http\Request;
 class CassavaUnitsController extends Controller
 {
     use HasPaginationParams;
-    public function __construct(protected CassavaUnitRepo $repo)
-    {
-    }
 
-    /**
-     * @param Request $request
-     * @return CassavaUnitResourceCollection
-     */
+    public function __construct(protected CassavaUnitRepo $repo) {}
+
     public function index(Request $request): CassavaUnitResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $cassavaPrices = $this->repo->paginateWithSort(
             perPage: $perPage,

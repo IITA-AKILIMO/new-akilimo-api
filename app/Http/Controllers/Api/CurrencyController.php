@@ -12,19 +12,13 @@ class CurrencyController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected CurrencyRepo $repo)
-    {
-    }
+    public function __construct(protected CurrencyRepo $repo) {}
 
-    /**
-     * @param Request $request
-     * @return CurrencyResourceCollection
-     */
     public function index(Request $request): CurrencyResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'currency_code', 'created_at'], 'currency_code');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $currencies = $this->repo->paginateWithSort(
             perPage: $perPage,

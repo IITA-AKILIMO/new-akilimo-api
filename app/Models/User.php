@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Base\User as BaseUser;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends BaseUser
 {
@@ -10,4 +11,9 @@ class User extends BaseUser
         'password',
         'remember_token',
     ];
+
+    public function apiKeys(): HasMany
+    {
+        return $this->hasMany(ApiKey::class);
+    }
 }

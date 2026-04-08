@@ -38,5 +38,4 @@ class ComputeRequest extends FormRequest
             FertilizerRules::messages()
         );
     }
-
 }

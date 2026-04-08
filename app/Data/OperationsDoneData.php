@@ -10,6 +10,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class OperationsDoneData extends Data
 {
     public bool $ploughingDone;
+
     public bool $harrowingDone;
+
     public bool $ridgingDone;
 }

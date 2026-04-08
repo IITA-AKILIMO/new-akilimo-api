@@ -10,6 +10,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class ManualCostsData extends Data
 {
     public float $costManualPloughing;
+
     public float $costManualHarrowing;
+
     public float $costManualRidging;
 }

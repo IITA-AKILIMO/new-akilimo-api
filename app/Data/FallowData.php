@@ -10,6 +10,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class FallowData extends Data
 {
     public string $fallowType;
+
     public float $fallowHeight;
+
     public bool $fallowGreen;
 }

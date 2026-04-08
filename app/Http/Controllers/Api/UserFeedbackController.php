@@ -14,15 +14,13 @@ class UserFeedbackController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected UserFeedBackRepo $repo)
-    {
-    }
+    public function __construct(protected UserFeedBackRepo $repo) {}
 
     public function index(Request $request): UserFeedbackResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'akilimo_usage'], 'created_at');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $userFeedbackData = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -35,8 +33,9 @@ class UserFeedbackController extends Controller
 
     public function store(FeedBackRequest $request): UserFeedbackResource
     {
-        $data     = $request->toPersistenceArray();
+        $data = $request->toPersistenceArray();
         $feedBack = $this->repo->create($data);
+
         return UserFeedbackResource::make($feedBack);
     }
 }

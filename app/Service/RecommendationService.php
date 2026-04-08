@@ -2,16 +2,17 @@
 
 namespace App\Service;
 
+use App\Data\AkilimoComputeData;
 use App\Data\ComputeRequestData;
 use App\Data\FertilizerData;
-use App\Data\AkilimoComputeData;
 use App\Data\UserInfoData;
 use App\Exceptions\RecommendationException;
-use App\Http\Enums\EnumAreaUnit;
 use App\Repositories\ApiRequestRepo;
 use App\Repositories\FertilizerRepo;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -22,11 +23,10 @@ class RecommendationService
     protected int|\DateTimeInterface $cacheTTL;
 
     public function __construct(
-        protected FertilizerRepo        $fertilizerRepo,
-        protected ApiRequestRepo        $apiRequestRepo,
+        protected FertilizerRepo $fertilizerRepo,
+        protected ApiRequestRepo $apiRequestRepo,
         protected AkilimoComputeService $akilimoComputeService,
-    )
-    {
+    ) {
         $ttl = config('cache.ttl'); // e.g. "1d", "1h", "30m"
         $this->cacheTTL = $this->parseTtl($ttl);
     }
@@ -34,7 +34,7 @@ class RecommendationService
     /**
      * Handles the entire recommendation computation workflow.
      *
-     * @param array $droidRequest The parsed request payload.
+     * @param  array  $droidRequest  The parsed request payload.
      * @return array Contains 'rec_type' and 'recommendation'.
      *
      * @throws \JsonException
@@ -49,14 +49,14 @@ class RecommendationService
         // Always assign a fresh request_id — each HTTP call is a distinct trace event
         // even when the computation result is served from cache.
         $result['request_id'] = (string) Str::uuid();
+
         return $result;
     }
-
 
     /**
      * Performs computation based on the droid request data.
      *
-     * @param array $droidRequest The input data containing user information, compute request, and fertilizer list.
+     * @param  array  $droidRequest  The input data containing user information, compute request, and fertilizer list.
      * @return array An array containing the recommended type and recommendations.
      *
      * @throws RecommendationException If there is an error specific to the recommendation process.
@@ -86,7 +86,7 @@ class RecommendationService
 
         // Generate a server-side UUID as the request correlation ID (#38).
         // The client-supplied device_token is stored separately for device-level queries.
-        $requestUuid = (string)Str::uuid();
+        $requestUuid = (string) Str::uuid();
         $requestLog = $this->logRequest($requestUuid, $deviceToken, $droidRequest, $akilimoComputeData);
 
         $startedAt = now();
@@ -98,14 +98,19 @@ class RecommendationService
 
             return [
                 'request_id' => $requestUuid,
+                'status' => Arr::get($computeResp, 'status', 'success'),
                 'version' => Arr::get($computeResp, 'version'),
-                'rec_type' => Arr::get($computeResp, 'rec_type'),
-                'recommendation' => Arr::get($computeResp, 'recommendation'),
+                'data' => [
+                    'rec_type' => Arr::get($computeResp, 'data.rec_type'),
+                    'recommendation' => Arr::get($computeResp, 'data.recommendation'),
+                    'data' => Arr::get($computeResp, 'data.data', []),
+                    'fertilizer_rates' => Arr::get($computeResp, 'data.fertilizer_rates', []),
+                ],
             ];
         } catch (RecommendationException $ex) {
             $this->updateRequestLogResponse($requestLog->id, $ex->body, $startedAt);
             throw $ex;
-        } catch (\Illuminate\Http\Client\ConnectionException $ex) {
+        } catch (ConnectionException $ex) {
             // Network/timeout/DNS failures
             $errorBody = [
                 'error' => 'Connection failed',
@@ -116,7 +121,7 @@ class RecommendationService
             $this->updateRequestLogResponse($requestLog->id, $errorBody, $startedAt);
 
             throw RecommendationException::serviceUnavailable('Recommendation service is unreachable');
-        } catch (\Illuminate\Http\Client\RequestException $ex) {
+        } catch (RequestException $ex) {
             // HTTP errors (4xx, 5xx responses)
             $statusCode = $ex->response->status();
             $responseBody = $ex->response->json() ?? [];
@@ -168,8 +173,6 @@ class RecommendationService
     /**
      * Generates a unique cache key based on the droidRequest payload.
      *
-     * @param array $droidRequest
-     * @return string
      * @throws \JsonException
      */
     private function generateCacheKey(array $droidRequest): string
@@ -190,14 +193,11 @@ class RecommendationService
         });
 
         // Use SHA-256 or xxHash (faster for non-crypto use)
-        return 'rec:' . hash('sha256', json_encode($relevantData, JSON_THROW_ON_ERROR));
+        return 'rec:'.hash('sha256', json_encode($relevantData, JSON_THROW_ON_ERROR));
     }
 
     /**
      * Retrieves available fertilizers for a specific country.
-     *
-     * @param string $countryCode
-     * @return \Illuminate\Database\Eloquent\Collection
      */
     private function getAvailableFertilizers(string $countryCode): \Illuminate\Database\Eloquent\Collection
     {
@@ -218,10 +218,6 @@ class RecommendationService
 
     /**
      * Maps fertilizers to the external service format.
-     *
-     * @param Collection $availableFertilizers
-     * @param Collection $fertilizerMap
-     * @return array
      */
     private function mapFertilizersToExternalFormat(Collection $availableFertilizers, Collection $fertilizerMap): array
     {
@@ -232,7 +228,7 @@ class RecommendationService
             $label = $fertilizer->label ?? null;
 
             // Skip if key or label missing (data integrity)
-            if (!$key || !$label) {
+            if (! $key || ! $label) {
                 continue;
             }
 
@@ -255,13 +251,9 @@ class RecommendationService
         return $computedFertilizers;
     }
 
-
     /**
      * Logs the incoming request to the database.
      *
-     * @param string $deviceToken
-     * @param array $droidRequest
-     * @param AkilimoComputeData $plumberRequest
      * @return object The created log entry.
      */
     private function logRequest(string $requestUuid, string $deviceToken, array $droidRequest, AkilimoComputeData $plumberRequest): object
@@ -277,25 +269,22 @@ class RecommendationService
     /**
      * Updates the log entry with the Plumbr response and computed latency.
      *
-     * @param int $logId
-     * @param array $responseData
-     * @param \Carbon\Carbon $startedAt Time immediately before the Plumbr call
-     * @return void
+     * @param  Carbon  $startedAt  Time immediately before the Plumbr call
      */
     private function updateRequestLogResponse(int $logId, array $responseData, Carbon $startedAt): void
     {
         $this->apiRequestRepo->update($logId, [
             'plumber_response' => $responseData,
             'request_started_at' => $startedAt,
-            'request_duration_ms' => (int)$startedAt->diffInMilliseconds(now()),
+            'request_duration_ms' => (int) $startedAt->diffInMilliseconds(now()),
         ]);
     }
 
     /**
      * Parses a TTL (time-to-live) string and converts it to a Carbon instance.
      *
-     * @param string $ttl The TTL string to parse. It can be a numeric value in seconds
-     *                    or a string with a unit (e.g., "10d" for 10 days, "5h" for 5 hours, "30m" for 30 minutes).
+     * @param  string  $ttl  The TTL string to parse. It can be a numeric value in seconds
+     *                       or a string with a unit (e.g., "10d" for 10 days, "5h" for 5 hours, "30m" for 30 minutes).
      * @return Carbon The calculated expiration time as a Carbon instance.
      */
     private function parseTtl(string $ttl): Carbon
@@ -304,21 +293,22 @@ class RecommendationService
         $now = Carbon::now();
 
         if (is_numeric($ttl)) {
-            return $now->addSeconds((int)$ttl);
+            return $now->addSeconds((int) $ttl);
         }
 
-
-        if (preg_match('/^(\d+)([dhm])$/', $ttl, $matches)) {
-            $value = (int)$matches[1];
+        if (preg_match('/^(\d+)([sdhm])$/', $ttl, $matches)) {
+            $value = (int) $matches[1];
             $unit = $matches[2];
 
             return match ($unit) {
+                's' => $now->addSeconds($value),
                 'd' => $now->addDays($value),
                 'h' => $now->addHours($value),
                 'm' => $now->addMinutes($value),
             };
         }
         \Log::warning('Unrecognised CACHE_TTL value, defaulting to 1 hour', ['value' => $ttl]);
+
         return $now->addHour();
     }
 }

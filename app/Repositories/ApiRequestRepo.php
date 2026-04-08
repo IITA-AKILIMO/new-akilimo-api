@@ -9,7 +9,6 @@ use App\Models\ApiRequest;
  */
 class ApiRequestRepo extends BaseRepo
 {
-
     /**
      * @return class-string<ApiRequest>
      */

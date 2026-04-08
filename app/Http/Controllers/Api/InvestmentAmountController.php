@@ -14,9 +14,7 @@ class InvestmentAmountController extends Controller
 
     public function __construct(
         protected InvestmentRepo $repo
-    )
-    {
-    }
+    ) {}
 
     public function index(Request $request): InvestmentAmountResourceCollection
     {
@@ -43,7 +41,7 @@ class InvestmentAmountController extends Controller
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $fertilizerPrices = $this->repo->paginateWithSort(
             perPage: $perPage,

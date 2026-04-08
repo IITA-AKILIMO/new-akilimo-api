@@ -10,7 +10,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class YieldInfoData extends Data
 {
     public float $currentFieldYield;
+
     public float $currentMaizePerformance;
+
     public bool $sellToStarchFactory;
+
     public ?string $starchFactoryName;
 }

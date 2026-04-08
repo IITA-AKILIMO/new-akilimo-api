@@ -12,6 +12,11 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CassavaPriceResourceCollection extends ResourceCollection
 {
+    public function __construct($resource, private readonly CassavaPriceRepo $priceRepo)
+    {
+        parent::__construct($resource);
+    }
+
     /**
      * Transform the resource collection into an array.
      *
@@ -22,13 +27,14 @@ class CassavaPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        // One query for all price bands across countries
+        // One query scoped to the countries present on this page
+        $countries = $this->collection->pluck('country')->unique()->values()->all();
         /** @var array<string, MinMaxPriceDto> $priceBands */
-        $priceBands = app(CassavaPriceRepo::class)->findAllPriceBands();
+        $priceBands = $this->priceRepo->findPriceBandsForCountries($countries);
 
         // One query for all currencies needed on this page
         $currencyCodes = $this->collection
-            ->map(fn($item) => EnumCountry::fromCode($item->country)->currency())
+            ->map(fn ($item) => EnumCountry::fromCode($item->country)->currency())
             ->unique()
             ->values()
             ->all();
@@ -38,9 +44,10 @@ class CassavaPriceResourceCollection extends ResourceCollection
 
         return [
             'data' => $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
-                $band         = $priceBands[$item->country] ?? new MinMaxPriceDto();
+                $band = $priceBands[$item->country] ?? new MinMaxPriceDto;
                 $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency     = $currencies->get($currencyCode);
+                $currency = $currencies->get($currencyCode);
+
                 return (new CassavaPriceResource($item, $band, $currency))->toArray($request);
             }),
         ];

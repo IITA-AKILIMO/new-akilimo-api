@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\RecommendationException;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 it('stores the message and status code', function () {
@@ -65,7 +66,7 @@ it('invalidData() produces a 422', function () {
 
 it('renders to a JSON response with the correct structure', function () {
     $ex = new RecommendationException('Not found', 404);
-    $request = Illuminate\Http\Request::create('/');
+    $request = Request::create('/');
 
     $response = $ex->render($request);
 
@@ -78,7 +79,7 @@ it('renders to a JSON response with the correct structure', function () {
 
 it('render returns the correct error type label for known status codes', function (int $status, string $label) {
     $ex = new RecommendationException('msg', $status);
-    $response = $ex->render(Illuminate\Http\Request::create('/'));
+    $response = $ex->render(Request::create('/'));
     expect($response->getData(true)['error'])->toBe($label);
 })->with([
     [400, 'Bad Request'],
