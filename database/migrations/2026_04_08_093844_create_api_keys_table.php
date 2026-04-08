@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('api_keys', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id')->primary();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');                    // human label, e.g. "Production mobile app"
             $table->string('key_prefix', 12);          // first 8 chars of raw key, stored plain for display (e.g. "ak_a1b2c3d4")

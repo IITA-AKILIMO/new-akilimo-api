@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('translations', function (Blueprint $table) {
-            $table->bigInteger('id', true);
+            $table->bigIncrements('id')->primary();
             $table->string('key', 50)->unique();
             $table->text('en')->comment('base language');
             $table->text('sw')->nullable();

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id')->primary();
             $table->morphs('tokenable');         // tokenable_type + tokenable_id (polymorphic — supports User and future models)
             $table->string('name');              // human label, e.g. "Login token"
             $table->string('token', 64)->unique(); // SHA-256 hex of the raw token
