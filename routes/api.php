@@ -42,6 +42,10 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\StarchPricesController::class, 'index']);
     });
 
+    Route::prefix('v1/default-prices')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\DefaultPriceController::class, 'index']);
+    });
+
     Route::prefix('v1/cassava-units')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\CassavaUnitsController::class, 'index']);
     });
