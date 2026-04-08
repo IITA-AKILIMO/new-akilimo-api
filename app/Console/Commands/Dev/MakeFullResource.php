@@ -3,10 +3,10 @@
 namespace App\Console\Commands\Dev;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-
 
 class MakeFullResource extends Command
 {
@@ -23,13 +23,13 @@ class MakeFullResource extends Command
         $model = $this->option('model');
 
         // Infer model from a resource name if not provided
-        if (!$model && Str::endsWith($name, 'Resource')) {
+        if (! $model && Str::endsWith($name, 'Resource')) {
             $model = Str::before($name, 'Resource');
         }
 
         $resourcePath = app_path("Http/Resources/{$name}.php");
         $collectionDir = app_path('Http/Resources/Collections');
-        $collectionPath = $collectionDir . "/{$name}Collection.php";
+        $collectionPath = $collectionDir."/{$name}Collection.php";
 
         if (file_exists($resourcePath) || file_exists($collectionPath)) {
             $this->error('One or both resources already exist. Use --force to overwrite.');
@@ -46,7 +46,7 @@ class MakeFullResource extends Command
         // Generate fillable fields for toArray()
         $fields = $this->getFillableFields($model);
         $fieldLines = '';
-        if (!empty($fields)) {
+        if (! empty($fields)) {
             $fieldLines = collect($fields)->map(function ($field) {
                 return "            '{$field}' => \$model->{$field},";
             })->implode("\n");
@@ -64,7 +64,7 @@ class MakeFullResource extends Command
 
             if (count($relationships)) {
                 $relationLines = collect($relationships)->map(function ($isCollection, $relation) {
-                    $resourceName = Str::studly(Str::singular($relation)) . 'Resource';
+                    $resourceName = Str::studly(Str::singular($relation)).'Resource';
 
                     return $isCollection
                         ? "            '{$relation}' => {$resourceName}::collection(\$model->{$relation}),"
@@ -73,19 +73,19 @@ class MakeFullResource extends Command
 
                 // Auto generate missing related resources only if with-relationships flag is passed
                 foreach ($relationships as $relation => $isCollection) {
-                    $relatedResourceName = Str::studly(Str::singular($relation)) . 'Resource';
+                    $relatedResourceName = Str::studly(Str::singular($relation)).'Resource';
                     $this->generateMissingResource($relatedResourceName);
                 }
 
                 // Add use statements for related resources
                 $resourceUses = collect($relationships)->map(function ($_, $relation) {
-                    $resourceName = Str::studly(Str::singular($relation)) . 'Resource';
+                    $resourceName = Str::studly(Str::singular($relation)).'Resource';
 
                     return "use App\\Http\\Resources\\{$resourceName};";
                 })->implode("\n");
 
                 if ($resourceUses) {
-                    $resourceUses = "\n" . $resourceUses;
+                    $resourceUses = "\n".$resourceUses;
                 }
             }
         }
@@ -148,12 +148,13 @@ PHP;
     {
         $modelClass = "App\\Models\\{$model}";
 
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             return null;
         }
 
         try {
             $instance = app($modelClass);
+
             return Schema::getColumnListing($instance->getTable());
         } catch (\Throwable $e) {
             return null;
@@ -167,7 +168,7 @@ PHP;
     {
         $modelClass = "App\\Models\\{$model}";
 
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             return [];
         }
 
@@ -181,7 +182,7 @@ PHP;
             if ($method->getNumberOfParameters() === 0 && $method->class === $modelClass) {
                 try {
                     $return = $method->invoke($instance);
-                    if ($return instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+                    if ($return instanceof Relation) {
                         $name = $method->getName();
                         $isCollection = in_array(class_basename($return), ['HasMany', 'BelongsToMany', 'MorphMany']);
                         $relationships[$name] = $isCollection;

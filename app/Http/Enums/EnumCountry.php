@@ -2,7 +2,6 @@
 
 namespace App\Http\Enums;
 
-
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
 enum EnumCountry: string

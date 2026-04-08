@@ -16,7 +16,7 @@ class StarchFactoryResourceCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data'=>StarchFactoryResource::collection($this->collection),
+            'data' => StarchFactoryResource::collection($this->collection),
         ];
     }
 }

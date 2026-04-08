@@ -29,6 +29,8 @@ class FertilizerResource extends JsonResource
             'currency_code' => EnumCountry::fromCode($fertilizer->country)->currency(),
             'sort_order' => $fertilizer->sort_order,
             'use_case' => $fertilizer->use_case,
+            'cis' => $fertilizer->cis,
+            'cim' => $fertilizer->cim,
             'available' => $fertilizer->available,
             'created_at' => $fertilizer->created_at,
             'updated_at' => $fertilizer->updated_at,

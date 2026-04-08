@@ -11,13 +11,6 @@ class FertilizerPriceRepo extends BaseRepo
         return FertilizerPrice::class;
     }
 
-    public function findBySortOrderAndFertilizerKey(int $sortOrder, string $fertilizerKey)
-    {
-        return FertilizerPrice::where('sort_order', $sortOrder)
-            ->where('fertilizer_key', $fertilizerKey)
-            ->first();
-    }
-
     /**
      * Load min (sort_order=1) and max (sort_order=4) price band records for a list of
      * fertilizer keys in two queries instead of two queries per row.

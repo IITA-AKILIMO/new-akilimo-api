@@ -1,9 +1,10 @@
 <?php
 
-use App\Service\RecommendationService;
-use App\Repositories\FertilizerRepo;
 use App\Repositories\ApiRequestRepo;
+use App\Repositories\FertilizerRepo;
 use App\Service\AkilimoComputeService;
+use App\Service\RecommendationService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 function makeTtlService(): RecommendationService
@@ -18,17 +19,18 @@ function makeTtlService(): RecommendationService
 /**
  * Invoke the private parseTtl method and return the resulting Carbon instance.
  */
-function parseTtl(string $value): \Carbon\Carbon
+function parseTtl(string $value): Carbon
 {
     $service = makeTtlService();
-    $method  = new ReflectionMethod($service, 'parseTtl');
+    $method = new ReflectionMethod($service, 'parseTtl');
+
     return $method->invoke($service, $value);
 }
 
 /**
  * Assert that $result is approximately $expectedSeconds in the future (±5 s tolerance).
  */
-function assertApproxSeconds(\Carbon\Carbon $result, int $expectedSeconds): void
+function assertApproxSeconds(Carbon $result, int $expectedSeconds): void
 {
     $diff = (int) now()->diffInSeconds($result, false);
     expect($diff)->toBeGreaterThanOrEqual($expectedSeconds - 5)

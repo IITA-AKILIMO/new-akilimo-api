@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $country
  * @property int|null $sort_order
  * @property string $use_case
+ * @property bool $cis
+ * @property bool $cim
  * @property bool|null $available
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -29,6 +31,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereAvailable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCim($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCis($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCountry($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Fertilizer whereFertilizerKey($value)
@@ -50,6 +54,8 @@ class Fertilizer extends Model
     protected $casts = [
         'weight' => 'int',
         'sort_order' => 'int',
+        'cis' => 'bool',
+        'cim' => 'bool',
         'available' => 'bool',
     ];
 
@@ -62,6 +68,8 @@ class Fertilizer extends Model
         'country',
         'sort_order',
         'use_case',
+        'cis',
+        'cim',
         'available',
     ];
 }

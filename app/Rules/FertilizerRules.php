@@ -4,7 +4,6 @@ namespace App\Rules;
 
 class FertilizerRules
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,8 +25,6 @@ class FertilizerRules
 
     /**
      * Custom messages for validation errors.
-     *
-     * @return array
      */
     public static function messages(): array
     {

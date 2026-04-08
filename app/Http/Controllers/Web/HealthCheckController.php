@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -21,7 +23,7 @@ class HealthCheckController extends Controller
         // will not implement
     }
 
-    public function check(): \Illuminate\Http\JsonResponse
+    public function check(): JsonResponse
     {
         $healthChecks = [
             'database' => $this->checkDatabase(),
@@ -49,11 +51,11 @@ class HealthCheckController extends Controller
         return response()->json([
             'status' => $overallStatus ? 'healthy' : 'unhealthy',
             'timestamp' => Carbon::now()->toIso8601String(),
-//            'server_info' => [
-//                'php_version' => PHP_VERSION,
-//                'laravel_version' => app()->version(),
-//                'environment' => app()->environment(),
-//            ],
+            //            'server_info' => [
+            //                'php_version' => PHP_VERSION,
+            //                'laravel_version' => app()->version(),
+            //                'environment' => app()->environment(),
+            //            ],
             'checks' => $healthChecks,
         ], $overallStatus ? 200 : 500);
     }
@@ -114,7 +116,7 @@ class HealthCheckController extends Controller
     private function checkCache(): array
     {
         try {
-            $testKey = 'health_check_' . uniqid();
+            $testKey = 'health_check_'.uniqid();
             Cache::put($testKey, 'test', 60);
             $value = Cache::get($testKey);
             Cache::forget($testKey);
@@ -134,7 +136,7 @@ class HealthCheckController extends Controller
     private function checkFileStorage(): array
     {
         try {
-            $testFile = 'health_check_' . uniqid() . '.txt';
+            $testFile = 'health_check_'.uniqid().'.txt';
             Storage::put($testFile, 'Storage health check');
             $fileExists = Storage::exists($testFile);
             Storage::delete($testFile);
@@ -247,37 +249,39 @@ class HealthCheckController extends Controller
             $extensionStatus[$ext] = extension_loaded($ext);
         }
 
-        $extensionStatus['status'] = count(array_filter($extensionStatus, fn($status) => $status === false)) === 0 ? 'UP' : 'DOWN';
+        $extensionStatus['status'] = count(array_filter($extensionStatus, fn ($status) => $status === false)) === 0 ? 'UP' : 'DOWN';
+
         return $extensionStatus;
     }
 
     private function checkAkilimoCompute(): array
     {
-        $baseUrl   = rtrim((string) config('akilimo-compute.base_url', ''), '/');
-        $healthUrl = $baseUrl ? $baseUrl . '/health' : null;
+        $baseUrl = rtrim((string) config('akilimo-compute.base_url', ''), '/');
+        $healthUrl = $baseUrl ? $baseUrl.'/health' : null;
 
         $result = [
             'status' => 'DOWN',
-            'url'    => $healthUrl,
+            'url' => $healthUrl,
         ];
 
         if (empty($healthUrl)) {
             $result['error'] = 'AKILIMO_COMPUTE_BASE_URL is not configured';
+
             return $result;
         }
 
         try {
             $response = Http::timeout(5)->get($healthUrl);
 
-            $result['status']      = $response->successful() ? 'UP' : 'DOWN';
+            $result['status'] = $response->successful() ? 'UP' : 'DOWN';
             $result['http_status'] = $response->status();
 
             // If the health endpoint returns JSON like {"status":"UP"}
             if ($response->json('status')) {
                 $result['service_status'] = $response->json('status');
             }
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            $result['error'] = 'Connection failed: ' . $e->getMessage();
+        } catch (ConnectionException $e) {
+            $result['error'] = 'Connection failed: '.$e->getMessage();
         } catch (\Throwable $e) {
             $result['error'] = $e->getMessage();
         }

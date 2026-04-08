@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class FertilizerPriceController extends Controller
 {
     use HasPaginationParams;
+
     public function __construct(
         protected FertilizerPriceRepo $repo
     ) {}
@@ -29,7 +30,7 @@ class FertilizerPriceController extends Controller
     public function byCountry(string $countryCode, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
-            'country' => strtoupper(trim($countryCode))
+            'country' => strtoupper(trim($countryCode)),
         ]);
     }
 
@@ -39,7 +40,7 @@ class FertilizerPriceController extends Controller
     public function byFertilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
-            'fertilizer_key' => strtoupper(trim($fertilizerKey))
+            'fertilizer_key' => strtoupper(trim($fertilizerKey)),
         ]);
     }
 
@@ -50,7 +51,7 @@ class FertilizerPriceController extends Controller
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $fertilizerPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -59,6 +60,6 @@ class FertilizerPriceController extends Controller
             filters: $filters
         );
 
-        return FertilizerPriceResourceCollection::make($fertilizerPrices);
+        return FertilizerPriceResourceCollection::make($fertilizerPrices, $this->repo);
     }
 }

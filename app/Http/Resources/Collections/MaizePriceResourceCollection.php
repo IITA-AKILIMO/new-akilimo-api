@@ -10,23 +10,30 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class MaizePriceResourceCollection extends ResourceCollection
 {
+    public function __construct($resource, private readonly MaizePriceRepo $priceRepo)
+    {
+        parent::__construct($resource);
+    }
+
     /**
      * Transform the resource collection into an array.
      *
-     * Price bands are loaded once for all (country, produce_type) combinations on this
-     * page, eliminating the N+1 query that the old per-row repo instantiation caused.
+     * Price bands are loaded once for the (country, produce_type) combinations present
+     * on this page, eliminating the N+1 query that the old per-row repo instantiation caused.
      *
      * @return array<int|string, mixed>
      */
     public function toArray(Request $request): array
     {
+        $countries = $this->collection->pluck('country')->unique()->values()->all();
         /** @var array<string, MinMaxPriceDto> $priceBands */
-        $priceBands = app(MaizePriceRepo::class)->findPriceBandsBulk();
+        $priceBands = $this->priceRepo->findPriceBandsBulkForCountries($countries);
 
         return [
             'data' => $this->collection->map(function ($item) use ($priceBands, $request) {
-                $key  = "{$item->country}:{$item->produce_type}";
-                $band = $priceBands[$key] ?? new MinMaxPriceDto();
+                $key = "{$item->country}:{$item->produce_type}";
+                $band = $priceBands[$key] ?? new MinMaxPriceDto;
+
                 return (new MaizePriceResource($item, $band))->toArray($request);
             }),
         ];

@@ -12,8 +12,11 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class FarmInformationData extends Data
 {
     public string $countryCode;
+
     public string $useCase;
+
     public float $mapLat;
+
     public float $mapLong;
 
     public float $fieldSize;

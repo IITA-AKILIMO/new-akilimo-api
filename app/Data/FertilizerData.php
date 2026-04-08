@@ -9,23 +9,22 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class FertilizerData extends Data
 {
-
     public string $name;
 
-    #[MapInputName("fertilizer_label")]
+    #[MapInputName('fertilizer_label')]
     public string $label;
 
-    #[MapInputName("fertilizer_type")]
+    #[MapInputName('fertilizer_type')]
     public string $type;
 
-    #[MapInputName("key")]
+    #[MapInputName('key')]
     public string $key;
 
     public float $weight;
 
-    #[MapInputName("price")]
+    #[MapInputName('price')]
     public float $pricePerBag = 0.0;
 
-    #[MapInputName("selected")]
+    #[MapInputName('selected')]
     public bool $selected = false;
 }

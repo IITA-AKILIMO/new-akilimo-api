@@ -12,11 +12,11 @@ use Illuminate\Support\Str;
 class FertilizerController extends Controller
 {
     use HasPaginationParams;
+
     public function __construct(
         protected FertilizerRepo $fertilizerRepo,
-    )
-    {
-        //empty constructor
+    ) {
+        // empty constructor
     }
 
     /**
@@ -26,32 +26,25 @@ class FertilizerController extends Controller
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
             direction: $sort);
 
-
         return FertilizerResourceCollection::make($availableFertilizers);
     }
 
-    /**
-     * @param string $countryCode
-     * @param Request $request
-     * @return FertilizerResourceCollection
-     */
     public function byCountry(string $countryCode, Request $request): FertilizerResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'name', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
         $useCase = $request->input('use_case');
 
-
         $filters = [
-            'country' => strtoupper($countryCode)
+            'country' => strtoupper($countryCode),
         ];
 
         $trimmed = Str::of($useCase)->trim();
@@ -59,15 +52,12 @@ class FertilizerController extends Controller
             $filters['use_case'] = $trimmed->upper()->toString();
         }
 
-
         $availableFertilizers = $this->fertilizerRepo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
             direction: $sort,
             filters: $filters);
 
-
         return FertilizerResourceCollection::make($availableFertilizers);
     }
-
 }

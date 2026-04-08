@@ -40,6 +40,6 @@ END");
      */
     public function down(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS process_rec_request");
+        DB::unprepared('DROP PROCEDURE IF EXISTS process_rec_request');
     }
 };

@@ -33,6 +33,6 @@ END");
      */
     public function down(): void
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS exclusion_flag_evaluation");
+        DB::unprepared('DROP PROCEDURE IF EXISTS exclusion_flag_evaluation');
     }
 };

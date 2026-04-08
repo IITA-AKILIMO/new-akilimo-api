@@ -19,18 +19,17 @@ final class RecommendationException extends Exception
     /**
      * Create a new recommendation exception instance.
      *
-     * @param string $message Exception message
-     * @param int $code HTTP status code (default: 500)
-     * @param array $body Structured error data from the API
-     * @param Throwable|null $previous Previous exception for chaining
+     * @param  string  $message  Exception message
+     * @param  int  $code  HTTP status code (default: 500)
+     * @param  array  $body  Structured error data from the API
+     * @param  Throwable|null  $previous  Previous exception for chaining
      */
     public function __construct(
-        string     $message = "",
-        int        $code = Response::HTTP_INTERNAL_SERVER_ERROR,
-        array      $body = [],
+        string $message = '',
+        int $code = Response::HTTP_INTERNAL_SERVER_ERROR,
+        array $body = [],
         ?Throwable $previous = null
-    )
-    {
+    ) {
         // Extract nested data if present, otherwise use body as-is
         $this->body = Arr::get($body, 'data', $body);
 
@@ -47,9 +46,6 @@ final class RecommendationException extends Exception
 
     /**
      * Normalize the HTTP status code to ensure it's valid.
-     *
-     * @param int $code
-     * @return int
      */
     private function normalizeStatusCode(int $code): int
     {
@@ -63,9 +59,6 @@ final class RecommendationException extends Exception
 
     /**
      * Render the exception as a JSON HTTP response.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function render(Request $request): JsonResponse
     {
@@ -74,16 +67,18 @@ final class RecommendationException extends Exception
         $response = [
             'error' => $this->getErrorType(),
             'message' => $this->getMessage(),
-            'status' => $status
+            'status' => $status,
         ];
+
+        if (! empty($this->body['errors'])) {
+            $response['errors'] = $this->body['errors'];
+        }
 
         return response()->json($response, $status);
     }
 
     /**
      * Get a human-readable error type based on status code.
-     *
-     * @return string
      */
     private function getErrorType(): string
     {
@@ -105,10 +100,9 @@ final class RecommendationException extends Exception
     /**
      * Create an exception for when a recommendation is not found.
      *
-     * @param string $message
      * @return static
      */
-    public static function notFound(string $message = 'Recommendation not found'): static
+    public static function notFound(string $message = 'Recommendation not found'): RecommendationException
     {
         return new self($message, Response::HTTP_NOT_FOUND);
     }
@@ -116,29 +110,30 @@ final class RecommendationException extends Exception
     /**
      * Create an exception for service unavailability.
      *
-     * @param string $message
-     * @param array $body
-     * @param Throwable|null $previous
      * @return static
      */
     public static function serviceUnavailable(
-        string     $message = 'Recommendation service is currently unavailable',
-        array      $body = [],
+        string $message = 'Recommendation service is currently unavailable',
+        array $body = [],
         ?Throwable $previous = null
-    ): static
-    {
+    ): RecommendationException {
         return new self($message, Response::HTTP_SERVICE_UNAVAILABLE, $body, $previous);
     }
 
     /**
      * Create an exception for invalid data.
-     *
-     * @param string $message
-     * @param array $errors
-     * @return static
      */
     public static function invalidData(string $message = 'Invalid recommendation data', array $errors = []): static
     {
         return new self($message, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
+    }
+
+    public static function validationFailed(array $errors, string $message = 'Validation failed'): static
+    {
+        return new self(
+            $message,
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            ['errors' => $errors]
+        );
     }
 }

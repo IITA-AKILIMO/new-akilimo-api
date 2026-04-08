@@ -2,9 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Data\MinMaxPriceDto;
-use App\Models\ApiRequest;
-use App\Models\CassavaPrice;
 use App\Models\CassavaUnit;
 
 class CassavaUnitRepo extends BaseRepo
@@ -16,5 +13,4 @@ class CassavaUnitRepo extends BaseRepo
     {
         return CassavaUnit::class;
     }
-
 }

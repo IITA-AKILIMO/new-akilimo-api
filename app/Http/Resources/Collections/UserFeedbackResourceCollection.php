@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Collections;
 
-use App\Http\Resources\CurrencyResource;
 use App\Http\Resources\UserFeedbackResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

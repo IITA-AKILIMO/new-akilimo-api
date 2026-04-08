@@ -12,7 +12,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class FarmMethodsData extends Data
 {
     public ?string $methodPloughing;
+
     public ?string $methodHarrowing;
+
     public ?string $methodRidging;
+
     public ?string $methodWeeding;
 }

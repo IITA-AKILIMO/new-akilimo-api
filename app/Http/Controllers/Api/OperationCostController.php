@@ -11,27 +11,21 @@ use Illuminate\Http\Request;
 class OperationCostController extends Controller
 {
     use HasPaginationParams;
-    public function __construct(protected OperationCostRepo $repo)
-    {
-    }
 
-    /**
-     * @param Request $request
-     * @return OperationCostResourceCollection
-     */
+    public function __construct(protected OperationCostRepo $repo) {}
+
     public function index(Request $request): OperationCostResourceCollection
     {
-        $perPage       = $this->getPerPage($request);
-        $orderBy       = $this->getOrderBy($request, ['sort_order', 'max_cost', 'min_cost', 'created_at'], 'max_cost');
-        $sort          = $this->getSortDirection($request);
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'max_cost', 'min_cost', 'created_at'], 'max_cost');
+        $sort = $this->getSortDirection($request);
         $operationName = $request->input('operation_name');
         $operationType = $request->input('operation_type');
 
-        $filters = [
-            'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType))
-        ];
-
+        $filters = array_filter([
+            'operation_name' => filled($operationName) ? strtolower(trim($operationName)) : null,
+            'operation_type' => filled($operationType) ? strtolower(trim($operationType)) : null,
+        ]);
 
         $operationCosts = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -42,25 +36,19 @@ class OperationCostController extends Controller
         return OperationCostResourceCollection::make($operationCosts);
     }
 
-    /**
-     * @param string $countryCode
-     * @param Request $request
-     * @return OperationCostResourceCollection
-     */
     public function byCountry(string $countryCode, Request $request): OperationCostResourceCollection
     {
-        $perPage       = $this->getPerPage($request);
-        $orderBy       = $this->getOrderBy($request, ['sort_order', 'max_cost', 'min_cost', 'created_at'], 'max_cost');
-        $sort          = $this->getSortDirection($request);
+        $perPage = $this->getPerPage($request);
+        $orderBy = $this->getOrderBy($request, ['sort_order', 'max_cost', 'min_cost', 'created_at'], 'max_cost');
+        $sort = $this->getSortDirection($request);
         $operationName = $request->input('operation_name');
         $operationType = $request->input('operation_type');
 
-        $filters = [
+        $filters = array_filter([
             'country_code' => $countryCode,
-            'operation_name' => strtolower(trim($operationName)),
-            'operation_type' => strtolower(trim($operationType))
-        ];
-
+            'operation_name' => filled($operationName) ? strtolower(trim($operationName)) : null,
+            'operation_type' => filled($operationType) ? strtolower(trim($operationType)) : null,
+        ]);
 
         $operationCosts = $this->repo->paginateWithSort(
             perPage: $perPage,

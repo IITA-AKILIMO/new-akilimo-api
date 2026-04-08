@@ -10,10 +10,16 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class TractorCostsData extends Data
 {
     public bool $tractorPlough;
+
     public bool $tractorHarrow;
+
     public bool $tractorRidger;
+
     public string $costLmoAreaBasis;
+
     public float $costTractorPloughing;
+
     public float $costTractorHarrowing;
+
     public float $costTractorRidging;
 }
