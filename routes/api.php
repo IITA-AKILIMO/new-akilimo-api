@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PotatoPricesController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\StarchFactoryController;
 use App\Http\Controllers\Api\StarchPricesController;
+use App\Http\Controllers\Api\ApiKeyController;
 use App\Http\Controllers\Api\TranslationController;
 use App\Http\Controllers\Api\UserFeedbackController;
 use App\Http\Controllers\Web\HealthCheckController;
@@ -54,14 +55,6 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/country/{countryCode}', [StarchFactoryController::class, 'byCountry']);
     });
 
-    Route::prefix('v1/starch-prices')->group(function () {
-        Route::get('/', [StarchPricesController::class, 'index']);
-    });
-
-    Route::prefix('v1/default-prices')->group(function () {
-        Route::get('/', [DefaultPriceController::class, 'index']);
-    });
-
     Route::prefix('v1/cassava-units')->group(function () {
         Route::get('/', [CassavaUnitsController::class, 'index']);
     });
@@ -89,9 +82,26 @@ Route::middleware('throttle:120,1')->group(function () {
         Route::get('/', [UserFeedbackController::class, 'index']);
     });
 
-    Route::prefix('v1/translations')->group(function () {
+    Route::prefix('v1/starch-prices')->group(function () {
+        Route::get('/', [StarchPricesController::class, 'index']);
+    });
+
+    Route::prefix('v1/default-prices')->group(function () {
+        Route::get('/', [DefaultPriceController::class, 'index']);
+    });
+
+    
+    Route::prefix('v1/translations')->middleware('auth.token')->group(function () {
         Route::get('/', [TranslationController::class, 'index']);
     });
+});
+
+// API key management — requires an existing valid token or key to authenticate
+Route::middleware(['throttle:30,1', 'auth.token'])->prefix('v1/auth')->group(function () {
+    Route::get('/api-keys', [ApiKeyController::class, 'index']);
+    Route::post('/api-keys', [ApiKeyController::class, 'store']);
+    Route::patch('/api-keys/{id}/revoke', [ApiKeyController::class, 'revoke']);
+    Route::delete('/api-keys/{id}', [ApiKeyController::class, 'destroy']);
 });
 
 // Mutating / expensive endpoints — tighter limit
