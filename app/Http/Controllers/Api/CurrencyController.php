@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CurrencyRequest;
 use App\Http\Resources\Collections\CurrencyResourceCollection;
+use App\Http\Resources\CurrencyResource;
 use App\Repositories\CurrencyRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
@@ -27,5 +30,32 @@ class CurrencyController extends Controller
         );
 
         return CurrencyResourceCollection::make($currencies);
+    }
+
+    public function store(CurrencyRequest $request): JsonResponse
+    {
+        $currency = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => new CurrencyResource($currency),
+            'message' => 'Currency created.',
+        ], 201);
+    }
+
+    public function update(CurrencyRequest $request, int $id): JsonResponse
+    {
+        $currency = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new CurrencyResource($currency),
+            'message' => 'Currency updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->repo->delete($id);
+
+        return response()->json(null, 204);
     }
 }

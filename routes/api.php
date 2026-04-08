@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\StarchFactoryController;
 use App\Http\Controllers\Api\StarchPricesController;
 use App\Http\Controllers\Api\TranslationController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserFeedbackController;
 use App\Http\Controllers\Web\HealthCheckController;
 use Illuminate\Support\Facades\Route;
@@ -118,4 +119,34 @@ Route::middleware(['throttle:30,1', 'auth.token'])->prefix('v1/auth')->group(fun
 Route::middleware(['throttle:30,1', 'auth.token'])->group(function () {
     Route::post('v1/recommendations/compute', [RecommendationController::class, 'computeRecommendations']);
     Route::post('v1/user-feedback', [UserFeedbackController::class, 'store']);
+});
+
+// ── Admin — lookup data CRUD (requires write ability) ─────────────────────────
+Route::middleware(['throttle:60,1', 'auth.token:write'])->prefix('v1/admin')->group(function () {
+    Route::apiResource('fertilizers', FertilizerController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('fertilizer-prices', FertilizerPriceController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('maize-prices', MaizePricesController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('cassava-prices', CassavaPricesController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('potato-prices', PotatoPricesController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('starch-prices', StarchPricesController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('starch-factories', StarchFactoryController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('investment-amounts', InvestmentAmountController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('operation-costs', OperationCostController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('currencies', CurrencyController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('cassava-units', CassavaUnitsController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('translations', TranslationController::class)->only(['store', 'update', 'destroy']);
+
+    // Default prices use a composite key (country + item) instead of a single integer id
+    Route::post('default-prices', [DefaultPriceController::class, 'store']);
+    Route::put('default-prices/{country}/{item}', [DefaultPriceController::class, 'update']);
+    Route::delete('default-prices/{country}/{item}', [DefaultPriceController::class, 'destroy']);
+});
+
+// ── Admin — user management (requires admin ability) ──────────────────────────
+Route::middleware(['throttle:30,1', 'auth.token:admin'])->prefix('v1/admin')->group(function () {
+    Route::get('users', [UserController::class, 'index']);
+    Route::post('users', [UserController::class, 'store']);
+    Route::get('users/{id}', [UserController::class, 'show']);
+    Route::put('users/{id}', [UserController::class, 'update']);
+    Route::delete('users/{id}', [UserController::class, 'destroy']);
 });
