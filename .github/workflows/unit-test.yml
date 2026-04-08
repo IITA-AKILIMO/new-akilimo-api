@@ -39,7 +39,7 @@ jobs:
           restore-keys: composer-
 
       - name: Install Composer dependencies
-        run: composer update --prefer-dist --no-suggest
+        run: composer update --prefer-dist
 
       - name: Prepare environment file
         run: cp .env.example .env
