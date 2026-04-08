@@ -1,11 +1,14 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "iita/akilimo-api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "AKILIMO API — agricultural recommendation engine for fertilizer, intercropping, and planting schedules.",
     "keywords": [
+        "akilimo",
+        "agriculture",
+        "recommendations",
         "laravel",
-        "framework"
+        "api"
     ],
     "license": "MIT",
     "minimum-stability": "dev",
