@@ -136,10 +136,7 @@ Route::middleware(['throttle:60,1', 'auth.token:write'])->prefix('v1/admin')->gr
     Route::apiResource('cassava-units', CassavaUnitsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('translations', TranslationController::class)->only(['store', 'update', 'destroy']);
 
-    // Default prices use a composite key (country + item) instead of a single integer id
-    Route::post('default-prices', [DefaultPriceController::class, 'store']);
-    Route::put('default-prices/{country}/{item}', [DefaultPriceController::class, 'update']);
-    Route::delete('default-prices/{country}/{item}', [DefaultPriceController::class, 'destroy']);
+    Route::apiResource('default-prices', DefaultPriceController::class)->only(['store', 'update', 'destroy']);
 });
 
 // ── Admin — user management (requires admin ability) ──────────────────────────

@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\DefaultPriceRequest;
 use App\Http\Resources\Collections\DefaultPriceResourceCollection;
 use App\Http\Resources\DefaultPriceResource;
-use App\Models\DefaultPrice;
 use App\Repositories\DefaultPriceRepo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,20 +27,18 @@ class DefaultPriceController extends Controller
             'country' => $request->input('country'),
         ];
 
-        $starchPrices = $this->repo->paginateWithSort(
+        $defaultPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
             direction: $sort,
             filters: $filters);
 
-        return DefaultPriceResourceCollection::make($starchPrices);
+        return DefaultPriceResourceCollection::make($defaultPrices);
     }
 
     public function store(DefaultPriceRequest $request): JsonResponse
     {
-        // forceCreate is required because country + item are the composite PK
-        // and are not in the base model's $fillable.
-        $price = DefaultPrice::forceCreate($request->validated());
+        $price = $this->repo->create($request->validated());
 
         return response()->json([
             'data' => new DefaultPriceResource($price),
@@ -49,26 +46,19 @@ class DefaultPriceController extends Controller
         ], 201);
     }
 
-    public function update(DefaultPriceRequest $request, string $country, string $item): JsonResponse
+    public function update(DefaultPriceRequest $request, int $id): JsonResponse
     {
-        $price = DefaultPrice::where('country', strtoupper($country))
-            ->where('item', $item)
-            ->firstOrFail();
-
-        $price->update($request->validated());
+        $price = $this->repo->update($id, $request->validated());
 
         return response()->json([
-            'data' => new DefaultPriceResource($price->fresh()),
+            'data' => new DefaultPriceResource($price),
             'message' => 'Default price updated.',
         ]);
     }
 
-    public function destroy(string $country, string $item): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        DefaultPrice::where('country', strtoupper($country))
-            ->where('item', $item)
-            ->firstOrFail()
-            ->delete();
+        $this->repo->delete($id);
 
         return response()->json(null, 204);
     }

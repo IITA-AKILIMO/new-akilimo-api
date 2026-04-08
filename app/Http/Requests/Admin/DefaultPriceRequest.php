@@ -13,13 +13,13 @@ class DefaultPriceRequest extends FormRequest
 
     public function rules(): array
     {
-        $isCreate = $this->isMethod('POST');
+        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
 
         return [
-            'country' => [$isCreate ? 'required' : 'sometimes|required', 'string', 'size:2'],
-            'item' => [$isCreate ? 'required' : 'sometimes|required', 'string', 'max:50'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'unit' => ['required', 'string', 'max:15'],
+            'country' => [$required, 'string', 'size:2'],
+            'item' => [$required, 'string', 'max:50'],
+            'price' => [$required, 'numeric', 'min:0'],
+            'unit' => [$required, 'string', 'max:15'],
             'currency' => ['nullable', 'string', 'size:3'],
         ];
     }
