@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AKILIMO API is a Laravel 12 RESTful API that computes and delivers agricultural recommendations (fertilizer, intercropping, planting schedules) based on detailed farm data. It acts as an orchestration layer between clients and an external **Plumbr** computation service.
+AKILIMO API is a Laravel 12 RESTful API that computes and delivers agricultural recommendations (fertilizer, intercropping, planting schedules) based on detailed farm data. It acts as an orchestration layer between clients and an external **Akilimo Compute** service.
 
 ## Common Commands
 
@@ -36,8 +36,8 @@ php artisan test --filter=TestClassName
 ```
 Client → ComputeRequest (validation) → RecommendationController
        → RecommendationService (caching, logging)
-       → PlumberService (HTTP client)
-       → External Plumbr API
+       → AkilimoComputeService (HTTP client)
+       → External Akilimo Compute API
 ```
 
 ### Key Layers
@@ -46,12 +46,12 @@ Client → ComputeRequest (validation) → RecommendationController
 
 **Services** (`app/Service/`) — Three services:
 - `RecommendationService` — orchestrates computation, handles caching (configurable TTL), logs all requests to `api_requests`, maps fertilizer data, transforms request/response.
-- `PlumberService` — HTTP client for the external Plumbr service. Configurable via `config/services.php` (`plumbr.base_url`, `plumbr.rec_endpoint`, `plumbr.request_timeout` defaults to 120s).
+- `AkilimoComputeService` — HTTP client for the external Akilimo Compute service. Configurable via `config/akilimo-compute.php` (`base_url`, `endpoint`, `timeout` defaults to 120s, `retries` defaults to 3, `logging`).
 - `AuthService` — handles login (user lookup, password verification, token minting) and token revocation. Keep auth logic here; `AuthController` is thin.
 
 **Repositories** (`app/Repositories/`) — Data access via `BaseRepo` (abstract, handles pagination/sorting/filtering). All repos implement `Contracts/Repository`. Don't bypass repositories to query models directly from controllers.
 
-**DTOs** (`app/Data/`) — Spatie LaravelData classes are the canonical data shape passed between layers. `PlumberComputeData` is the main payload (~100+ properties) sent to Plumbr. `ComputeRequestData` is the inbound request shape.
+**DTOs** (`app/Data/`) — Spatie LaravelData classes are the canonical data shape passed between layers. `AkilimoComputeData` is the main payload sent to the Akilimo Compute service. `ComputeRequestData` is the inbound request shape.
 
 **Validation** (`app/Http/Requests/`, `app/Rules/`) — `ComputeRequest` merges rules from three rule classes: `UserInfoRules`, `ComputeFieldRules`, `FertilizerRules`.
 
@@ -108,14 +108,14 @@ MariaDB in production/dev; SQLite in-memory for tests. Key tables:
 
 ### Fertilizer Data Flow
 
-Understanding this is essential before touching `RecommendationService`, `FertilizerData`, or `PlumberComputeData`.
+Understanding this is essential before touching `RecommendationService`, `FertilizerData`, or `AkilimoComputeData`.
 
 **Database schema** (`fertilizers` table — key columns):
 
 | column | example value | purpose |
 |---|---|---|
 | `fertilizer_key` | `urea` | Stable identifier; matched against `key` in the client's `fertilizer_list` |
-| `fertilizer_label` | `urea` | Prefix used to build Plumbr field names (see below) |
+| `fertilizer_label` | `urea` | Prefix used to build compute service field names (see below) |
 | `name` | `Urea 46%` | Human-readable display name |
 | `weight` | `50` | Default bag weight in kg |
 | `country` | `NG` | Country the fertilizer is available in |
@@ -139,7 +139,7 @@ Understanding this is essential before touching `RecommendationService`, `Fertil
 3. If matched, the client-supplied `selected`, `weight`, and `price` override the DB defaults.
 4. Builds a flat array keyed by `{fertilizer_label}available`, `{fertilizer_label}BagWt`, `{fertilizer_label}CostperBag`.
 
-**Resulting array** passed to `PlumberComputeData` as `['fertilizers' => ...]`:
+**Resulting array** passed to `AkilimoComputeData` as `['fertilizers' => ...]`:
 ```php
 [
     'ureaavailable'       => true,   // bool  — was it selected by the farmer?
@@ -158,7 +158,7 @@ Understanding this is essential before touching `RecommendationService`, `Fertil
 ]
 ```
 
-**`PlumberComputeData::toArray()`** merges these keys directly into the top-level Plumbr payload — they must not be nested under a `fertilizers` key in the HTTP body. The override in `toArray()` handles this:
+**`AkilimoComputeData::toArray()`** merges these keys directly into the top-level Akilimo Compute payload — they must not be nested under a `fertilizers` key in the HTTP body. The override in `toArray()` handles this:
 ```php
 public function toArray(): array
 {
@@ -170,13 +170,13 @@ public function toArray(): array
 ```
 
 **Adding a new fertilizer type** — only two steps needed:
-1. Insert a row into `fertilizers` with `fertilizer_label` set to the Plumbr field prefix (e.g. `NPK201010`).
+1. Insert a row into `fertilizers` with `fertilizer_label` set to the compute service field prefix (e.g. `NPK201010`).
 2. Ensure the client sends a matching `key` in `fertilizer_list` if the farmer selects it.
 
 No PHP code changes are required.
 
 ### Error Handling
-`RecommendationException` is the domain exception — carries HTTP status code and body. `PlumberService` converts HTTP client failures into `RecommendationException`. The `JsonFormatResponse` middleware forces all responses to `application/json`.
+`RecommendationException` is the domain exception — carries HTTP status code and body. `AkilimoComputeService` converts HTTP client failures into `RecommendationException`. The `JsonFormatResponse` middleware forces all responses to `application/json`.
 
 ## Infrastructure
 
@@ -192,9 +192,11 @@ No PHP code changes are required.
 Key `.env` variables beyond standard Laravel:
 ```
 # External computation service
-PLUMBR_BASE_URL=               # Required — base URL of the Plumbr service
-PLUMBR_REC_ENDPOINT=           # Endpoint path (default: /compute)
-PLUMBR_REQUEST_TIMEOUT=        # HTTP timeout in seconds (default: 120)
+AKILIMO_COMPUTE_BASE_URL=      # Required — base URL of the Akilimo Compute service
+AKILIMO_COMPUTE_ENDPOINT=      # Endpoint path (default: /compute)
+AKILIMO_COMPUTE_TIMEOUT=       # HTTP timeout in seconds (default: 120)
+AKILIMO_COMPUTE_RETRIES=       # Retry attempts on failure (default: 3)
+AKILIMO_COMPUTE_LOGGING=       # Enable request/response logging (default: true)
 
 # Authentication
 AUTH_TOKEN_TTL_DAYS=30         # Bearer token lifetime in days
