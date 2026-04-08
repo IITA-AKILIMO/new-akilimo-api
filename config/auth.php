@@ -18,6 +18,9 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    // Lifetime of bearer tokens issued on login, in days.
+    'token_ttl_days' => (int) env('AUTH_TOKEN_TTL_DAYS', 30),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards

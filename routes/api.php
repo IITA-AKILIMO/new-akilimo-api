@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\StarchFactoryController;
 use App\Http\Controllers\Api\StarchPricesController;
 use App\Http\Controllers\Api\ApiKeyController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TranslationController;
 use App\Http\Controllers\Api\UserFeedbackController;
 use App\Http\Controllers\Web\HealthCheckController;
@@ -94,6 +95,12 @@ Route::middleware('throttle:120,1')->group(function () {
     Route::prefix('v1/translations')->middleware('auth.token')->group(function () {
         Route::get('/', [TranslationController::class, 'index']);
     });
+});
+
+// Authentication
+Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.token');
 });
 
 // API key management — requires an existing valid token or key to authenticate
