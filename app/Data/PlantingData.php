@@ -11,7 +11,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class PlantingData extends Data
 {
     public Carbon $plantingDate;
+
     public int $plantingDateWindow;
+
     public Carbon $harvestDate;
+
     public int $harvestDateWindow;
 }

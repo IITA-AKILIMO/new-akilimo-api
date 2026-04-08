@@ -38,7 +38,7 @@ class AuthenticateWithToken
         }
 
         foreach ($abilities as $ability) {
-            if (!$token->can($ability)) {
+            if (! $token->can($ability)) {
                 return response()->json(
                     ['message' => "Forbidden. This token does not have the [{$ability}] ability."],
                     Response::HTTP_FORBIDDEN,
@@ -95,7 +95,7 @@ class AuthenticateWithToken
             ->with('user')
             ->first();
 
-        if ($apiKey === null || !$apiKey->isUsable()) {
+        if ($apiKey === null || ! $apiKey->isUsable()) {
             return null;
         }
 

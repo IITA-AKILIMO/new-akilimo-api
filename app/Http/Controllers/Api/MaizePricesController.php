@@ -12,15 +12,13 @@ class MaizePricesController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected MaizePriceRepo $repo)
-    {
-    }
+    public function __construct(protected MaizePriceRepo $repo) {}
 
     public function index(Request $request): MaizePriceResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         return MaizePriceResourceCollection::make(
             $this->repo->paginateWithSort(perPage: $perPage, orderBy: $orderBy, direction: $sort),
@@ -32,7 +30,7 @@ class MaizePricesController extends Controller
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         return MaizePriceResourceCollection::make(
             $this->repo->paginateWithSort(

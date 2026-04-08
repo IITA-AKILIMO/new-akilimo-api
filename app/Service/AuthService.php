@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Models\PersonalAccessToken;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
@@ -14,7 +15,7 @@ class AuthService
      * Returns the raw token string on success, or null on failure.
      * The token is hashed before storage and never retrievable again.
      *
-     * @return array{user: User, token: string, expires_at: \Carbon\Carbon}|null
+     * @return array{user: User, token: string, expires_at: Carbon}|null
      */
     public function attempt(string $username, string $password): ?array
     {
@@ -22,26 +23,26 @@ class AuthService
             ->orWhere('email', $username)
             ->first();
 
-        if ($user === null || !Hash::check($password, $user->password)) {
+        if ($user === null || ! Hash::check($password, $user->password)) {
             return null;
         }
 
-        $ttlDays   = (int) config('auth.token_ttl_days', 30);
+        $ttlDays = (int) config('auth.token_ttl_days', 30);
         $expiresAt = now()->addDays($ttlDays);
-        $rawToken  = bin2hex(random_bytes(32));
+        $rawToken = bin2hex(random_bytes(32));
 
         PersonalAccessToken::create([
             'tokenable_type' => User::class,
-            'tokenable_id'   => $user->id,
-            'name'           => 'login',
-            'token'          => hash('sha256', $rawToken),
-            'abilities'      => ['*'],
-            'expires_at'     => $expiresAt,
+            'tokenable_id' => $user->id,
+            'name' => 'login',
+            'token' => hash('sha256', $rawToken),
+            'abilities' => ['*'],
+            'expires_at' => $expiresAt,
         ]);
 
         return [
-            'user'       => $user,
-            'token'      => $rawToken,
+            'user' => $user,
+            'token' => $rawToken,
             'expires_at' => $expiresAt,
         ];
     }

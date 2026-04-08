@@ -13,9 +13,9 @@ class RecommendationResource extends JsonResource
     {
         return [
             'request_id' => $this->resource['request_id'] ?? null,
-            'status'     => $this->resource['status'] ?? 'success',
-            'version'    => $this->resource['version'] ?? null,
-            'data'       => $this->resource['data'] ?? [],
+            'status' => $this->resource['status'] ?? 'success',
+            'version' => $this->resource['version'] ?? null,
+            'data' => $this->resource['data'] ?? [],
         ];
     }
 }

@@ -3,11 +3,9 @@
 namespace App\Rules;
 
 use App\Http\Enums\EnumAreaUnit;
-use Illuminate\Validation\Rule;
 
 class ComputeFieldRules
 {
-
     public static function rules(): array
     {
 
@@ -26,14 +24,13 @@ class ComputeFieldRules
                 new CaseInsensitiveIn(EnumAreaUnit::values()),
             ],
 
-
             // Intercropping
             'compute_request.interCropping.inter_cropped_crop' => ['nullable', 'string', 'max:255'],
             'compute_request.interCropping.inter_cropping_maize_rec' => ['boolean'],
             'compute_request.interCropping.inter_cropping_potato_rec' => ['boolean'],
 
             // Recommendations
-            'compute_request.recommendations.lang' => ['required', 'string', "min:2", "max:2"],
+            'compute_request.recommendations.lang' => ['required', 'string', 'min:2', 'max:2'],
             'compute_request.recommendations.fertilizer_rec' => ['boolean'],
             'compute_request.recommendations.planting_practices_rec' => ['boolean'],
             'compute_request.recommendations.scheduled_planting_rec' => ['boolean'],
@@ -116,7 +113,6 @@ class ComputeFieldRules
             'compute_request.maxInvestment' => ['numeric', 'min:0'],
         ];
 
-
     }
 
     public static function messages(): array
@@ -132,8 +128,7 @@ class ComputeFieldRules
             '*.date_format' => 'The :attribute must be in the format m/d/Y.',
             '*.between' => 'The :attribute must be between :min and :max.',
             '*.nullable' => 'The :attribute can be null.',
-            'compute_request.farmInformation.area_unit.in' =>
-                'The area unit :input must be one of: ' . implode(', ', EnumAreaUnit::values()) . '.',
+            'compute_request.farmInformation.area_unit.in' => 'The area unit :input must be one of: '.implode(', ', EnumAreaUnit::values()).'.',
         ];
     }
 }

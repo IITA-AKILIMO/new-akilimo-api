@@ -12,15 +12,13 @@ class TranslationController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected TranslationRepo $translationRepo)
-    {
-    }
+    public function __construct(protected TranslationRepo $translationRepo) {}
 
     public function index(Request $request): TranslationResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['created_at'], 'created_at');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $items = $this->translationRepo->paginateWithSort(
             perPage: $perPage,

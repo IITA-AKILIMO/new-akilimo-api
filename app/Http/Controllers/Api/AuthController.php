@@ -11,9 +11,7 @@ use Illuminate\Routing\Controller;
 
 class AuthController extends Controller
 {
-    public function __construct(private readonly AuthService $authService)
-    {
-    }
+    public function __construct(private readonly AuthService $authService) {}
 
     public function login(LoginRequest $request): JsonResponse
     {
@@ -30,13 +28,13 @@ class AuthController extends Controller
 
         return response()->json([
             'token_type' => 'Bearer',
-            'token'      => $result['token'],
+            'token' => $result['token'],
             'expires_at' => $result['expires_at']->toIso8601String(),
-            'user'       => [
-                'id'       => $user->id,
-                'name'     => $user->name,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
                 'username' => $user->username,
-                'email'    => $user->email,
+                'email' => $user->email,
             ],
         ]);
     }

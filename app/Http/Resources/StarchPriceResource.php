@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Currency;
 use App\Models\StarchPrice;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -17,9 +15,8 @@ class StarchPriceResource extends JsonResource
     public function toArray($request): array
     {
 
-
         return [
-            'key' => $this->starch_factory->factory_name . $this->price_class,
+            'key' => $this->starch_factory->factory_name.$this->price_class,
             'starch_factory' => $this->starch_factory->factory_name,
             'starch_factory_label' => $this->starch_factory->factory_label,
             'class' => $this->price_class,

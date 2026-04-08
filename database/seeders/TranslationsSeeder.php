@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\StarchFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use League\Csv\Exception;
 use League\Csv\Reader;
+use League\Csv\UnavailableStream;
 
 class TranslationsSeeder extends Seeder
 {
     /**
-     * @return void
-     * @throws \League\Csv\Exception
-     * @throws \League\Csv\UnavailableStream
+     * @throws Exception
+     * @throws UnavailableStream
      */
     public function run(): void
     {
@@ -43,7 +43,7 @@ class TranslationsSeeder extends Seeder
             }
         }
 
-        if (!empty($batch)) {
+        if (! empty($batch)) {
             DB::table('translations')->upsert(
                 $batch,
                 ['key'],

@@ -17,15 +17,14 @@ class RecommendationController extends Controller
 
     public function __construct(
         protected RecommendationService $recommendationService,
-        protected ApiRequestRepo        $repo,
-    ) {
-    }
+        protected ApiRequestRepo $repo,
+    ) {}
 
     public function index(Request $request): ApiRequestResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['created_at', 'updated_at', 'request_id'], 'created_at');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $recommendationData = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -45,14 +44,14 @@ class RecommendationController extends Controller
      * Adjusts the area unit in the request to standardized values for further processing.
      * Sends the request to the computation service and returns the original request data, the computed response, and the final request sent to the service.
      *
-     * @param ComputeRequest $request The incoming compute request containing user data, computation details, and a list of fertilizers.
-     * @return RecommendationResource
+     * @param  ComputeRequest  $request  The incoming compute request containing user data, computation details, and a list of fertilizers.
+     *
      * @throws \JsonException
      */
     public function computeRecommendations(ComputeRequest $request): RecommendationResource
     {
         $result = $this->recommendationService->compute(droidRequest: $request->toArray());
+
         return RecommendationResource::make($result);
     }
-
 }

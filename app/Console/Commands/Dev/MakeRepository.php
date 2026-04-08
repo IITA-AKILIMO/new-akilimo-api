@@ -27,7 +27,7 @@ class MakeRepository extends Command
 
         $modelClass = $model ? "\\App\\Models\\{$model}" : '';
         $modelImport = $model ? "use {$modelClass};" : '';
-//        $modelVariable = $model ? lcfirst(class_basename($model)) : 'model';
+        //        $modelVariable = $model ? lcfirst(class_basename($model)) : 'model';
         $modelVariable = 'model';
         $modelType = $model ?: 'Model';
 
@@ -56,6 +56,7 @@ PHP;
         file_put_contents($repositoryPath, $stub);
 
         $this->info("Repository '{$name}' created successfully.");
+
         return true;
     }
 }

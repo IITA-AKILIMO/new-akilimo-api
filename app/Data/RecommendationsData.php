@@ -10,8 +10,11 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class RecommendationsData extends Data
 {
     public bool $fertilizerRec;
+
     public bool $plantingPracticesRec;
+
     public bool $scheduledPlantingRec;
+
     public bool $scheduledHarvestRec;
 
     public string $lang = 'en';

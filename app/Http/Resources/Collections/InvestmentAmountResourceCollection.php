@@ -21,7 +21,7 @@ class InvestmentAmountResourceCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         $currencyCodes = $this->collection
-            ->map(fn($item) => EnumCountry::fromCode($item->country)->currency())
+            ->map(fn ($item) => EnumCountry::fromCode($item->country)->currency())
             ->unique()
             ->values()
             ->all();
@@ -33,7 +33,8 @@ class InvestmentAmountResourceCollection extends ResourceCollection
         return [
             'data' => $this->collection->map(function ($item) use ($currencies, $request) {
                 $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency     = $currencies->get($currencyCode);
+                $currency = $currencies->get($currencyCode);
+
                 return (new InvestmentAmountResource($item, $currency))->toArray($request);
             }),
         ];

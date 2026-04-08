@@ -3,9 +3,10 @@
 namespace App\Http\Resources;
 
 use App\Models\OperationCost;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
-class OperationCostResource extends \Illuminate\Http\Resources\Json\JsonResource
+class OperationCostResource extends JsonResource
 {
     public function toArray($request): array
     {

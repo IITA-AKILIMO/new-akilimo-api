@@ -25,7 +25,7 @@ return [
     |--------------------------------------------------------------------------
     | Timeout in seconds for HTTP requests to Akilimo.
     */
-    'timeout' => (int)env('AKILIMO_COMPUTE_TIMEOUT', 120),
+    'timeout' => (int) env('AKILIMO_COMPUTE_TIMEOUT', 120),
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ return [
     |--------------------------------------------------------------------------
     | Number of times to retry failed requests before giving up.
     */
-    'retries' => (int)env('AKILIMO_COMPUTE_RETRIES', 3),
+    'retries' => (int) env('AKILIMO_COMPUTE_RETRIES', 3),
 
     /*
     |--------------------------------------------------------------------------

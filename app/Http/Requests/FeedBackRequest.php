@@ -55,5 +55,4 @@ class FeedBackRequest extends FormRequest
             'akilimo_useful_rating' => $validated['nps_score'],
         ];
     }
-
 }

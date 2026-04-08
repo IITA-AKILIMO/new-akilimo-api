@@ -6,6 +6,7 @@ use App\Repositories\Contracts\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
@@ -19,6 +20,7 @@ abstract class BaseRepo implements Repository
 {
     /**
      * @var TModel
+     *
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $model;
@@ -171,8 +173,8 @@ abstract class BaseRepo implements Repository
     /**
      * Create or update a record by unique identifiers.
      *
-     * @param array $input The full data array to insert or update.
-     * @param array $identifiers Keys to match existing records (e.g. ['phone' => '123', 'campaign_id' => 5])
+     * @param  array  $input  The full data array to insert or update.
+     * @param  array  $identifiers  Keys to match existing records (e.g. ['phone' => '123', 'campaign_id' => 5])
      * @return TModel
      *
      * @throws Throwable
@@ -196,22 +198,21 @@ abstract class BaseRepo implements Repository
     }
 
     public function existsWithConditions(
-        array   $conditions = [],
-        array   $whereIn = [],
+        array $conditions = [],
+        array $whereIn = [],
         ?string $orderBy = null,
-        string  $direction = 'desc',
-    ): bool
-    {
+        string $direction = 'desc',
+    ): bool {
         $query = $this->query();
 
         // Apply standard where conditions
-        if (!empty($conditions)) {
+        if (! empty($conditions)) {
             $query->where($conditions);
         }
 
         // Apply whereIn conditions
         foreach ($whereIn as $column => $values) {
-            if (!is_string($column) || !is_array($values)) {
+            if (! is_string($column) || ! is_array($values)) {
                 throw new InvalidArgumentException("whereIn must be ['column' => [values]]");
             }
 
@@ -230,25 +231,25 @@ abstract class BaseRepo implements Repository
      * Paginate with sorting and optional filters.
      */
     public function paginateWithSort(
-        int    $perPage = 50,
+        int $perPage = 50,
         string $orderBy = 'created_at',
         string $direction = 'desc',
-        array  $filters = [],
-        array  $with = [],
-        array  $relationFilters = [],
-    ): \Illuminate\Pagination\LengthAwarePaginator {
+        array $filters = [],
+        array $with = [],
+        array $relationFilters = [],
+    ): LengthAwarePaginator {
         $query = $this->query($with);
 
         // Apply direct filters
-        $cleanFilters = array_filter($filters, fn($v) => $v !== null && $v !== '');
-        if (!empty($cleanFilters)) {
+        $cleanFilters = array_filter($filters, fn ($v) => $v !== null && $v !== '');
+        if (! empty($cleanFilters)) {
             $query->where($cleanFilters);
         }
 
         // Apply relation filters only if values are provided
         foreach ($relationFilters as $relation => $conditions) {
-            $conditions = array_filter($conditions, fn($v) => $v !== null && $v !== '');
-            if (!empty($conditions)) {
+            $conditions = array_filter($conditions, fn ($v) => $v !== null && $v !== '');
+            if (! empty($conditions)) {
                 $query->whereHas($relation, function ($q) use ($conditions) {
                     $q->where($conditions);
                 });

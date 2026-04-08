@@ -6,7 +6,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::dropIfExists('operation_costs_old');
@@ -15,7 +16,7 @@ return new class extends Migration {
     public function down(): void
     {
         // Optional: Recreate it if needed
-        if (!Schema::hasTable('operation_costs_old')) {
+        if (! Schema::hasTable('operation_costs_old')) {
             Schema::create('operation_costs_old', function (Blueprint $table) {
                 $table->id();
                 $table->string('operation_name');
@@ -61,7 +62,7 @@ return new class extends Migration {
         })->toArray();
 
         DB::table('operation_costs_old')->insert($restored);
-        echo("✅ Inserted " . count($restored) . " NG records.\n\n");
+        echo '✅ Inserted '.count($restored)." NG records.\n\n";
     }
 
     /**
@@ -78,7 +79,7 @@ return new class extends Migration {
         $updated = 0;
 
         foreach ($tzRecords as $tz) {
-            $affected = DB::update("
+            $affected = DB::update('
                 UPDATE operation_costs_old
                 SET min_tzs = ?, max_tzs = ?, updated_at = ?
                 WHERE id = (
@@ -92,7 +93,7 @@ return new class extends Migration {
                         LIMIT 1
                     ) AS temp
                 )
-            ", [
+            ', [
                 $tz->min_cost,
                 $tz->max_cost,
                 Carbon::now(),
@@ -105,6 +106,6 @@ return new class extends Migration {
             }
         }
 
-        echo("✅ Updated TZS values for $updated records.");
+        echo "✅ Updated TZS values for $updated records.";
     }
 };

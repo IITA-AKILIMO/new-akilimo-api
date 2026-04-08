@@ -16,9 +16,9 @@ abstract class TestCase extends BaseTestCase
     protected function actingAsApiUser(): static
     {
         $user = User::create([
-            'name'     => 'Test User',
-            'username' => 'testuser_' . str()->random(8),
-            'email'    => 'test_' . str()->random(8) . '@example.com',
+            'name' => 'Test User',
+            'username' => 'testuser_'.str()->random(8),
+            'email' => 'test_'.str()->random(8).'@example.com',
             'password' => bcrypt('password'),
         ]);
 
@@ -26,11 +26,11 @@ abstract class TestCase extends BaseTestCase
 
         PersonalAccessToken::create([
             'tokenable_type' => User::class,
-            'tokenable_id'   => $user->id,
-            'name'           => 'test',
-            'token'          => hash('sha256', $rawToken),
-            'abilities'      => ['*'],
-            'expires_at'     => now()->addDay(),
+            'tokenable_id' => $user->id,
+            'name' => 'test',
+            'token' => hash('sha256', $rawToken),
+            'abilities' => ['*'],
+            'expires_at' => now()->addDay(),
         ]);
 
         return $this->withToken($rawToken);

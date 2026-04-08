@@ -11,19 +11,14 @@ use Illuminate\Http\Request;
 class CassavaPricesController extends Controller
 {
     use HasPaginationParams;
-    public function __construct(protected CassavaPriceRepo $repo)
-    {
-    }
 
-    /**
-     * @param Request $request
-     * @return CassavaPriceResourceCollection
-     */
+    public function __construct(protected CassavaPriceRepo $repo) {}
+
     public function index(Request $request): CassavaPriceResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $cassavaPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -34,19 +29,14 @@ class CassavaPricesController extends Controller
         return CassavaPriceResourceCollection::make($cassavaPrices, $this->repo);
     }
 
-    /**
-     * @param string $countryCode
-     * @param Request $request
-     * @return CassavaPriceResourceCollection
-     */
     public function byCountry(string $countryCode, Request $request): CassavaPriceResourceCollection
     {
         $perPage = $this->getPerPage($request);
         $orderBy = $this->getOrderBy($request, ['sort_order', 'created_at'], 'sort_order');
-        $sort    = $this->getSortDirection($request);
+        $sort = $this->getSortDirection($request);
 
         $filters = [
-            'country' => strtoupper(trim($countryCode))
+            'country' => strtoupper(trim($countryCode)),
         ];
         $cassavaPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
@@ -54,6 +44,7 @@ class CassavaPricesController extends Controller
             direction: $sort,
             filters: $filters,
         );
+
         return CassavaPriceResourceCollection::make($cassavaPrices, $this->repo);
     }
 }

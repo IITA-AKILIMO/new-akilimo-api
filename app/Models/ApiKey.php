@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int         $id
- * @property int         $user_id
- * @property string      $name
- * @property string      $key_prefix
- * @property string      $key_hash
- * @property array|null  $abilities
- * @property bool        $is_active
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string $key_prefix
+ * @property string $key_hash
+ * @property array|null $abilities
+ * @property bool $is_active
  * @property Carbon|null $last_used_at
  * @property Carbon|null $expires_at
  * @property Carbon|null $created_at
@@ -33,10 +33,10 @@ class ApiKey extends Model
     ];
 
     protected $casts = [
-        'abilities'    => 'array',
-        'is_active'    => 'boolean',
+        'abilities' => 'array',
+        'is_active' => 'boolean',
         'last_used_at' => 'datetime',
-        'expires_at'   => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -51,7 +51,7 @@ class ApiKey extends Model
 
     public function isUsable(): bool
     {
-        return $this->is_active && !$this->isExpired();
+        return $this->is_active && ! $this->isExpired();
     }
 
     /**

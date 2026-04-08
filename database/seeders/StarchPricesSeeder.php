@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use League\Csv\Reader;
-use Illuminate\Support\Facades\DB;
 use App\Models\StarchFactory;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use League\Csv\Exception;
+use League\Csv\Reader;
+use League\Csv\UnavailableStream;
 
 class StarchPricesSeeder extends Seeder
 {
     /**
-     * @return void
-     * @throws \League\Csv\Exception
-     * @throws \League\Csv\UnavailableStream
+     * @throws Exception
+     * @throws UnavailableStream
      */
     public function run(): void
     {
@@ -34,14 +35,13 @@ class StarchPricesSeeder extends Seeder
 
             $batch[] = [
                 'starch_factory_id' => $factory->id,
-                'price_class' => (int)$record['class'],
-                'min_starch' => (float)$record['minStarch'],
+                'price_class' => (int) $record['class'],
+                'min_starch' => (float) $record['minStarch'],
                 'range_starch' => $record['rangeStarch'] ?? '',
-                'price' => (float)$record['price'],
+                'price' => (float) $record['price'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-
 
             if (count($batch) >= $batchSize) {
                 DB::table('starch_prices')->upsert(
@@ -53,7 +53,7 @@ class StarchPricesSeeder extends Seeder
             }
         }
 
-        if (!empty($batch)) {
+        if (! empty($batch)) {
             DB::table('starch_prices')->upsert(
                 $batch,
                 ['starch_factory_id', 'price_class'],

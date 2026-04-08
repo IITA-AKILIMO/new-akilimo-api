@@ -7,15 +7,13 @@ use Illuminate\Support\Str;
 
 class CurrencyConversion
 {
-
     public function convertPriceToLocalCurrency(
-        float       $minUsd,
-        float       $maxUsd,
-        float       $currencyRate,
-        float       $nearestValue,
+        float $minUsd,
+        float $maxUsd,
+        float $currencyRate,
+        float $nearestValue,
         CurrencyDto $currency
-    ): string
-    {
+    ): string {
         $min = $this->roundToNearestSpecifiedValue(
             $this->convertToSpecifiedCurrencyValue($minUsd, $currencyRate),
             $nearestValue
@@ -31,12 +29,11 @@ class CurrencyConversion
     }
 
     public function convertToSpecifiedCurrency(
-        float       $amount,
-        float       $currencyRate,
-        float       $nearestValue,
+        float $amount,
+        float $currencyRate,
+        float $nearestValue,
         CurrencyDto $currencyDto
-    ): float
-    {
+    ): float {
         if (Str::isMatch($currencyDto->currency_code, 'USD')) {
             return $amount;
         }
@@ -60,6 +57,7 @@ class CurrencyConversion
     public function roundToNearestSpecifiedValue(float $numberToRound, float $roundToNearest): float
     {
         $rounded = round($numberToRound / $roundToNearest) * $roundToNearest;
+
         return ($rounded > 0) ? $rounded : $numberToRound;
     }
 
@@ -70,6 +68,7 @@ class CurrencyConversion
         }
 
         $currency = $currencyDto->currency_symbol ?: $currencyDto->currency_code;
-        return number_format($number, 0, '.', ',') . ' ' . $currency;
+
+        return number_format($number, 0, '.', ',').' '.$currency;
     }
 }

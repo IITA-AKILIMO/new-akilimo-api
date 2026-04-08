@@ -31,8 +31,9 @@ class MaizePriceResourceCollection extends ResourceCollection
 
         return [
             'data' => $this->collection->map(function ($item) use ($priceBands, $request) {
-                $key  = "{$item->country}:{$item->produce_type}";
-                $band = $priceBands[$key] ?? new MinMaxPriceDto();
+                $key = "{$item->country}:{$item->produce_type}";
+                $band = $priceBands[$key] ?? new MinMaxPriceDto;
+
                 return (new MaizePriceResource($item, $band))->toArray($request);
             }),
         ];

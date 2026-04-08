@@ -11,7 +11,7 @@ trait HasPaginationParams
      */
     protected function getPerPage(Request $request, int $default = 50): int
     {
-        return min(max(1, (int)$request->input('per_page', $default)), 100);
+        return min(max(1, (int) $request->input('per_page', $default)), 100);
     }
 
     /**
@@ -19,7 +19,8 @@ trait HasPaginationParams
      */
     protected function getSortDirection(Request $request): string
     {
-        $sort = strtolower((string)$request->input('sort', 'asc'));
+        $sort = strtolower((string) $request->input('sort', 'asc'));
+
         return in_array($sort, ['asc', 'desc'], true) ? $sort : 'asc';
     }
 
@@ -29,7 +30,8 @@ trait HasPaginationParams
      */
     protected function getOrderBy(Request $request, array $allowed, string $default): string
     {
-        $orderBy = (string)$request->input('order_by', $default);
+        $orderBy = (string) $request->input('order_by', $default);
+
         return in_array($orderBy, $allowed, true) ? $orderBy : $default;
     }
 
@@ -53,6 +55,4 @@ trait HasPaginationParams
 
         return $filters;
     }
-
-
 }

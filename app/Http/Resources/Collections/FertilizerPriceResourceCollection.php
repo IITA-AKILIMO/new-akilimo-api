@@ -37,7 +37,7 @@ class FertilizerPriceResourceCollection extends ResourceCollection
 
         // One query for all currencies needed on this page
         $currencyCodes = $this->collection
-            ->map(fn($item) => EnumCountry::fromCode($item->country)->currency())
+            ->map(fn ($item) => EnumCountry::fromCode($item->country)->currency())
             ->unique()
             ->values()
             ->all();
@@ -47,9 +47,10 @@ class FertilizerPriceResourceCollection extends ResourceCollection
 
         return [
             'data' => $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
-                $bands        = $priceBands[$item->fertilizer_key] ?? ['min' => null, 'max' => null];
+                $bands = $priceBands[$item->fertilizer_key] ?? ['min' => null, 'max' => null];
                 $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency     = $currencies->get($currencyCode);
+                $currency = $currencies->get($currencyCode);
+
                 return (new FertilizerPriceResource($item, $bands['min'], $bands['max'], $currency))->toArray($request);
             }),
         ];

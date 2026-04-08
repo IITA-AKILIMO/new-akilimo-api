@@ -34,7 +34,7 @@ class CassavaPriceResourceCollection extends ResourceCollection
 
         // One query for all currencies needed on this page
         $currencyCodes = $this->collection
-            ->map(fn($item) => EnumCountry::fromCode($item->country)->currency())
+            ->map(fn ($item) => EnumCountry::fromCode($item->country)->currency())
             ->unique()
             ->values()
             ->all();
@@ -44,9 +44,10 @@ class CassavaPriceResourceCollection extends ResourceCollection
 
         return [
             'data' => $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
-                $band         = $priceBands[$item->country] ?? new MinMaxPriceDto();
+                $band = $priceBands[$item->country] ?? new MinMaxPriceDto;
                 $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency     = $currencies->get($currencyCode);
+                $currency = $currencies->get($currencyCode);
+
                 return (new CassavaPriceResource($item, $band, $currency))->toArray($request);
             }),
         ];

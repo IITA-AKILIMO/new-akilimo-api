@@ -25,8 +25,8 @@ class FertilizerPriceResource extends JsonResource
     public function toArray(Request $request): array
     {
         /** @var FertilizerPrice $fertilizerPrice */
-        $fertilizerPrice  = $this->resource;
-        $conv             = new CurrencyConversion();
+        $fertilizerPrice = $this->resource;
+        $conv = new CurrencyConversion;
         $currencyResource = $this->currency ? CurrencyResource::make($this->currency) : null;
 
         $priceRange = $conv->convertPriceToLocalCurrency(
@@ -38,23 +38,23 @@ class FertilizerPriceResource extends JsonResource
         );
 
         return [
-            'id'                 => $fertilizerPrice->id,
-            'price_id'           => $fertilizerPrice->id,
-            'fertilizer_key'     => $fertilizerPrice->fertilizer_key,
+            'id' => $fertilizerPrice->id,
+            'price_id' => $fertilizerPrice->id,
+            'fertilizer_key' => $fertilizerPrice->fertilizer_key,
             'fertilizer_country' => "{$fertilizerPrice->country}{$fertilizerPrice->id}",
-            'country_code'       => $fertilizerPrice->country,
-            'currency'           => $currencyResource,
-            'sort_order'         => $fertilizerPrice->sort_order,
-            'min_local_price'    => $fertilizerPrice->min_price,
-            'max_local_price'    => $fertilizerPrice->max_price,
-            'min_allowed_price'  => $this->minBand?->min_price,
-            'max_allowed_price'  => $this->maxBand?->max_price,
-            'price_per_bag'      => $fertilizerPrice->price_per_bag,
-            'price_range'        => $priceRange,
-            'active'             => $fertilizerPrice->price_active,
-            'description'        => $fertilizerPrice->desc,
-            'created_at'         => $fertilizerPrice->created_at,
-            'updated_at'         => $fertilizerPrice->updated_at,
+            'country_code' => $fertilizerPrice->country,
+            'currency' => $currencyResource,
+            'sort_order' => $fertilizerPrice->sort_order,
+            'min_local_price' => $fertilizerPrice->min_price,
+            'max_local_price' => $fertilizerPrice->max_price,
+            'min_allowed_price' => $this->minBand?->min_price,
+            'max_allowed_price' => $this->maxBand?->max_price,
+            'price_per_bag' => $fertilizerPrice->price_per_bag,
+            'price_range' => $priceRange,
+            'active' => $fertilizerPrice->price_active,
+            'description' => $fertilizerPrice->desc,
+            'created_at' => $fertilizerPrice->created_at,
+            'updated_at' => $fertilizerPrice->updated_at,
         ];
     }
 }

@@ -1,17 +1,17 @@
 <?php
 
-beforeEach(fn() => $this->actingAsApiUser());
+beforeEach(fn () => $this->actingAsApiUser());
 
 function validFeedbackPayload(): array
 {
     return [
-        'akilimo_usage'      => 'fertilizer recommendation',
-        'user_type'          => 'farmer',
-        'device_token'       => fake()->uuid(),
-        'device_language'    => 'en',
+        'akilimo_usage' => 'fertilizer recommendation',
+        'user_type' => 'farmer',
+        'device_token' => fake()->uuid(),
+        'device_language' => 'en',
         'satisfaction_rating' => 4,
-        'nps_score'          => 8,
-        'use_case'           => 'CASSAVA',
+        'nps_score' => 8,
+        'use_case' => 'CASSAVA',
     ];
 }
 
@@ -27,28 +27,28 @@ it('returns 422 when required feedback fields are missing', function () {
 });
 
 it('returns 422 when satisfaction_rating is out of range', function () {
-    $payload                       = validFeedbackPayload();
+    $payload = validFeedbackPayload();
     $payload['satisfaction_rating'] = 6;
 
     $this->postJson('/api/v1/user-feedback', $payload)->assertUnprocessable();
 });
 
 it('returns 422 when nps_score is out of range', function () {
-    $payload              = validFeedbackPayload();
+    $payload = validFeedbackPayload();
     $payload['nps_score'] = 11;
 
     $this->postJson('/api/v1/user-feedback', $payload)->assertUnprocessable();
 });
 
 it('returns 422 when device_language is not supported', function () {
-    $payload                    = validFeedbackPayload();
+    $payload = validFeedbackPayload();
     $payload['device_language'] = 'de';
 
     $this->postJson('/api/v1/user-feedback', $payload)->assertUnprocessable();
 });
 
 it('returns 422 when akilimo_usage exceeds max length', function () {
-    $payload                  = validFeedbackPayload();
+    $payload = validFeedbackPayload();
     $payload['akilimo_usage'] = str_repeat('a', 256);
 
     $this->postJson('/api/v1/user-feedback', $payload)->assertUnprocessable();

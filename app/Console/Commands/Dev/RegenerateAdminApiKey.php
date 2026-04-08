@@ -21,19 +21,21 @@ class RegenerateAdminApiKey extends Command
 
         if ($user === null) {
             $this->error("No user found with username [{$username}].");
+
             return self::FAILURE;
         }
 
         $existing = $user->apiKeys()->where('is_active', true)->get();
 
-        if ($existing->isNotEmpty() && !$this->option('force')) {
+        if ($existing->isNotEmpty() && ! $this->option('force')) {
             $this->table(
                 ['ID', 'Name', 'Prefix', 'Created'],
                 $existing->map(fn ($k) => [$k->id, $k->name, $k->key_prefix, $k->created_at]),
             );
 
-            if (!$this->confirm("Revoke the above key(s) for [{$username}] and generate a new one?")) {
+            if (! $this->confirm("Revoke the above key(s) for [{$username}] and generate a new one?")) {
                 $this->line('Aborted.');
+
                 return self::SUCCESS;
             }
         }
@@ -41,23 +43,23 @@ class RegenerateAdminApiKey extends Command
         // Revoke all active keys for this user
         $user->apiKeys()->where('is_active', true)->update(['is_active' => false]);
 
-        $rawKey = 'ak_' . bin2hex(random_bytes(16));
+        $rawKey = 'ak_'.bin2hex(random_bytes(16));
         $prefix = substr($rawKey, 0, 12);
 
         $user->apiKeys()->create([
-            'name'       => 'Admin wildcard key',
+            'name' => 'Admin wildcard key',
             'key_prefix' => $prefix,
-            'key_hash'   => hash('sha256', $rawKey),
-            'abilities'  => null,
+            'key_hash' => hash('sha256', $rawKey),
+            'abilities' => null,
             'expires_at' => null,
         ]);
 
         $keyLine = "  X-Api-Key: {$rawKey}  ";
-        $pad     = str_repeat('─', mb_strlen($keyLine));
+        $pad = str_repeat('─', mb_strlen($keyLine));
 
         $this->line('');
         $this->warn("┌{$pad}┐");
-        $this->warn("│  COPY THIS KEY — it will NOT be shown again.  │");
+        $this->warn('│  COPY THIS KEY — it will NOT be shown again.  │');
         $this->warn("│{$keyLine}│");
         $this->warn("└{$pad}┘");
         $this->line('');

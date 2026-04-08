@@ -12,8 +12,8 @@ enum EnumAreaUnit: string
     case Ha = 'ha';
     case M2 = 'm2';
     case Are = 'are';
-//    case Ekari = 'ekari';
-//    case Hekta = 'hekta';
+    //    case Ekari = 'ekari';
+    //    case Hekta = 'hekta';
 
     public static function normalize(string $value): self
     {
@@ -24,7 +24,7 @@ enum EnumAreaUnit: string
                 return $case;
             }
         }
+
         return self::Acre;
     }
-
 }

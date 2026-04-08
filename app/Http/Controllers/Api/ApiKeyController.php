@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Auth\TokenAbility;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiKeyResource;
-use App\Models\ApiKey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -40,21 +39,21 @@ class ApiKeyController extends Controller
         $validAbilities = implode(',', TokenAbility::ALL);
 
         $validated = $request->validate([
-            'name'        => ['required', 'string', 'max:100'],
-            'abilities'   => ['nullable', 'array'],
+            'name' => ['required', 'string', 'max:100'],
+            'abilities' => ['nullable', 'array'],
             'abilities.*' => ['string', "in:{$validAbilities}"],
-            'expires_at'  => ['nullable', 'date', 'after:now'],
+            'expires_at' => ['nullable', 'date', 'after:now'],
         ]);
 
-        $rawKey = 'ak_' . bin2hex(random_bytes(16)); // ak_ + 32 hex chars = 35 chars total
+        $rawKey = 'ak_'.bin2hex(random_bytes(16)); // ak_ + 32 hex chars = 35 chars total
         $prefix = substr($rawKey, 0, 12);             // "ak_" + first 8 hex chars
-        $hash   = hash('sha256', $rawKey);
+        $hash = hash('sha256', $rawKey);
 
         $apiKey = $request->user()->apiKeys()->create([
-            'name'       => $validated['name'],
+            'name' => $validated['name'],
             'key_prefix' => $prefix,
-            'key_hash'   => $hash,
-            'abilities'  => $validated['abilities'] ?? null, // null = wildcard
+            'key_hash' => $hash,
+            'abilities' => $validated['abilities'] ?? null, // null = wildcard
             'expires_at' => $validated['expires_at'] ?? null,
         ]);
 
@@ -80,7 +79,7 @@ class ApiKeyController extends Controller
         $apiKey->update(['is_active' => false]);
 
         return response()->json([
-            'data'    => new ApiKeyResource($apiKey->fresh()),
+            'data' => new ApiKeyResource($apiKey->fresh()),
             'message' => 'API key revoked.',
         ]);
     }

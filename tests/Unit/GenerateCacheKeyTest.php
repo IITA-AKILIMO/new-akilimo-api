@@ -1,9 +1,9 @@
 <?php
 
-use App\Service\RecommendationService;
-use App\Repositories\FertilizerRepo;
 use App\Repositories\ApiRequestRepo;
+use App\Repositories\FertilizerRepo;
 use App\Service\AkilimoComputeService;
+use App\Service\RecommendationService;
 
 function makeService(): RecommendationService
 {
@@ -17,7 +17,7 @@ function makeService(): RecommendationService
 function baseRequest(): array
 {
     return [
-        'user_info'       => ['device_token' => 'abc', 'email_address' => 'a@b.com'],
+        'user_info' => ['device_token' => 'abc', 'email_address' => 'a@b.com'],
         'compute_request' => ['farmInformation' => ['country_code' => 'NG']],
         'fertilizer_list' => [],
     ];
@@ -25,7 +25,7 @@ function baseRequest(): array
 
 it('produces the same cache key for identical requests', function () {
     $service = makeService();
-    $method  = new ReflectionMethod($service, 'generateCacheKey');
+    $method = new ReflectionMethod($service, 'generateCacheKey');
 
     $req = baseRequest();
     expect($method->invoke($service, $req))->toBe($method->invoke($service, $req));
@@ -33,7 +33,7 @@ it('produces the same cache key for identical requests', function () {
 
 it('produces different cache keys when fertilizer_list differs', function () {
     $service = makeService();
-    $method  = new ReflectionMethod($service, 'generateCacheKey');
+    $method = new ReflectionMethod($service, 'generateCacheKey');
 
     $req1 = baseRequest();
     $req2 = baseRequest();
@@ -44,19 +44,19 @@ it('produces different cache keys when fertilizer_list differs', function () {
 
 it('produces the same cache key regardless of user_info differences', function () {
     $service = makeService();
-    $method  = new ReflectionMethod($service, 'generateCacheKey');
+    $method = new ReflectionMethod($service, 'generateCacheKey');
 
     $req1 = baseRequest();
     $req2 = baseRequest();
     $req2['user_info']['email_address'] = 'different@example.com';
-    $req2['user_info']['device_token']  = 'different-token';
+    $req2['user_info']['device_token'] = 'different-token';
 
     expect($method->invoke($service, $req1))->toBe($method->invoke($service, $req2));
 });
 
 it('produces different keys when compute_request differs', function () {
     $service = makeService();
-    $method  = new ReflectionMethod($service, 'generateCacheKey');
+    $method = new ReflectionMethod($service, 'generateCacheKey');
 
     $req1 = baseRequest();
     $req2 = baseRequest();

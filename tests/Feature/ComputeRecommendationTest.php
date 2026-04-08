@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\ApiRequest;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-beforeEach(fn() => $this->actingAsApiUser());
+beforeEach(fn () => $this->actingAsApiUser());
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -183,13 +185,13 @@ it('logs the request to api_requests with device_token and duration', function (
         'device_token' => $deviceToken,
     ]);
 
-    $record = \App\Models\ApiRequest::where('device_token', $deviceToken)->first();
+    $record = ApiRequest::where('device_token', $deviceToken)->first();
     expect($record)->not->toBeNull()
         ->and($record->request_duration_ms)->toBeInt()->toBeGreaterThanOrEqual(0);
 });
 
 it('returns 503 when Plumbr is unreachable', function () {
-    Http::fake(['*' => fn() => throw new \Illuminate\Http\Client\ConnectionException('timeout')]);
+    Http::fake(['*' => fn () => throw new ConnectionException('timeout')]);
 
     $this->postJson('/api/v1/recommendations/compute', validComputePayload())
         ->assertStatus(503);

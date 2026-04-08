@@ -7,7 +7,6 @@ class UserInfoRules
     public static function rules(): array
     {
 
-
         return [
             'user_info' => ['required', 'array'],
             'user_info.device_token' => ['required', 'uuid'],
@@ -22,7 +21,6 @@ class UserInfoRules
             'user_info.send_sms' => ['boolean'],
             'user_info.send_email' => ['boolean'],
         ];
-
 
     }
 

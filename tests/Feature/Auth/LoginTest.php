@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Hash;
 function createTestUser(string $password = 'secret123'): User
 {
     return User::create([
-        'name'     => 'Auth Test User',
-        'username' => 'authuser_' . str()->random(6),
-        'email'    => 'auth_' . str()->random(6) . '@example.com',
+        'name' => 'Auth Test User',
+        'username' => 'authuser_'.str()->random(6),
+        'email' => 'auth_'.str()->random(6).'@example.com',
         'password' => Hash::make($password),
     ]);
 }
@@ -23,9 +23,9 @@ it('returns a bearer token on valid username + password', function () {
         'username' => $user->username,
         'password' => 'secret123',
     ])->assertOk()
-      ->assertJsonStructure(['token_type', 'token', 'expires_at', 'user'])
-      ->assertJsonPath('token_type', 'Bearer')
-      ->assertJsonPath('user.username', $user->username);
+        ->assertJsonStructure(['token_type', 'token', 'expires_at', 'user'])
+        ->assertJsonPath('token_type', 'Bearer')
+        ->assertJsonPath('user.username', $user->username);
 });
 
 it('accepts email as the login identifier', function () {
@@ -35,7 +35,7 @@ it('accepts email as the login identifier', function () {
         'username' => $user->email,
         'password' => 'secret123',
     ])->assertOk()
-      ->assertJsonPath('user.email', $user->email);
+        ->assertJsonPath('user.email', $user->email);
 });
 
 it('returns 401 for a wrong password', function () {
@@ -56,14 +56,14 @@ it('returns 401 for an unknown username', function () {
 
 it('returns 422 when username is missing', function () {
     $this->postJson('/api/v1/auth/login', ['password' => 'secret123'])
-         ->assertUnprocessable();
+        ->assertUnprocessable();
 });
 
 it('returns 422 when password is missing', function () {
     $user = createTestUser();
 
     $this->postJson('/api/v1/auth/login', ['username' => $user->username])
-         ->assertUnprocessable();
+        ->assertUnprocessable();
 });
 
 it('stores the hashed token in personal_access_tokens', function () {
@@ -75,7 +75,7 @@ it('stores the hashed token in personal_access_tokens', function () {
     ])->assertOk();
 
     $rawToken = $response->json('token');
-    $hash     = hash('sha256', $rawToken);
+    $hash = hash('sha256', $rawToken);
 
     expect(PersonalAccessToken::where('token', $hash)->exists())->toBeTrue();
 });
@@ -93,8 +93,8 @@ it('returns 200 and deletes the token on logout', function () {
     $rawToken = $loginResp->json('token');
 
     $this->withToken($rawToken)
-         ->postJson('/api/v1/auth/logout')
-         ->assertOk();
+        ->postJson('/api/v1/auth/logout')
+        ->assertOk();
 
     expect(PersonalAccessToken::where('token', hash('sha256', $rawToken))->exists())->toBeFalse();
 });
@@ -114,6 +114,6 @@ it('cannot reuse a token after logout', function () {
     $this->withToken($rawToken)->postJson('/api/v1/auth/logout')->assertOk();
 
     $this->withToken($rawToken)
-         ->getJson('/api/v1/translations')
-         ->assertUnauthorized();
+        ->getJson('/api/v1/translations')
+        ->assertUnauthorized();
 });
