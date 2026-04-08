@@ -40,4 +40,15 @@ class PersonalAccessToken extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * Check whether this token grants the given ability.
+     * A null abilities list or a ['*'] entry grants everything.
+     */
+    public function can(string $ability): bool
+    {
+        $abilities = $this->abilities ?? ['*'];
+
+        return in_array('*', $abilities, true) || in_array($ability, $abilities, true);
+    }
 }

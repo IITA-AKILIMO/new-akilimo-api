@@ -18,26 +18,51 @@ use Symfony\Component\HttpFoundation\Response;
  *     Looked up in api_keys (SHA-256 hash match).
  *     Must be active and not expired.
  *
- * On success the resolved User is bound into the request so downstream
- * code can call $request->user().
+ * Optional ability requirements can be passed as middleware parameters:
+ *
+ *   Route::middleware('auth.token:read')           // single ability
+ *   Route::middleware('auth.token:read,write')     // must have both
+ *
+ * On success:
+ *  - The resolved User is bound via $request->setUserResolver()
+ *  - The resolved token/key is stored at $request->attributes->get('auth_token')
  */
 class AuthenticateWithToken
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$abilities): Response
     {
-        $user = $this->resolveFromBearer($request)
-            ?? $this->resolveFromApiKey($request);
+        $token = $this->resolveToken($request);
 
-        if ($user === null) {
+        if ($token === null) {
             return response()->json(['message' => 'Unauthenticated.'], Response::HTTP_UNAUTHORIZED);
         }
 
+        foreach ($abilities as $ability) {
+            if (!$token->can($ability)) {
+                return response()->json(
+                    ['message' => "Forbidden. This token does not have the [{$ability}] ability."],
+                    Response::HTTP_FORBIDDEN,
+                );
+            }
+        }
+
+        $user = $token instanceof PersonalAccessToken
+            ? $token->tokenable
+            : $token->user;
+
         $request->setUserResolver(fn () => $user);
+        $request->attributes->set('auth_token', $token);
 
         return $next($request);
     }
 
-    private function resolveFromBearer(Request $request): ?\Illuminate\Contracts\Auth\Authenticatable
+    private function resolveToken(Request $request): PersonalAccessToken|ApiKey|null
+    {
+        return $this->resolveFromBearer($request)
+            ?? $this->resolveFromApiKey($request);
+    }
+
+    private function resolveFromBearer(Request $request): ?PersonalAccessToken
     {
         $raw = $request->bearerToken();
 
@@ -45,25 +70,20 @@ class AuthenticateWithToken
             return null;
         }
 
-        $hash  = hash('sha256', $raw);
-        $token = PersonalAccessToken::where('token', $hash)
+        $token = PersonalAccessToken::where('token', hash('sha256', $raw))
             ->with('tokenable')
             ->first();
 
-        if ($token === null) {
-            return null;
-        }
-
-        if ($token->expires_at !== null && $token->expires_at->isPast()) {
+        if ($token === null || ($token->expires_at !== null && $token->expires_at->isPast())) {
             return null;
         }
 
         $token->forceFill(['last_used_at' => now()])->saveQuietly();
 
-        return $token->tokenable;
+        return $token;
     }
 
-    private function resolveFromApiKey(Request $request): ?\Illuminate\Contracts\Auth\Authenticatable
+    private function resolveFromApiKey(Request $request): ?ApiKey
     {
         $raw = $request->header('X-Api-Key');
 
@@ -71,8 +91,7 @@ class AuthenticateWithToken
             return null;
         }
 
-        $hash   = hash('sha256', $raw);
-        $apiKey = ApiKey::where('key_hash', $hash)
+        $apiKey = ApiKey::where('key_hash', hash('sha256', $raw))
             ->with('user')
             ->first();
 
@@ -82,6 +101,6 @@ class AuthenticateWithToken
 
         $apiKey->forceFill(['last_used_at' => now()])->saveQuietly();
 
-        return $apiKey->user;
+        return $apiKey;
     }
 }

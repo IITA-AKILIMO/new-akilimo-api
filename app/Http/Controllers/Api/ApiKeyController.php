@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Auth\TokenAbility;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiKeyResource;
 use App\Models\ApiKey;
@@ -36,9 +37,13 @@ class ApiKeyController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $validAbilities = implode(',', TokenAbility::ALL);
+
         $validated = $request->validate([
-            'name'       => ['required', 'string', 'max:100'],
-            'expires_at' => ['nullable', 'date', 'after:now'],
+            'name'        => ['required', 'string', 'max:100'],
+            'abilities'   => ['nullable', 'array'],
+            'abilities.*' => ['string', "in:{$validAbilities}"],
+            'expires_at'  => ['nullable', 'date', 'after:now'],
         ]);
 
         $rawKey = 'ak_' . bin2hex(random_bytes(16)); // ak_ + 32 hex chars = 35 chars total
@@ -49,6 +54,7 @@ class ApiKeyController extends Controller
             'name'       => $validated['name'],
             'key_prefix' => $prefix,
             'key_hash'   => $hash,
+            'abilities'  => $validated['abilities'] ?? null, // null = wildcard
             'expires_at' => $validated['expires_at'] ?? null,
         ]);
 
