@@ -1,4 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react'
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { PageProps } from '../types'
 
@@ -71,6 +72,77 @@ function FlashBanner() {
     )
 }
 
+function Nav({ currentPath }: { currentPath: string }) {
+    // A group is open by default if any of its items matches the current path
+    const initialOpen = Object.fromEntries(
+        navigation.map((g) => [
+            g.heading,
+            g.items.some((i) => currentPath === i.href || currentPath.startsWith(i.href + '/')),
+        ]),
+    )
+    const [open, setOpen] = useState<Record<string, boolean>>(initialOpen)
+
+    function toggle(heading: string) {
+        setOpen((prev) => ({ ...prev, [heading]: !prev[heading] }))
+    }
+
+    return (
+        <nav className="flex-grow-1 overflow-auto py-3 px-2">
+            {navigation.map((group) => {
+                const isOpen = open[group.heading] ?? false
+                const hasActive = group.items.some(
+                    (i) => currentPath === i.href || currentPath.startsWith(i.href + '/'),
+                )
+
+                return (
+                    <div key={group.heading} className="mb-1">
+                        <button
+                            type="button"
+                            onClick={() => toggle(group.heading)}
+                            className="nav-group-toggle w-100 d-flex align-items-center justify-content-between"
+                            aria-expanded={isOpen}
+                        >
+                            <span className={`nav-group-label${hasActive ? ' text-success' : ''}`}>
+                                {group.heading}
+                            </span>
+                            <svg
+                                width="12" height="12" viewBox="0 0 12 12" fill="currentColor"
+                                style={{
+                                    opacity: 0.5,
+                                    transition: 'transform 0.2s',
+                                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <path d="M6 8L1 3h10L6 8z" />
+                            </svg>
+                        </button>
+
+                        <div style={{
+                            overflow: 'hidden',
+                            maxHeight: isOpen ? '500px' : '0',
+                            transition: 'max-height 0.25s ease',
+                        }}>
+                            {group.items.map((item) => {
+                                const active = currentPath === item.href || currentPath.startsWith(item.href + '/')
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className={`nav-link${active ? ' active' : ''}`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )
+            })}
+        </nav>
+    )
+}
+
 interface AdminLayoutProps {
     title?: string
     children: ReactNode
@@ -96,25 +168,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-grow-1 overflow-auto py-3 px-2">
-                    {navigation.map((group) => (
-                        <div key={group.heading} className="mb-4">
-                            <div className="nav-group-label mb-1">{group.heading}</div>
-                            {group.items.map((item) => {
-                                const active = currentPath === item.href || currentPath.startsWith(item.href + '/')
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        className={`nav-link${active ? ' active' : ''}`}
-                                    >
-                                        {item.label}
-                                    </Link>
-                                )
-                            })}
-                        </div>
-                    ))}
-                </nav>
+                <Nav currentPath={currentPath} />
 
                 {/* User footer */}
                 <div className="border-top border-secondary p-3">
