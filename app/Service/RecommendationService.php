@@ -89,7 +89,7 @@ class RecommendationService
         $requestUuid = (string) Str::uuid();
         $requestLog = $this->logRequest($requestUuid, $deviceToken, $droidRequest, $akilimoComputeData);
 
-        $startedAt = now();
+        $startedAt = Carbon::now();
 
         try {
             $computeResp = $this->akilimoComputeService->compute($akilimoComputeData);
