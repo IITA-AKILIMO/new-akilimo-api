@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\CassavaPriceController;
 use App\Http\Controllers\Admin\CassavaUnitController;
+use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DefaultPriceController;
@@ -48,6 +49,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->except(['show'])
         ->parameters(['fertilizers' => 'id']);
 
+    // Fertilizer prices — batch routes before resource
+    Route::get('fertilizer-prices/batch-create', [FertilizerPriceController::class, 'batchCreate'])->name('fertilizer-prices.batch-create');
+    Route::post('fertilizer-prices/batch', [FertilizerPriceController::class, 'batchStore'])->name('fertilizer-prices.batch-store');
+    Route::get('fertilizer-prices/batch-edit', [FertilizerPriceController::class, 'batchEdit'])->name('fertilizer-prices.batch-edit');
+    Route::put('fertilizer-prices/batch', [FertilizerPriceController::class, 'batchUpdate'])->name('fertilizer-prices.batch-update');
+
     Route::resource('fertilizer-prices', FertilizerPriceController::class)
         ->except(['show'])
         ->parameters(['fertilizer-prices' => 'id']);
@@ -65,9 +72,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->except(['show'])
         ->parameters(['potato-prices' => 'id']);
 
+    // Starch prices — batch routes must come before the resource to avoid {id} capture
+    Route::get('starch-prices/batch-create', [StarchPriceController::class, 'batchCreate'])->name('starch-prices.batch-create');
+    Route::post('starch-prices/batch', [StarchPriceController::class, 'batchStore'])->name('starch-prices.batch-store');
+    Route::get('starch-prices/batch-edit', [StarchPriceController::class, 'batchEdit'])->name('starch-prices.batch-edit');
+    Route::put('starch-prices/batch', [StarchPriceController::class, 'batchUpdate'])->name('starch-prices.batch-update');
+
     Route::resource('starch-prices', StarchPriceController::class)
         ->except(['show'])
         ->parameters(['starch-prices' => 'id']);
+
+    // Default prices — batch routes before resource
+    Route::get('default-prices/batch-create', [DefaultPriceController::class, 'batchCreate'])->name('default-prices.batch-create');
+    Route::post('default-prices/batch', [DefaultPriceController::class, 'batchStore'])->name('default-prices.batch-store');
+    Route::get('default-prices/batch-edit', [DefaultPriceController::class, 'batchEdit'])->name('default-prices.batch-edit');
+    Route::put('default-prices/batch', [DefaultPriceController::class, 'batchUpdate'])->name('default-prices.batch-update');
 
     Route::resource('default-prices', DefaultPriceController::class)
         ->except(['show'])
@@ -82,6 +101,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->except(['show'])
         ->parameters(['investment-amounts' => 'id']);
 
+    // Operation costs — batch routes before resource
+    Route::get('operation-costs/batch-create', [OperationCostController::class, 'batchCreate'])->name('operation-costs.batch-create');
+    Route::post('operation-costs/batch', [OperationCostController::class, 'batchStore'])->name('operation-costs.batch-store');
+    Route::get('operation-costs/batch-edit', [OperationCostController::class, 'batchEdit'])->name('operation-costs.batch-edit');
+    Route::put('operation-costs/batch', [OperationCostController::class, 'batchUpdate'])->name('operation-costs.batch-update');
+
     Route::resource('operation-costs', OperationCostController::class)
         ->except(['show'])
         ->parameters(['operation-costs' => 'id']);
@@ -90,9 +115,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->except(['show'])
         ->parameters(['currencies' => 'id']);
 
+    Route::resource('countries', CountryController::class)
+        ->except(['show'])
+        ->parameters(['countries' => 'id']);
+
     Route::resource('cassava-units', CassavaUnitController::class)
         ->except(['show'])
         ->parameters(['cassava-units' => 'id']);
+
+    // Translations — batch edit (create + edit unified in one spreadsheet page)
+    Route::get('translations/batch-edit', [TranslationController::class, 'batchEdit'])->name('translations.batch-edit');
+    Route::put('translations/batch', [TranslationController::class, 'batchUpdate'])->name('translations.batch-update');
 
     Route::resource('translations', TranslationController::class)
         ->except(['show'])

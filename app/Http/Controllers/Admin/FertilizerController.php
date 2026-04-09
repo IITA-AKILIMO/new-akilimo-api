@@ -15,13 +15,20 @@ class FertilizerController extends AdminController
 
     public function index(Request $request): Response
     {
+        $filters = $this->filtersFrom($request, ['country', 'use_case', 'available']);
         $paginator = $this->repo->paginateWithSort(
             perPage: (int) $request->get('per_page', 20),
             orderBy: 'sort_order',
             direction: 'asc',
+            filters: $filters,
         );
 
         return Inertia::render('Fertilizers/Index', [
+            'filters' => [
+                'country' => $request->get('country', ''),
+                'use_case' => $request->get('use_case', ''),
+                'available' => $request->get('available', ''),
+            ],
             'items' => $this->paginateShape($paginator, fn ($f) => [
                 'id' => $f->id,
                 'name' => $f->name,

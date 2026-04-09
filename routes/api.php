@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ApiKeyController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CassavaPricesController;
 use App\Http\Controllers\Api\CassavaUnitsController;
+use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\Api\DefaultPriceController;
 use App\Http\Controllers\Api\FertilizerController;
@@ -34,6 +35,10 @@ Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
 
 // ── Public reference data — cheap reads used by mobile clients on startup ─────
 Route::middleware('throttle:120,1')->group(function () {
+    Route::prefix('v1/countries')->group(function () {
+        Route::get('/', [CountryController::class, 'index']);
+    });
+
     Route::prefix('v1/currencies')->group(function () {
         Route::get('/', [CurrencyController::class, 'index']);
     });

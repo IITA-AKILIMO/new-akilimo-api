@@ -43,6 +43,7 @@ const navigation: NavGroup[] = [
             { label: 'Investment Amounts', href: '/admin/investment-amounts' },
             { label: 'Operation Costs', href: '/admin/operation-costs' },
             { label: 'Starch Factories', href: '/admin/starch-factories' },
+            { label: 'Countries', href: '/admin/countries' },
             { label: 'Currencies', href: '/admin/currencies' },
             { label: 'Cassava Units', href: '/admin/cassava-units' },
             { label: 'Translations', href: '/admin/translations' },

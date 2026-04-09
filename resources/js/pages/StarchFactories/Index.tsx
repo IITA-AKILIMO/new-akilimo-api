@@ -2,13 +2,15 @@ import { Link, router } from '@inertiajs/react'
 import { useState } from 'react'
 import Badge from '../../components/Badge'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import CountryFilter from '../../components/CountryFilter'
 import DataTable, { type Column } from '../../components/DataTable'
 import AdminLayout from '../../layouts/AdminLayout'
 import type { Paginated, StarchFactory } from '../../types'
 
-interface Props { items: Paginated<StarchFactory> }
+interface Filters { country: string }
+interface Props { items: Paginated<StarchFactory>; filters: Filters }
 
-export default function StarchFactoriesIndex({ items }: Props) {
+export default function StarchFactoriesIndex({ items, filters }: Props) {
     const [deleting, setDeleting] = useState<StarchFactory | null>(null)
     const [processing, setProcessing] = useState(false)
     const columns: Column[] = [
@@ -17,7 +19,10 @@ export default function StarchFactoriesIndex({ items }: Props) {
         { key: 'country', label: 'Country' },
         { key: 'factory_active', label: 'Active', render: (v) => <Badge active={!!v} /> },
     ]
-    function handlePageChange(page: number) { router.get('/admin/starch-factories', { page }, { preserveState: true }) }
+    function navigate(next: Partial<Filters>) {
+        router.get('/admin/starch-factories', { ...filters, ...next, page: 1 }, { preserveState: true })
+    }
+    function handlePageChange(page: number) { router.get('/admin/starch-factories', { ...filters, page }, { preserveState: true }) }
     function handleDelete() {
         if (!deleting) return; setProcessing(true)
         router.delete(`/admin/starch-factories/${deleting.id}`, { onFinish: () => { setProcessing(false); setDeleting(null) } })
@@ -27,6 +32,16 @@ export default function StarchFactoriesIndex({ items }: Props) {
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <span className="text-muted small">{items.meta.total} records</span>
                 <Link href="/admin/starch-factories/create" className="btn btn-success btn-sm">+ New</Link>
+            </div>
+            <div className="row g-2 mb-3">
+                <div className="col-auto">
+                    <CountryFilter value={filters.country} onChange={(v) => navigate({ country: v })} />
+                </div>
+                {filters.country && (
+                    <div className="col-auto">
+                        <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate({ country: '' })}>Clear</button>
+                    </div>
+                )}
             </div>
             <DataTable columns={columns} data={items.data as Record<string, unknown>[]} pagination={items.meta} links={items.links} sortBy="" onSort={() => {}} onPageChange={handlePageChange}
                 actions={(row) => (<div className="d-flex gap-1 justify-content-end"><Link href={`/admin/starch-factories/${row.id}/edit`} className="btn btn-outline-secondary btn-sm">Edit</Link><button onClick={() => setDeleting(row as unknown as StarchFactory)} className="btn btn-outline-danger btn-sm">Delete</button></div>)} />

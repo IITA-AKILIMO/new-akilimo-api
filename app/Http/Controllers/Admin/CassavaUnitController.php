@@ -15,13 +15,16 @@ class CassavaUnitController extends AdminController
 
     public function index(Request $request): Response
     {
+        $filters = $this->filtersFrom($request, ['is_active']);
         $paginator = $this->repo->paginateWithSort(
             perPage: (int) $request->get('per_page', 20),
             orderBy: 'sort_order',
             direction: 'asc',
+            filters: $filters,
         );
 
         return Inertia::render('CassavaUnits/Index', [
+            'filters' => ['is_active' => $request->get('is_active', '')],
             'items' => $this->paginateShape($paginator, fn ($f) => [
                 'id' => $f->id,
                 'label' => $f->label,

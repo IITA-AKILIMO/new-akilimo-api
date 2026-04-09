@@ -2,11 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller;
 
 abstract class AdminController extends Controller
 {
+    /**
+     * Extract named filter values from the request, stripping blank strings.
+     * Accepts a map of ['requestParam' => 'dbColumn'] or ['param'] for same-name params.
+     */
+    protected function filtersFrom(Request $request, array $keys): array
+    {
+        $filters = [];
+        foreach ($keys as $param => $column) {
+            if (is_int($param)) {
+                $param = $column;
+            }
+            $value = $request->get($param);
+            if ($value !== null && $value !== '') {
+                $filters[$column] = $value;
+            }
+        }
+
+        return $filters;
+    }
+
     /**
      * Convert a LengthAwarePaginator to the Paginated<T> shape expected by the frontend.
      */

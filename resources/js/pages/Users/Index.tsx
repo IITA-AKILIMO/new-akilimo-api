@@ -11,12 +11,14 @@ interface Props {
     filters: {
         sort_by: string
         sort_dir: 'asc' | 'desc'
+        search: string
     }
 }
 
 export default function UsersIndex({ users, filters }: Props) {
     const [deleting, setDeleting] = useState<User | null>(null)
     const [processing, setProcessing] = useState(false)
+    const [searchInput, setSearchInput] = useState(filters.search)
 
     const columns: Column[] = [
         { key: 'id', label: 'ID', sortable: true },
@@ -35,11 +37,15 @@ export default function UsersIndex({ users, filters }: Props) {
     function handleSort(col: string) {
         const dir =
             filters.sort_by === col && filters.sort_dir === 'asc' ? 'desc' : 'asc'
-        router.get('/admin/users', { sort_by: col, sort_dir: dir }, { preserveState: true })
+        router.get('/admin/users', { ...filters, sort_by: col, sort_dir: dir, page: 1 }, { preserveState: true })
     }
 
     function handlePageChange(page: number) {
         router.get('/admin/users', { ...filters, page }, { preserveState: true })
+    }
+
+    function navigateSearch(search: string) {
+        router.get('/admin/users', { ...filters, search, page: 1 }, { preserveState: true })
     }
 
     function handleDelete() {
@@ -62,6 +68,23 @@ export default function UsersIndex({ users, filters }: Props) {
                 <Link href="/admin/users/create" className="btn btn-success btn-sm">
                     + New User
                 </Link>
+            </div>
+
+            <div className="row g-2 mb-3">
+                <div className="col-auto">
+                    <input
+                        type="text" className="form-control form-control-sm" placeholder="Search name, username or email…"
+                        value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') navigateSearch(searchInput) }}
+                        onBlur={() => { if (searchInput !== filters.search) navigateSearch(searchInput) }}
+                        style={{ width: 280 }}
+                    />
+                </div>
+                {filters.search && (
+                    <div className="col-auto">
+                        <button className="btn btn-outline-secondary btn-sm" onClick={() => { setSearchInput(''); navigateSearch('') }}>Clear</button>
+                    </div>
+                )}
             </div>
 
             <DataTable

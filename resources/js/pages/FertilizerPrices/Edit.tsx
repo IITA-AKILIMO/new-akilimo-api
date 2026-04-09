@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react'
 import type { FormEvent } from 'react'
 import FormField from '../../components/FormField'
 import ResourceForm from '../../components/ResourceForm'
+import CountrySelect from '../../components/CountrySelect'
 import AdminLayout from '../../layouts/AdminLayout'
 import type { FertilizerPrice } from '../../types'
 
@@ -24,7 +25,7 @@ export default function FertilizerPricesEdit({ item }: Props) {
                     <div className="row g-3">
                         <div className="col-md-4">
                             <FormField label="Country" required error={errors.country}>
-                                <input type="text" maxLength={2} className={`form-control ${errors.country ? 'is-invalid' : ''}`} value={data.country} onChange={e => setData('country', e.target.value.toUpperCase())} />
+                                <CountrySelect value={data.country} onChange={(v) => setData('country', v)} error={errors.country} required />
                             </FormField>
                         </div>
                         <div className="col-md-8">

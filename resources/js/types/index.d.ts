@@ -6,6 +6,14 @@ export interface User {
     created_at?: string
 }
 
+export interface Country {
+    id: number
+    code: string
+    name: string
+    active?: boolean
+    sort_order?: number
+}
+
 export interface Fertilizer {
     id: number
     name: string
@@ -166,6 +174,7 @@ export interface PageProps {
     }
     flash: Flash
     errors: Record<string, string>
+    countries: Pick<Country, 'id' | 'code' | 'name'>[]
     [key: string]: unknown
 }
 

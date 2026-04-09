@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react'
 import type { FormEvent } from 'react'
 import FormField from '../../components/FormField'
 import ResourceForm from '../../components/ResourceForm'
+import CountrySelect from '../../components/CountrySelect'
 import AdminLayout from '../../layouts/AdminLayout'
 import type { OperationCost } from '../../types'
 
@@ -20,7 +21,7 @@ export default function OperationCostsEdit({ item }: Props) {
                 <ResourceForm title={`Edit: ${item.operation_name}`} onSubmit={handleSubmit} processing={processing} onCancel={() => window.history.back()}>
                     <div className="row g-3">
                         <div className="col-md-8"><FormField label="Operation Name" required error={errors.operation_name}><input type="text" className={`form-control ${errors.operation_name ? 'is-invalid' : ''}`} value={data.operation_name} onChange={e => setData('operation_name', e.target.value)} /></FormField></div>
-                        <div className="col-md-4"><FormField label="Country Code" required error={errors.country_code}><input type="text" maxLength={2} className={`form-control ${errors.country_code ? 'is-invalid' : ''}`} value={data.country_code} onChange={e => setData('country_code', e.target.value.toUpperCase())} /></FormField></div>
+                        <div className="col-md-4"><FormField label="Country" required error={errors.country_code}><CountrySelect value={data.country_code} onChange={(v) => setData('country_code', v)} error={errors.country_code} required /></FormField></div>
                         <div className="col-md-6"><FormField label="Operation Type" required error={errors.operation_type}><input type="text" className={`form-control ${errors.operation_type ? 'is-invalid' : ''}`} value={data.operation_type} onChange={e => setData('operation_type', e.target.value)} /></FormField></div>
                         <div className="col-md-3"><FormField label="Min Cost" required error={errors.min_cost}><input type="number" min={0} step="0.01" className={`form-control ${errors.min_cost ? 'is-invalid' : ''}`} value={data.min_cost} onChange={e => setData('min_cost', e.target.value)} /></FormField></div>
                         <div className="col-md-3"><FormField label="Max Cost" required error={errors.max_cost}><input type="number" min={0} step="0.01" className={`form-control ${errors.max_cost ? 'is-invalid' : ''}`} value={data.max_cost} onChange={e => setData('max_cost', e.target.value)} /></FormField></div>

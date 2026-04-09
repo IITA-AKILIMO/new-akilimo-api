@@ -1,13 +1,5 @@
-const COUNTRIES = [
-    { code: 'ET', name: 'Ethiopia' },
-    { code: 'GH', name: 'Ghana' },
-    { code: 'KE', name: 'Kenya' },
-    { code: 'MZ', name: 'Mozambique' },
-    { code: 'NG', name: 'Nigeria' },
-    { code: 'RW', name: 'Rwanda' },
-    { code: 'TZ', name: 'Tanzania' },
-    { code: 'UG', name: 'Uganda' },
-]
+import { usePage } from '@inertiajs/react'
+import type { PageProps } from '../types'
 
 interface CountryFilterProps {
     value: string
@@ -15,6 +7,8 @@ interface CountryFilterProps {
 }
 
 export default function CountryFilter({ value, onChange }: CountryFilterProps) {
+    const { countries } = usePage<PageProps>().props
+
     return (
         <div className="d-flex align-items-center gap-2">
             <label htmlFor="country-filter" className="form-label mb-0 fw-medium text-nowrap">
@@ -28,7 +22,7 @@ export default function CountryFilter({ value, onChange }: CountryFilterProps) {
                 style={{ width: 'auto' }}
             >
                 <option value="">All Countries</option>
-                {COUNTRIES.map((c) => (
+                {countries.map((c) => (
                     <option key={c.code} value={c.code}>
                         {c.code} — {c.name}
                     </option>

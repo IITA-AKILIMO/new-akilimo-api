@@ -15,13 +15,16 @@ class MaizePriceController extends AdminController
 
     public function index(Request $request): Response
     {
+        $filters = $this->filtersFrom($request, ['country']);
         $paginator = $this->repo->paginateWithSort(
             perPage: (int) $request->get('per_page', 20),
             orderBy: 'sort_order',
             direction: 'asc',
+            filters: $filters,
         );
 
         return Inertia::render('MaizePrices/Index', [
+            'filters' => ['country' => $request->get('country', '')],
             'items' => $this->paginateShape($paginator, fn ($f) => [
                 'id' => $f->id,
                 'country' => $f->country,

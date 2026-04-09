@@ -15,13 +15,17 @@ class CurrencyController extends AdminController
 
     public function index(Request $request): Response
     {
+        // country_code is the DB column; request sends 'country'
+        $filters = $this->filtersFrom($request, ['country' => 'country_code']);
         $paginator = $this->repo->paginateWithSort(
             perPage: (int) $request->get('per_page', 20),
             orderBy: 'country_code',
             direction: 'asc',
+            filters: $filters,
         );
 
         return Inertia::render('Currencies/Index', [
+            'filters' => ['country' => $request->get('country', '')],
             'items' => $this->paginateShape($paginator, fn ($f) => [
                 'id' => $f->id,
                 'country_code' => $f->country_code,

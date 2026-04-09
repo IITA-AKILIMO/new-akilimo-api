@@ -22,12 +22,11 @@ class UserController extends Controller
             ? $request->get('sort_by')
             : 'created_at';
         $direction = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
+        $search = (string) $request->get('search', '');
 
-        $paginator = $this->repo->paginateWithSort(
-            perPage: $perPage,
-            orderBy: $orderBy,
-            direction: $direction,
-        );
+        $paginator = $search !== ''
+            ? $this->repo->paginateWithSearch($search, $perPage, $orderBy, $direction)
+            : $this->repo->paginateWithSort(perPage: $perPage, orderBy: $orderBy, direction: $direction);
 
         return Inertia::render('Users/Index', [
             'users' => [
@@ -56,6 +55,7 @@ class UserController extends Controller
             'filters' => [
                 'sort_by' => $orderBy,
                 'sort_dir' => $direction,
+                'search' => $search,
             ],
         ]);
     }
