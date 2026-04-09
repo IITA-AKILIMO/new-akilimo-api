@@ -6,14 +6,27 @@
     min-width: 260px;
 }
 
+.admin-sidebar .nav-group-toggle {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.admin-sidebar .nav-group-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.25rem;
+}
+
 .admin-sidebar .nav-group-label {
     font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: rgba(255, 255, 255, 0.35);
-    padding: 0 0.75rem;
-    margin-bottom: 0.25rem;
 }
 
 .admin-sidebar .nav-link {
@@ -32,6 +45,21 @@
 .admin-sidebar .nav-link.active {
     color: #fff;
     background-color: #198754;
+}
+
+/* ── JSON panel toggle ────────────────────────────────────── */
+.json-panel-toggle {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.json-panel-toggle:focus-visible {
+    outline: 2px solid #198754;
+    border-radius: 0.25rem;
 }
 
 /* ── Flash banner ─────────────────────────────────────────── */

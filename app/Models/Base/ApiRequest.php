@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool|null $sph
  * @property bool|null $spp
  * @property bool|null $excluded
+ * @property string|null $use_case
+ * @property string|null $gender_code
  * @property array $droid_request
  * @property array $plumber_request
  * @property Carbon|null $request_started_at
@@ -46,6 +48,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereFr($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereFullNames($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereGenderCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereIc($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereLat($value)
@@ -60,6 +63,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereSph($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereSpp($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiRequest whereUseCase($value)
  *
  * @mixin \Eloquent
  */
@@ -98,6 +102,8 @@ class ApiRequest extends Model
         'sph',
         'spp',
         'excluded',
+        'use_case',
+        'gender_code',
         'droid_request',
         'plumber_request',
         'request_started_at',

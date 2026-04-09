@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\PotatoPriceController;
 use App\Http\Controllers\Admin\StarchFactoryController;
 use App\Http\Controllers\Admin\StarchPriceController;
 use App\Http\Controllers\Admin\ApiKeyController;
+use App\Http\Controllers\Admin\FeedbackController;
+use App\Http\Controllers\Admin\RequestLogController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Web\HealthCheckController;
@@ -138,4 +140,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
     Route::resource('api-keys', ApiKeyController::class)
         ->except(['show'])
         ->parameters(['api-keys' => 'id']);
+
+    // Monitoring
+    Route::get('requests', [RequestLogController::class, 'index'])->name('requests.index');
+    Route::get('requests/{id}', [RequestLogController::class, 'show'])->name('requests.show');
+    Route::get('feedback', [FeedbackController::class, 'index'])->name('feedback.index');
 });

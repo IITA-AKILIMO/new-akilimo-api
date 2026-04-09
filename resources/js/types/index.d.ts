@@ -200,6 +200,37 @@ export interface Paginated<T> {
     meta: PaginationMeta
 }
 
+export interface ApiRequest {
+    id: number
+    request_id: string
+    device_token: string | null
+    country_code: string | null
+    full_names: string | null
+    phone_number: string | null
+    gender_code: string | null
+    use_case: string | null
+    excluded: boolean
+    duration_ms: number | null
+    created_at: string
+}
+
+export interface ApiRequestDetail extends ApiRequest {
+    droid_request: Record<string, unknown>
+    plumber_request: Record<string, unknown>
+    plumber_response: Record<string, unknown>
+}
+
+export interface UserFeedback {
+    id: number
+    device_token: string | null
+    use_case: string | null
+    user_type: string
+    akilimo_rec_rating: number
+    akilimo_useful_rating: number
+    language: string | null
+    created_at: string
+}
+
 export interface ApiKey {
     id: number
     name: string
