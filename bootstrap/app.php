@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthenticateWithToken;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\JsonFormatResponse;
@@ -28,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->alias([
+            'auth'       => Authenticate::class,
             'auth.token' => AuthenticateWithToken::class,
         ]);
     })
