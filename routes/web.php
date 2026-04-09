@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OperationCostController;
 use App\Http\Controllers\Admin\PotatoPriceController;
 use App\Http\Controllers\Admin\StarchFactoryController;
 use App\Http\Controllers\Admin\StarchPriceController;
+use App\Http\Controllers\Admin\ApiKeyController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Web\HealthCheckController;
@@ -130,4 +131,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
     Route::resource('translations', TranslationController::class)
         ->except(['show'])
         ->parameters(['translations' => 'id']);
+
+    // API Keys
+    Route::patch('api-keys/{id}/revoke', [ApiKeyController::class, 'revoke'])->name('api-keys.revoke');
+    Route::patch('api-keys/{id}/activate', [ApiKeyController::class, 'activate'])->name('api-keys.activate');
+    Route::resource('api-keys', ApiKeyController::class)
+        ->except(['show'])
+        ->parameters(['api-keys' => 'id']);
 });
