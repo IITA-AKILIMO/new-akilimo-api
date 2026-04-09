@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,7 +11,9 @@ return new class extends Migration
     {
         Schema::dropIfExists('countries');
 
-        Schema::create('countries', function (Blueprint $table) {
+        $isMariaDb = DB::getDriverName() !== 'sqlite';
+
+        Schema::create('countries', function (Blueprint $table) use ($isMariaDb) {
             $table->id();
 
             // ISO codes
@@ -31,17 +34,22 @@ return new class extends Migration
             $table->decimal('min_longitude', 11, 8)->nullable();
             $table->decimal('max_longitude', 11, 8)->nullable();
 
-            // Full geometry (MariaDB spatial type)
-            $table->geometry('boundary')
-                ->default(DB::raw("ST_GeomFromText('GEOMETRYCOLLECTION EMPTY')"))
-                ->comment('Country boundary polygon or multipolygon');
+            // Full geometry — MariaDB spatial type only
+            if ($isMariaDb) {
+                $table->geometry('boundary')
+                    ->default(DB::raw("ST_GeomFromText('GEOMETRYCOLLECTION EMPTY')"))
+                    ->comment('Country boundary polygon or multipolygon');
+            }
 
             $table->timestamps();
 
             // Indexes
             $table->index(['latitude', 'longitude'], 'idx_country_coordinates');
             $table->index(['min_latitude', 'max_latitude', 'min_longitude', 'max_longitude'], 'idx_country_bbox');
-            $table->spatialIndex('boundary', 'idx_country_boundary');
+
+            if ($isMariaDb) {
+                $table->spatialIndex('boundary', 'idx_country_boundary');
+            }
         });
     }
 

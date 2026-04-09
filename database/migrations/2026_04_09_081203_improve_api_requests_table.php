@@ -2,11 +2,16 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return; // storedAs() uses MariaDB JSON functions not supported by SQLite
+        }
+
         Schema::table('api_requests', function (Blueprint $table) {
             // Add STORED generated columns
             $table->string('country_code', 5)
