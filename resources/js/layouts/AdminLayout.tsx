@@ -23,6 +23,7 @@ const navigation: NavGroup[] = [
         heading: 'Management',
         items: [
             { label: 'Users', href: '/admin/users' },
+            { label: 'API Keys', href: '/admin/api-keys' },
             { label: 'Fertilizers', href: '/admin/fertilizers' },
             { label: 'Fertilizer Prices', href: '/admin/fertilizer-prices' },
         ],

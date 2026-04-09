@@ -199,3 +199,15 @@ export interface Paginated<T> {
     links: PaginationLinks
     meta: PaginationMeta
 }
+
+export interface ApiKey {
+    id: number
+    name: string
+    key_prefix: string
+    is_active: boolean
+    abilities: string[] | null
+    last_used_at: string | null
+    expires_at: string | null
+    created_at: string
+    user: Pick<User, 'id' | 'name' | 'email'> | null
+}
