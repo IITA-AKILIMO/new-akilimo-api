@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CurrencyRequest;
 use App\Http\Resources\Collections\CurrencyResourceCollection;
 use App\Http\Resources\CurrencyResource;
 use App\Repositories\CurrencyRepo;
+use App\Traits\HasPaginationParams;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +15,9 @@ class CurrencyController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected CurrencyRepo $repo) {}
+    public function __construct(protected CurrencyRepo $repo)
+    {
+    }
 
     public function index(Request $request): CurrencyResourceCollection
     {
