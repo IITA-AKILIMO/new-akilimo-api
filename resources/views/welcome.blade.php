@@ -27,6 +27,7 @@
             </svg>
             Health
         </a>
+        <a href="/playground" class="btn btn-terra">Try the API</a>
         <a href="/admin" class="btn btn-primary">Admin Panel</a>
     </div>
 </nav>
@@ -50,6 +51,12 @@
             schedule recommendations tailored to smallholder farmers across Africa.
         </p>
         <div class="hero-actions">
+            <a href="/playground" class="btn btn-terra">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 3l14 9-14 9V3z"/>
+                </svg>
+                Try the API
+            </a>
             <a href="/admin" class="btn btn-primary">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
@@ -222,10 +229,16 @@
     <div class="cta-inner">
         <h2 class="cta-title">Ready to get started?</h2>
         <p class="cta-desc">
-            Sign in to the admin panel to manage reference data, monitor API usage,
-            and generate API keys for your integration.
+            Try the API instantly in the playground — no account needed.
+            Or sign in to the admin panel to manage data and generate API keys.
         </p>
         <div class="cta-actions">
+            <a href="/playground" class="btn btn-terra">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 3l14 9-14 9V3z"/>
+                </svg>
+                Try the API
+            </a>
             <a href="/admin/login" class="btn btn-primary">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
