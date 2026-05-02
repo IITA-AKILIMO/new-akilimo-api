@@ -33,6 +33,7 @@ Route::prefix('health')->group(function () {
 });
 
 Route::get('/playground', [PlaygroundController::class, 'show']);
+Route::get('/playground/history', [PlaygroundController::class, 'history']);
 Route::middleware('throttle:5,1')->post('/playground/compute', [PlaygroundController::class, 'compute']);
 
 // ── Admin — public ─────────────────────────────────────────────────────────────

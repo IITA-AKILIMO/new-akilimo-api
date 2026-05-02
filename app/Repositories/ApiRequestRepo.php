@@ -59,6 +59,28 @@ class ApiRequestRepo extends BaseRepo
         return $query->orderBy($orderBy, $direction)->paginate($perPage);
     }
 
+    public function playgroundHistory(int $limit = 30): \Illuminate\Support\Collection
+    {
+        return $this->model->newQuery()
+            ->where('device_token', 'like', 'playground-%')
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get([
+                'id',
+                'request_id',
+                'country_code',
+                'use_case',
+                'fr',
+                'ic',
+                'pp',
+                'sph',
+                'spp',
+                'request_duration_ms',
+                'created_at',
+                'plumber_response',
+            ]);
+    }
+
     public function useCases(): array
     {
         return $this->model->newQuery()
