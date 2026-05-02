@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ApiKeyController;
+use App\Http\Controllers\Api\PlaygroundController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CassavaPricesController;
 use App\Http\Controllers\Api\CassavaUnitsController;
@@ -26,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('health')->group(function () {
     Route::get('/', [HealthCheckController::class, 'check']);
 });
+
+// ── Playground (public, strictly throttled) ───────────────────────────────────
+Route::middleware('throttle:5,1')->post('v1/playground/compute', [PlaygroundController::class, 'compute']);
 
 // ── Authentication ────────────────────────────────────────────────────────────
 Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
