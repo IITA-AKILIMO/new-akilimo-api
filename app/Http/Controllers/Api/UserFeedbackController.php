@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeedBackRequest;
 use App\Http\Resources\Collections\UserFeedbackResourceCollection;

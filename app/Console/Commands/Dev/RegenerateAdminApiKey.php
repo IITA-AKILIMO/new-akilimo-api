@@ -4,6 +4,7 @@ namespace App\Console\Commands\Dev;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Random\RandomException;
 
 class RegenerateAdminApiKey extends Command
 {
@@ -13,6 +14,9 @@ class RegenerateAdminApiKey extends Command
 
     protected $description = 'Revoke the existing wildcard API key for the admin user and issue a new one';
 
+    /**
+     * @throws RandomException
+     */
     public function handle(): int
     {
         $username = $this->option('username');

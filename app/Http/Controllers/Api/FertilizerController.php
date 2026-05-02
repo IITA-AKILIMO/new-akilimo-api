@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\FertilizerRequest;
 use App\Http\Resources\Collections\FertilizerResourceCollection;
+use App\Http\Resources\FertilizerResource;
 use App\Repositories\FertilizerRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -19,9 +22,6 @@ class FertilizerController extends Controller
         // empty constructor
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): FertilizerResourceCollection
     {
         $perPage = $this->getPerPage($request);
@@ -59,5 +59,32 @@ class FertilizerController extends Controller
             filters: $filters);
 
         return FertilizerResourceCollection::make($availableFertilizers);
+    }
+
+    public function store(FertilizerRequest $request): JsonResponse
+    {
+        $fertilizer = $this->fertilizerRepo->create($request->validated());
+
+        return response()->json([
+            'data' => new FertilizerResource($fertilizer),
+            'message' => 'Fertilizer created.',
+        ], 201);
+    }
+
+    public function update(FertilizerRequest $request, int $id): JsonResponse
+    {
+        $fertilizer = $this->fertilizerRepo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new FertilizerResource($fertilizer),
+            'message' => 'Fertilizer updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->fertilizerRepo->delete($id);
+
+        return response()->json(null, 204);
     }
 }

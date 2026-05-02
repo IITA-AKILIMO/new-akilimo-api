@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\InvestmentAmountRequest;
 use App\Http\Resources\Collections\InvestmentAmountResourceCollection;
+use App\Http\Resources\InvestmentAmountResource;
 use App\Repositories\InvestmentRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class InvestmentAmountController extends Controller
@@ -21,9 +24,6 @@ class InvestmentAmountController extends Controller
         return $this->getPaginatedPrices($request);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function byCountry(string $countryCode, Request $request): InvestmentAmountResourceCollection
     {
         $filters = [
@@ -34,9 +34,33 @@ class InvestmentAmountController extends Controller
         return $this->getPaginatedPrices($request, $filters);
     }
 
-    /**
-     * Shared logic for paginating and sorting fertilizer prices.
-     */
+    public function store(InvestmentAmountRequest $request): JsonResponse
+    {
+        $amount = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => new InvestmentAmountResource($amount),
+            'message' => 'Investment amount created.',
+        ], 201);
+    }
+
+    public function update(InvestmentAmountRequest $request, int $id): JsonResponse
+    {
+        $amount = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new InvestmentAmountResource($amount),
+            'message' => 'Investment amount updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->repo->delete($id);
+
+        return response()->json(null, 204);
+    }
+
     private function getPaginatedPrices(Request $request, array $filters = []): InvestmentAmountResourceCollection
     {
         $perPage = $this->getPerPage($request);

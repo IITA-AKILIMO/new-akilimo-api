@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\DefaultPriceRequest;
 use App\Http\Resources\Collections\DefaultPriceResourceCollection;
+use App\Http\Resources\DefaultPriceResource;
 use App\Repositories\DefaultPriceRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DefaultPriceController extends Controller
@@ -24,13 +27,39 @@ class DefaultPriceController extends Controller
             'country' => $request->input('country'),
         ];
 
-        $starchPrices = $this->repo->paginateWithSort(
+        $defaultPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
             direction: $sort,
             filters: $filters);
 
-        return DefaultPriceResourceCollection::make($starchPrices);
+        return DefaultPriceResourceCollection::make($defaultPrices);
+    }
 
+    public function store(DefaultPriceRequest $request): JsonResponse
+    {
+        $price = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => new DefaultPriceResource($price),
+            'message' => 'Default price created.',
+        ], 201);
+    }
+
+    public function update(DefaultPriceRequest $request, int $id): JsonResponse
+    {
+        $price = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new DefaultPriceResource($price),
+            'message' => 'Default price updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->repo->delete($id);
+
+        return response()->json(null, 204);
     }
 }

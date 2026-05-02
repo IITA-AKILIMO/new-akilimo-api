@@ -6,8 +6,11 @@
 
 namespace App\Models\Base;
 
+use App\Models\ApiKey;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class User
@@ -21,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Collection|ApiKey[] $api_keys
+ * @property-read int|null $api_keys_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -53,4 +58,9 @@ class User extends Model
         'password',
         'remember_token',
     ];
+
+    public function api_keys(): HasMany
+    {
+        return $this->hasMany(ApiKey::class);
+    }
 }

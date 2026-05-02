@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * Created by Reliese Model.
+ */
+
+namespace App\Models\Base;
+
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * Class ApiKey
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string $key_prefix
+ * @property string $key_hash
+ * @property string|null $abilities
+ * @property bool $is_active
+ * @property Carbon|null $last_used_at
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property User $user
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereAbilities($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereKeyHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereKeyPrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereLastUsedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey whereUserId($value)
+ *
+ * @mixin \Eloquent
+ */
+class ApiKey extends Model
+{
+    protected $table = 'api_keys';
+
+    protected $casts = [
+        'user_id' => 'int',
+        'is_active' => 'bool',
+        'last_used_at' => 'datetime',
+        'expires_at' => 'datetime',
+    ];
+
+    protected $fillable = [
+        'user_id',
+        'name',
+        'key_prefix',
+        'key_hash',
+        'abilities',
+        'is_active',
+        'last_used_at',
+        'expires_at',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
