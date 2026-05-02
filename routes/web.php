@@ -39,7 +39,7 @@ Route::middleware('throttle:5,1')->post('/playground/compute', [PlaygroundContro
 // ── Admin — public ─────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('login.post');
 });
 
 // ── Admin — authenticated ──────────────────────────────────────────────────────
