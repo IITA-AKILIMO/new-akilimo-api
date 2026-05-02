@@ -8,7 +8,9 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/scss/welcome.scss',
+                'resources/scss/playground.scss',
                 'resources/js/app.tsx',
+                'resources/js/playground/index.tsx',
             ],
             refresh: true,
         }),
