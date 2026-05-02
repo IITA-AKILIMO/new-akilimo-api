@@ -493,13 +493,16 @@ export default function App() {
 
                     <div className="pg-actions">
                         <button className="btn btn-ghost" onClick={back}>← Back</button>
-                        <button className="btn btn-primary" onClick={advance}>
-                            Continue
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="9 18 15 12 9 6"/>
-                            </svg>
-                        </button>
+                        {isLastStep
+                            ? <SubmitButton submitting={submitting} onClick={submit}/>
+                            : <button className="btn btn-primary" onClick={advance}>
+                                Continue
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                        }
                     </div>
                 </div>
             )}
@@ -636,14 +639,6 @@ export default function App() {
                         <button className="btn btn-ghost" onClick={back}>← Back</button>
                         <SubmitButton submitting={submitting} onClick={submit}/>
                     </div>
-                </div>
-            )}
-
-            {/* ── Submit on step 2 when no further steps ── */}
-            {step === 2 && maxStep === 2 && (
-                <div
-                    style={{display: 'flex', justifyContent: 'flex-end', marginTop: '-0.5rem', marginBottom: '1.5rem'}}>
-                    <SubmitButton submitting={submitting} onClick={submit}/>
                 </div>
             )}
 
