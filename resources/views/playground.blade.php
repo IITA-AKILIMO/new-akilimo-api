@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Try the AKILIMO recommendations API — get fertilizer, intercropping, and planting schedule recommendations without an account.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Playground — {{ config('app.name', 'AKILIMO API') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
