@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\RequestLogController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Web\HealthCheckController;
+use App\Http\Controllers\Web\PlaygroundController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +31,8 @@ Route::get('/', function () {
 Route::prefix('health')->group(function () {
     Route::get('/', [HealthCheckController::class, 'check']);
 });
+
+Route::get('/playground', [PlaygroundController::class, 'show']);
 
 // ── Admin — public ─────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
