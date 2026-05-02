@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('starch_prices', function (Blueprint $table) {
-            $table->bigInteger('id', true);
+            $table->id();
             $table->bigInteger('starch_factory_id');
             $table->integer('price_class');
             $table->float('min_starch');

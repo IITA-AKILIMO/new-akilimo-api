@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\FertilizerPriceRequest;
 use App\Http\Resources\Collections\FertilizerPriceResourceCollection;
+use App\Http\Resources\FertilizerPriceResource;
 use App\Repositories\FertilizerPriceRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FertilizerPriceController extends Controller
@@ -16,17 +19,11 @@ class FertilizerPriceController extends Controller
         protected FertilizerPriceRepo $repo
     ) {}
 
-    /**
-     * Display a paginated list of all fertilizer prices.
-     */
     public function index(Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request);
     }
 
-    /**
-     * Display a paginated list of fertilizer prices filtered by country.
-     */
     public function byCountry(string $countryCode, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
@@ -34,9 +31,6 @@ class FertilizerPriceController extends Controller
         ]);
     }
 
-    /**
-     * Display a paginated list of fertilizer prices filtered by fertilizer key.
-     */
     public function byFertilizerKey(string $fertilizerKey, Request $request): FertilizerPriceResourceCollection
     {
         return $this->getPaginatedPrices($request, [
@@ -44,9 +38,33 @@ class FertilizerPriceController extends Controller
         ]);
     }
 
-    /**
-     * Shared logic for paginating and sorting fertilizer prices.
-     */
+    public function store(FertilizerPriceRequest $request): JsonResponse
+    {
+        $price = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => new FertilizerPriceResource($price),
+            'message' => 'Fertilizer price created.',
+        ], 201);
+    }
+
+    public function update(FertilizerPriceRequest $request, int $id): JsonResponse
+    {
+        $price = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new FertilizerPriceResource($price),
+            'message' => 'Fertilizer price updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->repo->delete($id);
+
+        return response()->json(null, 204);
+    }
+
     private function getPaginatedPrices(Request $request, array $filters = []): FertilizerPriceResourceCollection
     {
         $perPage = $this->getPerPage($request);

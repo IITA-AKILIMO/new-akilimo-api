@@ -1,11 +1,104 @@
-@import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* ── Sidebar ──────────────────────────────────────────────── */
+.admin-sidebar {
+    width: 260px;
+    min-width: 260px;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+.admin-sidebar .nav-group-toggle {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.admin-sidebar .nav-group-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.25rem;
+}
+
+.admin-sidebar .nav-group-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.65);
+    border-radius: 0.375rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.admin-sidebar .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background-color: #198754;
+}
+
+/* ── JSON panel toggle ────────────────────────────────────── */
+.json-panel-toggle {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.json-panel-toggle:focus-visible {
+    outline: 2px solid #198754;
+    border-radius: 0.25rem;
+}
+
+/* ── Flash banner ─────────────────────────────────────────── */
+.flash-success {
+    background-color: #d1e7dd;
+    color: #0a3622;
+    border-bottom: 1px solid #a3cfbb;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #58151c;
+    border-bottom: 1px solid #f1aeb5;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* ── Table sort icons ─────────────────────────────────────── */
+.sort-icon {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+    color: #adb5bd;
+}
+
+.sort-icon.active {
+    color: #198754;
+}
+
+.sort-icon svg {
+    opacity: 0.4;
+}
+
+.sort-icon svg.lit {
+    opacity: 1;
 }

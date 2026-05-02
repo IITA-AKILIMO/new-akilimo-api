@@ -11,24 +11,26 @@ use Illuminate\Support\Facades\Log;
 
 class AkilimoComputeService
 {
-    public function __construct(
-        protected string $baseUrl = '',
-        protected string $endpoint = '',
-        protected int $timeout = 120,
-        protected int $retries = 3,
-        protected bool $logging = true,
-    ) {
-        $this->baseUrl = config('akilimo-compute.base_url');
-        $this->endpoint = config('akilimo-compute.endpoint');
-        $this->timeout = config('akilimo-compute.timeout');
-        $this->retries = config('akilimo-compute.retries');
-        $this->logging = config('akilimo-compute.logging');
+    protected string $baseUrl;
+    protected string $endpoint;
+    protected int $timeout;
+    protected int $retries;
+    protected bool $logging;
+
+    public function __construct()
+    {
+        $this->baseUrl = rtrim(config('akilimo-compute.base_url'), '/');
+        $this->endpoint = ltrim(config('akilimo-compute.endpoint'), '/');
+        $this->timeout = config('akilimo-compute.timeout', 120);
+        $this->retries = config('akilimo-compute.retries', 3);
+        $this->logging = config('akilimo-compute.logging', true);
+
     }
 
     /**
      * Send compute request to Akilimo API.
      *
-     * @throws ConnectionException|RecommendationException
+     * @throws ConnectionException|RecommendationException|RequestException
      */
     public function compute(AkilimoComputeData $data): array
     {
@@ -79,7 +81,7 @@ class AkilimoComputeService
 
     protected function log(string $level, string $context, $response, ?string $message = null, ?array $body = null): void
     {
-        if (! $this->logging) {
+        if (!$this->logging) {
             return;
         }
 

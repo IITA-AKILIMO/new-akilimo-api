@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Concerns\HasPaginationParams;
+use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StarchFactoryRequest;
 use App\Http\Resources\Collections\StarchFactoryResourceCollection;
+use App\Http\Resources\StarchFactoryResource;
 use App\Repositories\StarchFactoryRepo;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StarchFactoryController extends Controller
@@ -45,5 +48,32 @@ class StarchFactoryController extends Controller
             filters: $filters);
 
         return StarchFactoryResourceCollection::make($starchFactory);
+    }
+
+    public function store(StarchFactoryRequest $request): JsonResponse
+    {
+        $factory = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => new StarchFactoryResource($factory),
+            'message' => 'Starch factory created.',
+        ], 201);
+    }
+
+    public function update(StarchFactoryRequest $request, int $id): JsonResponse
+    {
+        $factory = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => new StarchFactoryResource($factory),
+            'message' => 'Starch factory updated.',
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->repo->delete($id);
+
+        return response()->json(null, 204);
     }
 }
