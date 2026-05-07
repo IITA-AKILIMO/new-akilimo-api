@@ -33,7 +33,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "league/csv": "^9.28",
-        "masgeek/artisan-toolkit": "dev-main",
+        "masgeek/artisan-toolkit": "^1.0",
         "spatie/laravel-data": "^4.15",
         "vermaysha/pgbouncer-laravel-extension": "^0.0.5@beta"
     },
@@ -115,10 +115,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/masgeek/reliese-laravel-model-gen"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/masgeek/artisan-toolkit"
         }
     ]
 }

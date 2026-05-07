@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e71ff7f17928eb71c6efc199db63b26a",
+    "content-hash": "6de97f20dbe0dcee8ec319f417406e49",
     "packages": [
         {
             "name": "angel-source-labs/laravel-expression-grammar",
@@ -2871,23 +2871,26 @@
         },
         {
             "name": "masgeek/artisan-toolkit",
-            "version": "dev-main",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/masgeek/artisan-toolkit.git",
-                "reference": "70f9e5da1797b0c7f0d3ff0efc309200725c5670"
+                "reference": "0be3b3a691be1b975834f5ec263a6413f69571a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/masgeek/artisan-toolkit/zipball/70f9e5da1797b0c7f0d3ff0efc309200725c5670",
-                "reference": "70f9e5da1797b0c7f0d3ff0efc309200725c5670",
+                "url": "https://api.github.com/repos/masgeek/artisan-toolkit/zipball/0be3b3a691be1b975834f5ec263a6413f69571a1",
+                "reference": "0be3b3a691be1b975834f5ec263a6413f69571a1",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^11.0|^12.0",
+                "laravel/framework": "^11|^12",
                 "php": "^8.2"
             },
-            "default-branch": true,
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0",
+                "phpunit/phpunit": "^11.0|^12.0"
+            },
             "type": "library",
             "extra": {
                 "laravel": {
@@ -2901,6 +2904,7 @@
                     "Masgeek\\ArtisanToolkit\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2920,10 +2924,10 @@
                 "toolkit"
             ],
             "support": {
-                "source": "https://github.com/masgeek/artisan-toolkit/tree/main",
-                "issues": "https://github.com/masgeek/artisan-toolkit/issues"
+                "issues": "https://github.com/masgeek/artisan-toolkit/issues",
+                "source": "https://github.com/masgeek/artisan-toolkit/tree/1.0.0"
             },
-            "time": "2026-05-07T10:07:02+00:00"
+            "time": "2026-05-07T13:15:16+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -11339,7 +11343,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "masgeek/artisan-toolkit": 20,
         "pestphp/pest": 20,
         "vermaysha/pgbouncer-laravel-extension": 10
     },
