@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auth\TokenAbility;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,12 +57,32 @@ class ApiKey extends Model
 
     /**
      * Check whether this key grants the given ability.
-     * A null abilities list or a ['*'] entry grants everything.
+     *
+     * Resolution order:
+     *   1. Null abilities list → wildcard (grants all)
+     *   2. '*' or 'admin' in list → grants all
+     *   3. Exact match
+     *   4. Broad ability that implies the requested one (e.g. 'write' → 'prices:write')
      */
     public function can(string $ability): bool
     {
         $abilities = $this->abilities ?? ['*'];
 
-        return in_array('*', $abilities, true) || in_array($ability, $abilities, true);
+        foreach ($abilities as $granted) {
+            if ($granted === '*' || $granted === TokenAbility::ADMIN) {
+                return true;
+            }
+
+            if ($granted === $ability) {
+                return true;
+            }
+
+            $implied = TokenAbility::BROAD_GRANTS[$granted] ?? [];
+            if (in_array($ability, $implied, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

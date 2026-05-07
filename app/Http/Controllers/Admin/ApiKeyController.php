@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Auth\TokenAbility;
-use App\Http\Controllers\Controller;
 use App\Models\ApiKey;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -79,15 +78,23 @@ class ApiKeyController extends BaseController
 
     public function create(Request $request): Response
     {
-        $users = User::orderBy('name')->get(['id', 'name', 'email']);
+        $users = User::orderBy('name')->get(['id', 'name', 'email', 'role']);
 
         return Inertia::render('ApiKeys/Create', [
             'users' => $users->map(fn ($u) => [
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
+                'role' => $u->role ?? 'playground',
             ])->all(),
             'abilities' => TokenAbility::ALL,
+            'abilityGroups' => TokenAbility::GROUPS,
+            'abilityLabels' => TokenAbility::LABELS,
+            'rolePresets' => [
+                'playground' => TokenAbility::PLAYGROUND_ABILITIES,
+                'partner' => TokenAbility::PARTNER_ABILITIES,
+                'admin' => [TokenAbility::WILDCARD],
+            ],
         ]);
     }
 
@@ -123,8 +130,8 @@ class ApiKeyController extends BaseController
 
     public function edit(Request $request, int $id): Response
     {
-        $apiKey = ApiKey::with('user:id,name,email')->findOrFail($id);
-        $users = User::orderBy('name')->get(['id', 'name', 'email']);
+        $apiKey = ApiKey::with('user:id,name,email,role')->findOrFail($id);
+        $users = User::orderBy('name')->get(['id', 'name', 'email', 'role']);
 
         return Inertia::render('ApiKeys/Edit', [
             'apiKey' => [
@@ -140,14 +147,23 @@ class ApiKeyController extends BaseController
                     'id' => $apiKey->user->id,
                     'name' => $apiKey->user->name,
                     'email' => $apiKey->user->email,
+                    'role' => $apiKey->user->role ?? 'playground',
                 ] : null,
             ],
             'users' => $users->map(fn ($u) => [
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
+                'role' => $u->role ?? 'playground',
             ])->all(),
             'abilities' => TokenAbility::ALL,
+            'abilityGroups' => TokenAbility::GROUPS,
+            'abilityLabels' => TokenAbility::LABELS,
+            'rolePresets' => [
+                'playground' => TokenAbility::PLAYGROUND_ABILITIES,
+                'partner' => TokenAbility::PARTNER_ABILITIES,
+                'admin' => [TokenAbility::WILDCARD],
+            ],
         ]);
     }
 
