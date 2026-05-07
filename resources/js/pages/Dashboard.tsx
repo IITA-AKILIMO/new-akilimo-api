@@ -107,16 +107,16 @@ export default function Dashboard() {
 
     const statCards = data
         ? [
-              { label: 'Total Requests', value: data.stats.totalRequests.toLocaleString(), description: 'All time compute requests', color: 'success' },
-              { label: 'Active Users', value: data.stats.totalUsers.toLocaleString(), description: 'Registered users', color: 'primary' },
-              { label: 'Active API Keys', value: data.stats.activeKeys.toLocaleString(), description: 'Currently valid keys', color: 'info' },
-              { label: 'Countries', value: data.stats.totalCountries.toString(), description: 'Supported countries', color: 'warning' },
+              { label: 'Total Requests', value: data.stats.totalRequests.toLocaleString(), description: 'All time compute requests', color: 'primary', accent: 'primary' },
+              { label: 'Active Users', value: data.stats.totalUsers.toLocaleString(), description: 'Registered users', color: 'success', accent: 'success' },
+              { label: 'Active API Keys', value: data.stats.activeKeys.toLocaleString(), description: 'Currently valid keys', color: 'info', accent: 'info' },
+              { label: 'Countries', value: data.stats.totalCountries.toString(), description: 'Supported countries', color: 'warning', accent: 'warning' },
           ]
         : [
-              { label: 'Total Requests', value: '—', description: 'All time compute requests', color: 'success' },
-              { label: 'Active Users', value: '—', description: 'Registered users', color: 'primary' },
-              { label: 'Active API Keys', value: '—', description: 'Currently valid keys', color: 'info' },
-              { label: 'Countries', value: '—', description: 'Supported countries', color: 'warning' },
+              { label: 'Total Requests', value: '—', description: 'All time compute requests', color: 'primary', accent: 'primary' },
+              { label: 'Active Users', value: '—', description: 'Registered users', color: 'success', accent: 'success' },
+              { label: 'Active API Keys', value: '—', description: 'Currently valid keys', color: 'info', accent: 'info' },
+              { label: 'Countries', value: '—', description: 'Supported countries', color: 'warning', accent: 'warning' },
           ]
 
     const maxDaily = data?.charts.dailyRequests?.length ? Math.max(...data.charts.dailyRequests.map((d) => d.count)) : 0
@@ -194,11 +194,11 @@ export default function Dashboard() {
             <div className="row g-4 mb-4">
                 {statCards.map((card) => (
                     <div key={card.label} className="col-sm-6 col-xl-3">
-                        <div className="card shadow-sm h-100">
+                        <div className={`card shadow-sm h-100 stat-card stat-${card.accent}`}>
                             <div className="card-body">
-                                <p className="text-muted small fw-medium text-uppercase mb-1">{card.label}</p>
-                                <p className={`fs-2 fw-bold text-${card.color} mb-1`}>{card.value}</p>
-                                <p className="text-muted small mb-0">{card.description}</p>
+                                <p className="text-muted small fw-medium text-uppercase mb-1" style={{ letterSpacing: '0.04em', fontSize: '0.72rem' }}>{card.label}</p>
+                                <p className={`fw-bold text-${card.color} mb-1`} style={{ fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1 }}>{card.value}</p>
+                                <p className="text-muted mb-0" style={{ fontSize: '0.8125rem' }}>{card.description}</p>
                             </div>
                         </div>
                     </div>
@@ -257,14 +257,15 @@ export default function Dashboard() {
                                         {data.charts.dailyRequests.map((day, i) => (
                                             <Tooltip key={i} text={`${day.date}: ${day.count.toLocaleString()}`}>
                                                 <div
-                                                    className="flex-fill bg-primary rounded-top"
+                                                    className="flex-fill rounded-top"
                                                     style={{
                                                         height: `${maxDaily ? (day.count / maxDaily) * 100 : 0}%`,
                                                         minHeight: day.count > 0 ? '4px' : '0',
                                                         cursor: 'default',
+                                                        background: 'var(--brand-gradient)',
                                                         transition: 'opacity 0.15s',
                                                     }}
-                                                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = '0.75')}
+                                                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = '0.65')}
                                                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = '1')}
                                                 />
                                             </Tooltip>
@@ -308,10 +309,10 @@ export default function Dashboard() {
                                                         {item.count.toLocaleString()} ({pct}%)
                                                     </span>
                                                 </div>
-                                                <div className="progress" style={{ height: 6 }}>
+                                                <div className="progress" style={{ height: 5, borderRadius: 100, background: '#e2ece6' }}>
                                                     <div
                                                         className="progress-bar"
-                                                        style={{ width: `${pct}%` }}
+                                                        style={{ width: `${pct}%`, background: 'var(--brand-gradient)', borderRadius: 100 }}
                                                         role="progressbar"
                                                         aria-valuenow={pct}
                                                         aria-valuemin={0}

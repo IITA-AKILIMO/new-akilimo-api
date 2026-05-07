@@ -18,71 +18,78 @@ export default function Login() {
     }
 
     return (
-        <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-            <div style={{ width: '100%', maxWidth: 420 }} className="px-3">
-                <div className="text-center mb-4">
-                    <div>
-                        <span className="fs-3 fw-bold text-success">Akilimo</span>
-                        <span className="fs-3 fw-light text-secondary ms-1">Admin</span>
-                    </div>
-                    <p className="text-muted small mt-1">Sign in to your account</p>
+        <div className="login-page">
+            <div className="login-slides" aria-hidden="true">
+                <div className="login-slide login-slide--1" />
+                <div className="login-slide login-slide--2" />
+                <div className="login-slide login-slide--3" />
+                <div className="login-slide login-slide--4" />
+            </div>
+            <div className="login-overlay" />
+
+            <div className="login-card">
+                <div className="login-logo-wrap">
+                    <img src="/images/akilimo_logo_white.png" alt="Akilimo" className="login-logo" />
                 </div>
 
-                <div className="card shadow-sm">
-                    <div className="card-body p-4">
-                        <form onSubmit={handleSubmit} noValidate>
-                            <div className="mb-3">
-                                <label htmlFor="username" className="form-label fw-medium">
-                                    Username or email
-                                </label>
-                                <input
-                                    id="username"
-                                    type="text"
-                                    autoComplete="username"
-                                    autoFocus
-                                    value={data.username}
-                                    onChange={(e) => setData('username', e.target.value)}
-                                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
-                                />
-                                {errors.username && (
-                                    <div className="invalid-feedback">{errors.username}</div>
-                                )}
-                            </div>
-
-                            <div className="mb-4">
-                                <label htmlFor="password" className="form-label fw-medium">
-                                    Password
-                                </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                                />
-                                {errors.password && (
-                                    <div className="invalid-feedback">{errors.password}</div>
-                                )}
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="btn btn-success w-100"
-                            >
-                                {processing && (
-                                    <span
-                                        className="spinner-border spinner-border-sm me-2"
-                                        role="status"
-                                        aria-hidden="true"
-                                    />
-                                )}
-                                Sign in
-                            </button>
-                        </form>
-                    </div>
+                <div className="login-heading">
+                    <h1 className="login-title">Welcome back</h1>
+                    <p className="login-sub">Sign in to the admin portal</p>
                 </div>
+
+                <form onSubmit={handleSubmit} noValidate className="login-form">
+                    <div className="login-field">
+                        <label htmlFor="username" className="login-label">
+                            Username or email
+                        </label>
+                        <input
+                            id="username"
+                            type="text"
+                            autoComplete="username"
+                            autoFocus
+                            placeholder="you@example.com"
+                            value={data.username}
+                            onChange={(e) => setData('username', e.target.value)}
+                            className={`login-input${errors.username ? ' is-error' : ''}`}
+                        />
+                        {errors.username && (
+                            <span className="login-error">{errors.username}</span>
+                        )}
+                    </div>
+
+                    <div className="login-field">
+                        <label htmlFor="password" className="login-label">
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            autoComplete="current-password"
+                            placeholder="••••••••"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            className={`login-input${errors.password ? ' is-error' : ''}`}
+                        />
+                        {errors.password && (
+                            <span className="login-error">{errors.password}</span>
+                        )}
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="login-btn"
+                    >
+                        {processing ? (
+                            <span className="login-spinner" role="status" aria-hidden="true" />
+                        ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                            </svg>
+                        )}
+                        {processing ? 'Signing in…' : 'Sign in'}
+                    </button>
+                </form>
             </div>
         </div>
     )
