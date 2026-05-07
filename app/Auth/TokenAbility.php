@@ -4,26 +4,116 @@ namespace App\Auth;
 
 final class TokenAbility
 {
-    /** Grants all abilities — used for admin/superuser tokens. */
+    // ── Broad abilities (backward-compatible) ─────────────────────────────────
     const WILDCARD = '*';
 
-    /** Read any resource. */
     const READ = 'read';
 
-    /** Create or update resources. */
     const WRITE = 'write';
 
-    /** Generate, revoke, and delete own API keys. */
     const API_KEYS_MANAGE = 'api-keys:manage';
 
-    /** Manage users and perform privileged admin operations. */
     const ADMIN = 'admin';
 
-    /** All abilities that can be assigned to a token or API key. */
+    // ── Granular abilities ────────────────────────────────────────────────────
+    const RECOMMENDATIONS_COMPUTE = 'recommendations:compute';
+
+    const RECOMMENDATIONS_READ = 'recommendations:read';
+
+    const PRICES_WRITE = 'prices:write';
+
+    const FEEDBACK_READ = 'feedback:read';
+
+    const FEEDBACK_WRITE = 'feedback:write';
+
+    const TRANSLATIONS_READ = 'translations:read';
+
+    // ── Role presets ──────────────────────────────────────────────────────────
+
+    /** Playground users: compute recommendations only. */
+    const PLAYGROUND_ABILITIES = [
+        self::RECOMMENDATIONS_COMPUTE,
+    ];
+
+    /** Partners: compute + read history, submit prices & feedback, read translations. */
+    const PARTNER_ABILITIES = [
+        self::RECOMMENDATIONS_COMPUTE,
+        self::RECOMMENDATIONS_READ,
+        self::PRICES_WRITE,
+        self::FEEDBACK_WRITE,
+        self::TRANSLATIONS_READ,
+    ];
+
+    /** All selectable abilities shown in the admin UI. */
     const ALL = [
+        self::RECOMMENDATIONS_COMPUTE,
+        self::RECOMMENDATIONS_READ,
+        self::PRICES_WRITE,
+        self::FEEDBACK_READ,
+        self::FEEDBACK_WRITE,
+        self::TRANSLATIONS_READ,
+        self::API_KEYS_MANAGE,
         self::READ,
         self::WRITE,
-        self::API_KEYS_MANAGE,
         self::ADMIN,
+    ];
+
+    /**
+     * Broad abilities that imply specific granular ones.
+     * Used by ApiKey::can() for backward-compatible hierarchy checks.
+     */
+    const BROAD_GRANTS = [
+        self::WRITE => [
+            self::RECOMMENDATIONS_COMPUTE,
+            self::PRICES_WRITE,
+            self::FEEDBACK_WRITE,
+            self::WRITE,
+        ],
+        self::READ => [
+            self::RECOMMENDATIONS_READ,
+            self::FEEDBACK_READ,
+            self::TRANSLATIONS_READ,
+            self::READ,
+        ],
+    ];
+
+    /** Human-readable labels for the admin UI. */
+    const LABELS = [
+        self::RECOMMENDATIONS_COMPUTE => 'Compute recommendations',
+        self::RECOMMENDATIONS_READ => 'Read recommendation history',
+        self::PRICES_WRITE => 'Submit price updates',
+        self::FEEDBACK_READ => 'Read user feedback',
+        self::FEEDBACK_WRITE => 'Submit user feedback',
+        self::TRANSLATIONS_READ => 'Read translations',
+        self::API_KEYS_MANAGE => 'Manage own API keys',
+        self::READ => 'Broad read (legacy)',
+        self::WRITE => 'Broad write (legacy)',
+        self::ADMIN => 'Admin operations',
+    ];
+
+    /** Grouped for the admin UI ability picker. */
+    const GROUPS = [
+        'Recommendations' => [
+            self::RECOMMENDATIONS_COMPUTE,
+            self::RECOMMENDATIONS_READ,
+        ],
+        'Prices' => [
+            self::PRICES_WRITE,
+        ],
+        'Feedback' => [
+            self::FEEDBACK_READ,
+            self::FEEDBACK_WRITE,
+        ],
+        'Translations' => [
+            self::TRANSLATIONS_READ,
+        ],
+        'Keys' => [
+            self::API_KEYS_MANAGE,
+        ],
+        'Legacy / Broad' => [
+            self::READ,
+            self::WRITE,
+            self::ADMIN,
+        ],
     ];
 }

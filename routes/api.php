@@ -33,7 +33,7 @@ Route::middleware('throttle:10,1')->prefix('v1/auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.token');
 });
 
-// ── Public reference data — cheap reads used by mobile clients on startup ─────
+// ── Public reference data ─────────────────────────────────────────────────────
 Route::middleware('throttle:120,1')->group(function () {
     Route::prefix('v1/countries')->group(function () {
         Route::get('/', [CountryController::class, 'index']);
@@ -97,36 +97,46 @@ Route::middleware('throttle:120,1')->group(function () {
     });
 });
 
-// ── Protected read endpoints ──────────────────────────────────────────────────
-Route::middleware(['throttle:120,1', 'auth.token'])->group(function () {
-    Route::prefix('v1/recommendations')->group(function () {
-        Route::get('/', [RecommendationController::class, 'index']);
-    });
-
-    Route::prefix('v1/user-feedback')->group(function () {
-        Route::get('/', [UserFeedbackController::class, 'index']);
-    });
-
-    Route::prefix('v1/translations')->group(function () {
-        Route::get('/', [TranslationController::class, 'index']);
-    });
+// ── Recommendations ───────────────────────────────────────────────────────────
+Route::middleware(['throttle:30,1', 'auth.token:recommendations:compute'])->group(function () {
+    Route::post('v1/recommendations/compute', [RecommendationController::class, 'computeRecommendations']);
 });
 
-// ── Protected API key management ──────────────────────────────────────────────
-Route::middleware(['throttle:30,1', 'auth.token'])->prefix('v1/auth')->group(function () {
+Route::middleware(['throttle:120,1', 'auth.token:recommendations:read'])->group(function () {
+    Route::get('v1/recommendations', [RecommendationController::class, 'index']);
+});
+
+// ── User feedback ─────────────────────────────────────────────────────────────
+Route::middleware(['throttle:30,1', 'auth.token:feedback:write'])->group(function () {
+    Route::post('v1/user-feedback', [UserFeedbackController::class, 'store']);
+});
+
+Route::middleware(['throttle:120,1', 'auth.token:feedback:read'])->group(function () {
+    Route::get('v1/user-feedback', [UserFeedbackController::class, 'index']);
+});
+
+// ── Translations ──────────────────────────────────────────────────────────────
+Route::middleware(['throttle:120,1', 'auth.token:translations:read'])->group(function () {
+    Route::get('v1/translations', [TranslationController::class, 'index']);
+});
+
+// ── Partner — price submissions (requires prices:write) ───────────────────────
+Route::middleware(['throttle:30,1', 'auth.token:prices:write'])->prefix('v1/partner')->group(function () {
+    Route::post('/prices/maize', [MaizePricesController::class, 'store']);
+    Route::post('/prices/cassava', [CassavaPricesController::class, 'store']);
+    Route::post('/prices/potato', [PotatoPricesController::class, 'store']);
+    Route::post('/prices/fertilizer', [FertilizerPriceController::class, 'store']);
+});
+
+// ── API key self-management ───────────────────────────────────────────────────
+Route::middleware(['throttle:30,1', 'auth.token:api-keys:manage'])->prefix('v1/auth')->group(function () {
     Route::get('/api-keys', [ApiKeyController::class, 'index']);
     Route::post('/api-keys', [ApiKeyController::class, 'store']);
     Route::patch('/api-keys/{id}/revoke', [ApiKeyController::class, 'revoke']);
     Route::delete('/api-keys/{id}', [ApiKeyController::class, 'destroy']);
 });
 
-// ── Protected mutating endpoints ──────────────────────────────────────────────
-Route::middleware(['throttle:30,1', 'auth.token'])->group(function () {
-    Route::post('v1/recommendations/compute', [RecommendationController::class, 'computeRecommendations']);
-    Route::post('v1/user-feedback', [UserFeedbackController::class, 'store']);
-});
-
-// ── Admin — lookup data CRUD (requires write ability) ─────────────────────────
+// ── Admin — lookup data CRUD (requires write) ─────────────────────────────────
 Route::middleware(['throttle:60,1', 'auth.token:write'])->prefix('v1/admin')->group(function () {
     Route::apiResource('fertilizers', FertilizerController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('fertilizer-prices', FertilizerPriceController::class)->only(['store', 'update', 'destroy']);
@@ -140,11 +150,10 @@ Route::middleware(['throttle:60,1', 'auth.token:write'])->prefix('v1/admin')->gr
     Route::apiResource('currencies', CurrencyController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('cassava-units', CassavaUnitsController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('translations', TranslationController::class)->only(['store', 'update', 'destroy']);
-
     Route::apiResource('default-prices', DefaultPriceController::class)->only(['store', 'update', 'destroy']);
 });
 
-// ── Admin — user management (requires admin ability) ──────────────────────────
+// ── Admin — user management (requires admin) ──────────────────────────────────
 Route::middleware(['throttle:30,1', 'auth.token:admin'])->prefix('v1/admin')->group(function () {
     Route::get('users', [UserController::class, 'index']);
     Route::post('users', [UserController::class, 'store']);
