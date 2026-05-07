@@ -326,6 +326,7 @@ return [
             'plumber_response' => 'json',
             '*price' => 'float',
             'active' => 'boolean',
+            'boundary' => 'string',
         ],
 
         /*

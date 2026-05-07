@@ -15,6 +15,7 @@ export interface Country {
     name: string
     active?: boolean
     sort_order?: number
+    has_boundary?: boolean
 }
 
 export interface Fertilizer {

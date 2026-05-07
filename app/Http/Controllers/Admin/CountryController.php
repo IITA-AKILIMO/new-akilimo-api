@@ -28,6 +28,7 @@ class CountryController extends AdminController
                 'name' => $c->name,
                 'active' => (bool) $c->active,
                 'sort_order' => $c->sort_order,
+                'has_boundary' => $c->boundary !== null,
             ]),
         ]);
     }

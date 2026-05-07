@@ -26,6 +26,7 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "^8.2",
+        "angel-source-labs/laravel-spatial": "^1.3",
         "inertiajs/inertia-laravel": "^3.0",
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^12.0",

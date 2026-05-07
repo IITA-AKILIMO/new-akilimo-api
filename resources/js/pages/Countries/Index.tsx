@@ -17,6 +17,7 @@ export default function CountriesIndex({ items }: Props) {
         { key: 'code', label: 'Code' },
         { key: 'name', label: 'Country Name' },
         { key: 'active', label: 'Active', render: (v) => <Badge active={!!v} /> },
+        { key: 'has_boundary', label: 'Boundary', render: (v) => <Badge active={!!v} activeLabel="Set" inactiveLabel="None" /> },
     ]
 
     function handlePageChange(page: number) {

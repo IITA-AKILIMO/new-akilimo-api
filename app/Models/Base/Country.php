@@ -23,7 +23,7 @@ use Carbon\Carbon;
  * @property float|null $max_latitude
  * @property float|null $min_longitude
  * @property float|null $max_longitude
- * @property string|null $boundary
+ * @property string $boundary
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
