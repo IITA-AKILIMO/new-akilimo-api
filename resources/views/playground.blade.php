@@ -21,6 +21,13 @@
         {{ config('app.name', 'AKILIMO API') }}
     </a>
     <span class="pg-nav-badge">Playground</span>
+    <div class="pg-nav-user">
+        <span class="pg-nav-user-name">{{ auth()->user()->name }}</span>
+        <form method="POST" action="/playground/logout">
+            @csrf
+            <button type="submit" class="pg-nav-signout">Sign out</button>
+        </form>
+    </div>
 </nav>
 
 <div id="playground-root"></div>

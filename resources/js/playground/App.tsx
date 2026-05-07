@@ -8,9 +8,10 @@ import StepFertilizers from './StepFertilizers'
 import StepDates from './StepDates'
 import RecommendationResult from './RecommendationResult'
 import HistoryPanel from './HistoryPanel'
+import TokensPanel from './TokensPanel'
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState<'playground' | 'history'>('playground')
+    const [activeTab, setActiveTab] = useState<'playground' | 'history' | 'tokens'>('playground')
 
     const {
         step, form, setForm,
@@ -62,9 +63,19 @@ export default function App() {
                     </svg>
                     History
                 </button>
+                <button className={`pg-tab${activeTab === 'tokens' ? ' pg-tab--active' : ''}`}
+                        onClick={() => setActiveTab('tokens')}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    API Keys
+                </button>
             </div>
 
             {activeTab === 'history' && <HistoryPanel/>}
+            {activeTab === 'tokens' && <TokensPanel/>}
 
             {activeTab === 'playground' && (
                 <>

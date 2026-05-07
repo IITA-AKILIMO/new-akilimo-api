@@ -111,6 +111,200 @@ body {
         padding: 0.25rem 0.65rem;
         border-radius: 100px;
     }
+
+    &-user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        &-name {
+            font-family: $font-body;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    }
+
+    &-signout {
+        font-family: $font-body;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.25rem 0.65rem;
+        cursor: pointer;
+        transition: color 0.15s, border-color 0.15s;
+
+        &:hover {
+            color: var(--terra);
+            border-color: var(--terra);
+        }
+    }
+}
+
+// ── Auth pages ─────────────────────────────────────────────────────────────────
+.pg-auth-wrap {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: var(--cream);
+}
+
+.pg-auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.25rem 2rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.pg-auth-heading {
+    margin-bottom: 1.75rem;
+}
+
+.pg-auth-title {
+    font-family: $font-display;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.pg-auth-sub {
+    font-family: $font-body;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.pg-auth-alert {
+    font-family: $font-body;
+    font-size: 0.875rem;
+    color: var(--error);
+    background: var(--error-bg);
+    border: 1px solid rgba(192, 57, 43, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.pg-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.pg-auth-label {
+    font-family: $font-body;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+
+.pg-auth-input {
+    font-family: $font-body;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.875rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+
+    &:focus {
+        border-color: var(--forest-mid);
+        box-shadow: 0 0 0 3px rgba(45, 107, 68, 0.12);
+    }
+
+    &--error {
+        border-color: var(--error);
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+        }
+    }
+
+    &--success {
+        border-color: var(--forest-mid);
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgba(45, 107, 68, 0.12);
+        }
+    }
+}
+
+.pg-auth-username-status {
+    display: block;
+    font-family: $font-body;
+    font-size: 0.8rem;
+    font-weight: 500;
+    min-height: 1.1em;
+
+    &--checking { color: var(--text-muted); }
+    &--ok       { color: var(--forest-mid); }
+    &--error    { color: var(--error); }
+    &--hint     { color: var(--harvest); }
+}
+
+.pg-auth-hint {
+    font-family: $font-body;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.pg-auth-error {
+    font-family: $font-body;
+    font-size: 0.8rem;
+    color: var(--error);
+}
+
+.pg-auth-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    font-family: $font-body;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--forest);
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+        background: var(--forest-mid);
+    }
+
+    &:active {
+        background: var(--forest-deep);
+    }
+}
+
+.pg-auth-switch {
+    font-family: $font-body;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+
+    a {
+        color: var(--forest-mid);
+        font-weight: 500;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
 .pg-wrap {
@@ -1348,4 +1542,307 @@ body {
     transition: color 0.15s;
 
     &:hover { color: var(--text-primary); }
+}
+
+// ── Tokens panel ──────────────────────────────────────────────────────────────
+.tok-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.tok-section-title {
+    font-family: $font-display;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.tok-section-sub {
+    font-family: $font-body;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+
+    code {
+        font-size: 0.8rem;
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.1em 0.4em;
+        color: var(--text-secondary);
+    }
+}
+
+.tok-create-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.tok-create-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.tok-input {
+    flex: 1;
+    font-family: $font-body;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 0.875rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+        border-color: var(--forest-mid);
+        box-shadow: 0 0 0 3px rgba(45, 107, 68, 0.12);
+    }
+}
+
+.tok-create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: $font-body;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--forest);
+    border: none;
+    border-radius: 8px;
+    padding: 0.58rem 1.1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+
+    &:hover:not(:disabled) { background: var(--forest-mid); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.tok-create-error {
+    font-family: $font-body;
+    font-size: 0.8rem;
+    color: var(--error);
+    margin-top: 0.6rem;
+    margin-bottom: 0;
+}
+
+// New key reveal banner
+.tok-reveal {
+    background: rgba(45, 107, 68, 0.06);
+    border: 1.5px solid var(--forest-mid);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+
+.tok-reveal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: $font-body;
+    font-size: 0.875rem;
+    color: var(--forest);
+    margin-bottom: 0.75rem;
+}
+
+.tok-reveal-key {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.875rem;
+    margin-bottom: 1rem;
+
+    code {
+        flex: 1;
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        word-break: break-all;
+    }
+}
+
+.tok-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: $font-body;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--forest-mid);
+    background: none;
+    border: 1px solid var(--forest-mid);
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(45, 107, 68, 0.08); }
+}
+
+.tok-reveal-dismiss {
+    font-family: $font-body;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--forest);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+
+    &:hover { color: var(--forest-mid); }
+}
+
+// Key list
+.tok-list-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.tok-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.tok-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tok-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    transition: opacity 0.2s;
+
+    &--revoked { opacity: 0.55; }
+
+    @media (max-width: 600px) {
+        flex-wrap: wrap;
+    }
+}
+
+.tok-row-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.tok-name {
+    font-family: $font-body;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.tok-prefix {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    white-space: nowrap;
+}
+
+.tok-status {
+    font-family: $font-body;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 100px;
+    padding: 0.2em 0.6em;
+    white-space: nowrap;
+
+    &--active  { color: var(--forest); background: rgba(45, 107, 68, 0.1); }
+    &--revoked { color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); }
+}
+
+.tok-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.tok-meta-item {
+    font-family: $font-body;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.tok-abilities {
+    font-family: $font-body;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.15em 0.5em;
+    white-space: nowrap;
+}
+
+.tok-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.tok-action-btn {
+    font-family: $font-body;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid;
+    cursor: pointer;
+    background: none;
+    transition: background 0.15s, color 0.15s;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    &--revoke {
+        color: var(--harvest);
+        border-color: var(--harvest);
+        &:hover:not(:disabled) { background: rgba(200, 151, 58, 0.1); }
+    }
+
+    &--delete {
+        color: var(--error);
+        border-color: var(--error);
+        &:hover:not(:disabled) { background: rgba(192, 57, 43, 0.1); }
+    }
 }
