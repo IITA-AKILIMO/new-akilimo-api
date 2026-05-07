@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\EnumUserRole;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\ApiKeyController;
 use App\Http\Controllers\Admin\CassavaPriceController;
@@ -64,7 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // ── Admin — authenticated (admin + partner) ────────────────────────────────────
-Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'role:admin,partner'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'role:'.EnumUserRole::adminMiddlewareParam()])->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -81,7 +82,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'role:admin,part
     Route::get('feedback', [FeedbackController::class, 'index'])->name('feedback.index');
 
     // ── Admin-only routes ──────────────────────────────────────────────────────
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:'.EnumUserRole::Admin->value)->group(function () {
         // Users
         Route::resource('users', UserController::class)
             ->except(['show'])
