@@ -3,20 +3,29 @@ import type { FormEvent } from 'react'
 import FormField from '../../components/FormField'
 import ResourceForm from '../../components/ResourceForm'
 import AdminLayout from '../../layouts/AdminLayout'
+import type { UserRole } from '../../types'
 
 interface FormData {
     name: string
     username: string
     email: string
+    role: UserRole
     password: string
     password_confirmation: string
 }
+
+const ROLE_OPTIONS: { value: UserRole; label: string; description: string }[] = [
+    { value: 'playground', label: 'Playground', description: 'Can compute recommendations only' },
+    { value: 'partner',    label: 'Partner',    description: 'Can compute, read history, submit prices & feedback' },
+    { value: 'admin',      label: 'Admin',      description: 'Full access to all resources' },
+]
 
 export default function UsersCreate() {
     const { data, setData, post, processing, errors } = useForm<FormData>({
         name: '',
         username: '',
         email: '',
+        role: 'playground',
         password: '',
         password_confirmation: '',
     })
@@ -65,6 +74,21 @@ export default function UsersCreate() {
                             placeholder="user@example.com"
                             autoComplete="email"
                         />
+                    </FormField>
+
+                    <FormField label="Role" required error={errors.role}>
+                        <select
+                            value={data.role}
+                            onChange={(e) => setData('role', e.target.value as UserRole)}
+                            className={`form-select ${errors.role ? 'is-invalid' : ''}`}
+                        >
+                            {ROLE_OPTIONS.map((r) => (
+                                <option key={r.value} value={r.value}>{r.label}</option>
+                            ))}
+                        </select>
+                        <div className="form-text">
+                            {ROLE_OPTIONS.find((r) => r.value === data.role)?.description}
+                        </div>
                     </FormField>
 
                     <FormField label="Password" required error={errors.password}>

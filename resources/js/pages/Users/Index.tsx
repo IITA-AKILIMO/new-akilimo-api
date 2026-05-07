@@ -20,11 +20,30 @@ export default function UsersIndex({ users, filters }: Props) {
     const [processing, setProcessing] = useState(false)
     const [searchInput, setSearchInput] = useState(filters.search)
 
+    const ROLE_BADGE: Record<string, string> = {
+        admin:      'bg-danger',
+        partner:    'bg-primary',
+        playground: 'bg-secondary',
+    }
+
     const columns: Column[] = [
         { key: 'id', label: 'ID', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'username', label: 'Username', sortable: true },
         { key: 'email', label: 'Email', sortable: true },
+        {
+            key: 'role',
+            label: 'Role',
+            sortable: false,
+            render: (val) => {
+                const role = (val as string) ?? 'playground'
+                return (
+                    <span className={`badge ${ROLE_BADGE[role] ?? 'bg-secondary'}`}>
+                        {role}
+                    </span>
+                )
+            },
+        },
         {
             key: 'created_at',
             label: 'Created',

@@ -1,8 +1,11 @@
+export type UserRole = 'admin' | 'partner' | 'playground'
+
 export interface User {
     id: number
     name: string
     username: string
     email: string
+    role: UserRole
     created_at?: string
 }
 
@@ -161,6 +164,7 @@ export interface AuthUser {
     name: string
     username: string
     email: string
+    role: UserRole
 }
 
 export interface Flash {

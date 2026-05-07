@@ -35,6 +35,7 @@ class UserController extends Controller
                     'name' => $u->name,
                     'username' => $u->username,
                     'email' => $u->email,
+                    'role' => $u->role ?? 'playground',
                     'created_at' => $u->created_at?->toIso8601String(),
                 ])->all(),
                 'meta' => [
@@ -87,6 +88,7 @@ class UserController extends Controller
                 'name' => $found->name,
                 'username' => $found->username,
                 'email' => $found->email,
+                'role' => $found->role ?? 'playground',
             ],
         ]);
     }
