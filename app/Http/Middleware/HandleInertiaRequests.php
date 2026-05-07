@@ -34,11 +34,10 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'countries' => fn () => Country::where('active', true)
+            'countries' => fn () => Country::whereActive(true)
                 ->orderBy('sort_order')
                 ->orderBy('name')
-                ->get(['id', 'code', 'name'])
-                ->all(),
+                ->get(),
         ]);
     }
 }

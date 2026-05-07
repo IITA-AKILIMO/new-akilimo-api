@@ -1,27 +1,29 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\ApiKeyController;
 use App\Http\Controllers\Admin\CassavaPriceController;
 use App\Http\Controllers\Admin\CassavaUnitController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DefaultPriceController;
+use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\FertilizerController;
 use App\Http\Controllers\Admin\FertilizerPriceController;
 use App\Http\Controllers\Admin\InvestmentAmountController;
 use App\Http\Controllers\Admin\MaizePriceController;
 use App\Http\Controllers\Admin\OperationCostController;
 use App\Http\Controllers\Admin\PotatoPriceController;
+use App\Http\Controllers\Admin\RequestLogController;
 use App\Http\Controllers\Admin\StarchFactoryController;
 use App\Http\Controllers\Admin\StarchPriceController;
-use App\Http\Controllers\Admin\ApiKeyController;
-use App\Http\Controllers\Admin\FeedbackController;
-use App\Http\Controllers\Admin\RequestLogController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Web\HealthCheckController;
+use App\Http\Controllers\Web\PlaygroundAuthController;
 use App\Http\Controllers\Web\PlaygroundController;
+use App\Http\Controllers\Web\PlaygroundTokenController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,9 +34,28 @@ Route::prefix('health')->group(function () {
     Route::get('/', [HealthCheckController::class, 'check']);
 });
 
-Route::get('/playground', [PlaygroundController::class, 'show']);
-Route::get('/playground/history', [PlaygroundController::class, 'history']);
-Route::middleware('throttle:5,1')->post('/playground/compute', [PlaygroundController::class, 'compute']);
+// ── Playground — public auth ───────────────────────────────────────────────────
+Route::prefix('playground')->name('playground.')->group(function () {
+    Route::get('/login', [PlaygroundAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [PlaygroundAuthController::class, 'login'])->name('login.post')->middleware('throttle:10,1');
+    Route::get('/register', [PlaygroundAuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [PlaygroundAuthController::class, 'register'])->name('register.post')->middleware('throttle:5,1');
+    Route::get('/check-username', [PlaygroundAuthController::class, 'checkUsername'])->name('check-username')->middleware('throttle:60,1');
+    Route::post('/logout', [PlaygroundAuthController::class, 'logout'])->name('logout');
+});
+
+// ── Playground — authenticated ─────────────────────────────────────────────────
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/playground', [PlaygroundController::class, 'show']);
+    Route::get('/playground/history', [PlaygroundController::class, 'history']);
+    Route::middleware('throttle:5,1')->post('/playground/compute', [PlaygroundController::class, 'compute']);
+
+    // Token management
+    Route::get('/playground/tokens', [PlaygroundTokenController::class, 'index']);
+    Route::post('/playground/tokens', [PlaygroundTokenController::class, 'store'])->middleware('throttle:10,1');
+    Route::post('/playground/tokens/{id}/revoke', [PlaygroundTokenController::class, 'revoke']);
+    Route::delete('/playground/tokens/{id}', [PlaygroundTokenController::class, 'destroy']);
+});
 
 // ── Admin — public ─────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
