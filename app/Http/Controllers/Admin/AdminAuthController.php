@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EnumUserRole;
 use App\Http\Requests\Admin\AdminLoginRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -31,6 +32,12 @@ class AdminAuthController extends Controller
         if ($user === null || ! Hash::check($password, $user->password)) {
             return back()->withErrors([
                 'username' => 'These credentials do not match our records.',
+            ])->onlyInput('username');
+        }
+
+        if (! in_array($user->role, EnumUserRole::adminRoles(), true)) {
+            return back()->withErrors([
+                'username' => 'You do not have permission to access the admin panel.',
             ])->onlyInput('username');
         }
 

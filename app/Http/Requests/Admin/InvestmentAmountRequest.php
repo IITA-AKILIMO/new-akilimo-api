@@ -13,12 +13,12 @@ class InvestmentAmountRequest extends FormRequest
 
     public function rules(): array
     {
-        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
+        $required = $this->isMethod('POST') ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'country' => [$required, 'string', 'size:2'],
-            'investment_amount' => [$required, 'numeric', 'min:0'],
-            'area_unit' => [$required, 'string', 'max:20'],
+            'country' => [...$required, 'string', 'size:2'],
+            'investment_amount' => [...$required, 'numeric', 'min:0'],
+            'area_unit' => [...$required, 'string', 'max:20'],
             'price_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];

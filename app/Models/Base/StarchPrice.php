@@ -6,9 +6,9 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use App\Models\StarchFactory;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $currency
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property StarchFactory $starch_factory
+ * @property StarchFactory $starchFactory
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarchPrice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarchPrice newQuery()
@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class StarchPrice extends Model
+class StarchPrice extends BaseModel
 {
     protected $table = 'starch_prices';
 
@@ -60,7 +60,7 @@ class StarchPrice extends Model
         'currency',
     ];
 
-    public function starch_factory(): BelongsTo
+    public function starchFactory(): BelongsTo
     {
         return $this->belongsTo(StarchFactory::class);
     }

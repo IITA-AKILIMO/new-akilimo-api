@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class InvestmentAmount
@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class InvestmentAmount extends Model
+class InvestmentAmount extends BaseModel
 {
     protected $table = 'investment_amount';
 

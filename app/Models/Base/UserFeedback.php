@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class UserFeedback
@@ -39,13 +39,17 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class UserFeedback extends Model
+class UserFeedback extends BaseModel
 {
     protected $table = 'user_feedback';
 
     protected $casts = [
         'akilimo_rec_rating' => 'int',
         'akilimo_useful_rating' => 'int',
+    ];
+
+    protected $hidden = [
+        'device_token',
     ];
 
     protected $fillable = [

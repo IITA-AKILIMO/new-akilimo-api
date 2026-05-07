@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class YieldRequest
@@ -63,7 +63,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class YieldRequest extends Model
+class YieldRequest extends BaseModel
 {
     protected $table = 'yield_request';
 

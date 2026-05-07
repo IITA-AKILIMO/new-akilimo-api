@@ -6,7 +6,7 @@
 
 namespace App\Models\Base;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\Models\BaseModel;
 
 /**
  * Class RequestFertilizer
@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class RequestFertilizer extends Model
+class RequestFertilizer extends BaseModel
 {
     protected $table = 'request_fertilizer';
 

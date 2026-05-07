@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Fertilizer
@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Fertilizer extends Model
+class Fertilizer extends BaseModel
 {
     protected $table = 'fertilizers';
 

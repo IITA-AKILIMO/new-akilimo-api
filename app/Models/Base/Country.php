@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Country
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $max_latitude
  * @property float|null $min_longitude
  * @property float|null $max_longitude
- * @property geometry $boundary
+ * @property string $boundary
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -47,12 +47,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Country extends Model
+class Country extends BaseModel
 {
     protected $table = 'countries';
 
     protected $casts = [
-        'active' => 'bool',
+        'active' => 'boolean',
         'sort_order' => 'int',
         'latitude' => 'float',
         'longitude' => 'float',
@@ -60,7 +60,7 @@ class Country extends Model
         'max_latitude' => 'float',
         'min_longitude' => 'float',
         'max_longitude' => 'float',
-        'boundary' => 'geometry',
+        'boundary' => 'string',
     ];
 
     protected $fillable = [

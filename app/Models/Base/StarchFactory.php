@@ -6,10 +6,10 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use App\Models\StarchPrice;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Collection|StarchPrice[] $starch_prices
+ * @property Collection|StarchPrice[] $starchPrices
  * @property-read int|null $starch_prices_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarchFactory newModelQuery()
@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
-class StarchFactory extends Model
+class StarchFactory extends BaseModel
 {
     protected $table = 'starch_factories';
 
@@ -57,7 +57,7 @@ class StarchFactory extends Model
         'sort_order',
     ];
 
-    public function starch_prices(): HasMany
+    public function starchPrices(): HasMany
     {
         return $this->hasMany(StarchPrice::class);
     }

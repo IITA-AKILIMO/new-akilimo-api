@@ -13,14 +13,14 @@ class OperationCostRequest extends FormRequest
 
     public function rules(): array
     {
-        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
+        $required = $this->isMethod('POST') ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'operation_name' => [$required, 'string', 'max:100'],
-            'operation_type' => [$required, 'string', 'max:50'],
-            'country_code' => [$required, 'string', 'size:2'],
-            'min_cost' => [$required, 'numeric', 'min:0'],
-            'max_cost' => [$required, 'numeric', 'min:0', 'gte:min_cost'],
+            'operation_name' => [...$required, 'string', 'max:100'],
+            'operation_type' => [...$required, 'string', 'max:50'],
+            'country_code' => [...$required, 'string', 'size:2'],
+            'min_cost' => [...$required, 'numeric', 'min:0'],
+            'max_cost' => [...$required, 'numeric', 'min:0', 'gte:min_cost'],
             'is_active' => ['boolean'],
         ];
     }

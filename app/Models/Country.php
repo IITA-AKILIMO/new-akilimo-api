@@ -2,27 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use AngelSourceLabs\LaravelSpatial\Eloquent\SpatialTrait;
+use App\Models\Base\Country as BaseCountry;
 
-/**
- * @property int $id
- * @property string $code
- * @property string $name
- * @property bool $active
- * @property int|null $sort_order
- */
-class Country extends Model
+class Country extends BaseCountry
 {
-    protected $table = 'countries';
+    use SpatialTrait;
 
-    protected $fillable = [
-        'code',
-        'name',
-        'active',
-        'sort_order',
-    ];
+    protected array $spatialFields = ['boundary'];
 
     protected $casts = [
         'active' => 'boolean',
+        'sort_order' => 'int',
+        'latitude' => 'float',
+        'longitude' => 'float',
+        'min_latitude' => 'float',
+        'max_latitude' => 'float',
+        'min_longitude' => 'float',
+        'max_longitude' => 'float',
     ];
 }

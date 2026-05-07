@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auth\TokenAbility;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,14 +55,8 @@ class ApiKey extends Model
         return $this->is_active && ! $this->isExpired();
     }
 
-    /**
-     * Check whether this key grants the given ability.
-     * A null abilities list or a ['*'] entry grants everything.
-     */
     public function can(string $ability): bool
     {
-        $abilities = $this->abilities ?? ['*'];
-
-        return in_array('*', $abilities, true) || in_array($ability, $abilities, true);
+        return TokenAbility::check($this->abilities ?? ['*'], $ability);
     }
 }

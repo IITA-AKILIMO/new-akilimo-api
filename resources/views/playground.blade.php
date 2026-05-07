@@ -17,13 +17,33 @@
 
 <nav class="pg-nav">
     <a href="/" class="pg-nav-brand">
-        <span class="pg-nav-brand-dot"></span>
-        {{ config('app.name', 'AKILIMO API') }}
+        <img src="/images/akilimo_logo_colored.png" alt="Akilimo" class="pg-nav-brand-logo">
     </a>
     <span class="pg-nav-badge">Playground</span>
+    <div class="pg-nav-user">
+        <a href="/playground/health" class="pg-nav-health-link" title="System status">
+            <span class="pg-nav-health-dot" id="nav-health-dot"></span>
+        </a>
+        <span class="pg-nav-user-name">{{ auth()->user()->name }}</span>
+        <form method="POST" action="/playground/logout">
+            @csrf
+            <button type="submit" class="pg-nav-signout">Sign out</button>
+        </form>
+    </div>
 </nav>
 
 <div id="playground-root"></div>
+
+<script>
+(function () {
+    const dot = document.getElementById('nav-health-dot')
+    if (!dot) return
+    fetch('/health', { headers: { Accept: 'application/json' } })
+        .then(r => r.json())
+        .then(d => { dot.classList.add(d.status === 'healthy' ? 'is-up' : 'is-down') })
+        .catch(() => { dot.classList.add('is-down') })
+})()
+</script>
 
 </body>
 </html>
