@@ -109,7 +109,7 @@ class ApiRequestStatsRepo extends BaseRepo
         // Single query with conditional aggregation — hits the composite
         // (created_at, excluded) index added by the optimisation migration.
         $row = DB::table('api_requests')
-            ->selectRaw('COUNT(*) as total, SUM(CASE WHEN excluded = 1 THEN 1 ELSE 0 END) as excluded_count')
+            ->selectRaw('COUNT(*) as total, SUM(CASE WHEN excluded THEN 1 ELSE 0 END) as excluded_count')
             ->where('created_at', '>=', now()->subDays($days))
             ->first();
 

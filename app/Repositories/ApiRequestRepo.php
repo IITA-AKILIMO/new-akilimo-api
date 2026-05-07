@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\ApiRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * @extends BaseRepo<ApiRequest>
@@ -27,11 +28,11 @@ class ApiRequestRepo extends BaseRepo
 
         $query = $this->model->newQuery();
 
-        if (!empty($filters['country'])) {
+        if (! empty($filters['country'])) {
             $query->where('country_code', $filters['country']);
         }
 
-        if (!empty($filters['use_case'])) {
+        if (! empty($filters['use_case'])) {
             $query->where('use_case', $filters['use_case']);
         }
 
@@ -39,15 +40,15 @@ class ApiRequestRepo extends BaseRepo
             $query->where('excluded', (bool) $filters['excluded']);
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $term = $filters['search'];
             $query->where(fn ($q) => $q
                 ->where('device_token', 'like', "%{$term}%")
@@ -59,10 +60,10 @@ class ApiRequestRepo extends BaseRepo
         return $query->orderBy($orderBy, $direction)->paginate($perPage);
     }
 
-    public function playgroundHistory(int $limit = 30): \Illuminate\Support\Collection
+    public function playgroundHistory(int $userId, int $limit = 30): Collection
     {
         return $this->model->newQuery()
-            ->where('device_token', 'like', 'playground-%')
+            ->where('device_token', 'playground-'.$userId)
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get([
