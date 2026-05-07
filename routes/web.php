@@ -52,6 +52,7 @@ Route::middleware(['auth:web'])->group(function () {
     Route::middleware('throttle:5,1')->post('/playground/compute', [PlaygroundController::class, 'compute']);
 
     // Token management
+    Route::get('/playground/health', [PlaygroundController::class, 'showHealth']);
     Route::get('/playground/tokens', [PlaygroundTokenController::class, 'index']);
     Route::post('/playground/tokens', [PlaygroundTokenController::class, 'store'])->middleware('throttle:10,1');
     Route::post('/playground/tokens/{id}/revoke', [PlaygroundTokenController::class, 'revoke']);

@@ -23,6 +23,11 @@ class PlaygroundController extends Controller
         return view('playground');
     }
 
+    public function showHealth(): View
+    {
+        return view('playground-health');
+    }
+
     public function history(Request $request): JsonResponse
     {
         $records = $this->apiRequestRepo->playgroundHistory($request->user()->id);
