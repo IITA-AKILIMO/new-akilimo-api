@@ -23,7 +23,7 @@ use Carbon\Carbon;
  * @property float|null $max_latitude
  * @property float|null $min_longitude
  * @property float|null $max_longitude
- * @property string $boundary
+ * @property string|null $boundary
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -51,10 +51,7 @@ class Country extends BaseModel
 {
     protected $table = 'countries';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'active' => 'boolean',
         'sort_order' => 'int',
         'latitude' => 'float',
@@ -63,6 +60,7 @@ class Country extends BaseModel
         'max_latitude' => 'float',
         'min_longitude' => 'float',
         'max_longitude' => 'float',
+        'boundary' => 'string',
     ];
 
     protected $fillable = [

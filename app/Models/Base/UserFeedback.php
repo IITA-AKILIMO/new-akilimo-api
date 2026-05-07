@@ -43,10 +43,7 @@ class UserFeedback extends BaseModel
 {
     protected $table = 'user_feedback';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'akilimo_rec_rating' => 'int',
         'akilimo_useful_rating' => 'int',
     ];

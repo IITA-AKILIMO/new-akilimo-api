@@ -51,10 +51,7 @@ class Fertilizer extends BaseModel
 {
     protected $table = 'fertilizers';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'weight' => 'int',
         'sort_order' => 'int',
         'cis' => 'bool',

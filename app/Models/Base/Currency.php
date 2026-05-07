@@ -43,12 +43,6 @@ class Currency extends BaseModel
 {
     protected $table = 'currencies';
 
-    public $incrementing = false;
-
-    protected $casts = [
-        'id' => 'int',
-    ];
-
     protected $fillable = [
         'country_code',
         'country',

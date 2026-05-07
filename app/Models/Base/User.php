@@ -22,12 +22,12 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string $name
  * @property string $username
  * @property string $email
+ * @property string $role
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string $role
  * @property Collection|ApiKey[] $apiKeys
  * @property-read int|null $api_keys_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -55,10 +55,7 @@ class User extends BaseUser
 {
     protected $table = 'users';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'email_verified_at' => 'datetime',
     ];
 
@@ -71,10 +68,10 @@ class User extends BaseUser
         'name',
         'username',
         'email',
+        'role',
         'email_verified_at',
         'password',
         'remember_token',
-        'role',
     ];
 
     public function apiKeys(): HasMany

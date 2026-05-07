@@ -48,10 +48,7 @@ class ApiKey extends BaseModel
 {
     protected $table = 'api_keys';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'user_id' => 'int',
         'is_active' => 'bool',
         'last_used_at' => 'datetime',

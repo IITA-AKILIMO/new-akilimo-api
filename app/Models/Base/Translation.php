@@ -37,12 +37,6 @@ class Translation extends BaseModel
 {
     protected $table = 'translations';
 
-    public $incrementing = false;
-
-    protected $casts = [
-        'id' => 'int',
-    ];
-
     protected $fillable = [
         'key',
         'en',

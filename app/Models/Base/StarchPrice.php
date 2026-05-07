@@ -44,10 +44,7 @@ class StarchPrice extends BaseModel
 {
     protected $table = 'starch_prices';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'starch_factory_id' => 'int',
         'price_class' => 'int',
         'min_starch' => 'float',

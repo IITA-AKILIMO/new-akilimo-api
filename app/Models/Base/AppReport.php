@@ -57,10 +57,7 @@ class AppReport extends BaseModel
 {
     protected $table = 'app_report';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'lat' => 'float',
         'lon' => 'float',
         'excluded' => 'bool',

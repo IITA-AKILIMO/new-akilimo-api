@@ -39,10 +39,7 @@ class DefaultPrice extends BaseModel
 {
     protected $table = 'default_prices';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'price' => 'float',
     ];
 

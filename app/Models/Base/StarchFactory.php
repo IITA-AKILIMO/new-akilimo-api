@@ -44,10 +44,7 @@ class StarchFactory extends BaseModel
 {
     protected $table = 'starch_factories';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'factory_active' => 'bool',
         'sort_order' => 'int',
     ];

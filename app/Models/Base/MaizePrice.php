@@ -49,10 +49,7 @@ class MaizePrice extends BaseModel
 {
     protected $table = 'maize_prices';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'min_local_price' => 'float',
         'max_local_price' => 'float',
         'min_usd' => 'float',

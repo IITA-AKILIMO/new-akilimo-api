@@ -39,10 +39,7 @@ class InvestmentAmount extends BaseModel
 {
     protected $table = 'investment_amount';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'investment_amount' => 'float',
         'price_active' => 'bool',
         'sort_order' => 'int',

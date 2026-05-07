@@ -45,10 +45,7 @@ class ProducePrice extends BaseModel
 {
     protected $table = 'produce_prices';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'min_price' => 'float',
         'max_price' => 'float',
         'is_min_price' => 'float',

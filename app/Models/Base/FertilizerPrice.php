@@ -45,10 +45,7 @@ class FertilizerPrice extends BaseModel
 {
     protected $table = 'fertilizer_prices';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'min_price' => 'float',
         'max_price' => 'float',
         'price_per_bag' => 'float',

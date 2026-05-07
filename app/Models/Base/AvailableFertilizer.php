@@ -53,10 +53,7 @@ class AvailableFertilizer extends BaseModel
 {
     protected $table = 'available_fertilizer';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'n_content' => 'int',
         'p_content' => 'int',
         'k_content' => 'int',

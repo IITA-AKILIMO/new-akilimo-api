@@ -71,10 +71,7 @@ class ApiRequest extends BaseModel
 {
     protected $table = 'api_requests';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'lat' => 'float',
         'lon' => 'float',
         'fr' => 'bool',

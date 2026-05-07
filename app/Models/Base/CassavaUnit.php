@@ -39,10 +39,7 @@ class CassavaUnit extends BaseModel
 {
     protected $table = 'cassava_units';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'unit_weight' => 'float',
         'sort_order' => 'float',
         'is_active' => 'bool',

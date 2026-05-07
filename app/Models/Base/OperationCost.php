@@ -41,10 +41,7 @@ class OperationCost extends BaseModel
 {
     protected $table = 'operation_costs';
 
-    public $incrementing = false;
-
     protected $casts = [
-        'id' => 'int',
         'min_cost' => 'float',
         'max_cost' => 'float',
         'is_active' => 'bool',

@@ -36,12 +36,9 @@ class RequestFertilizer extends BaseModel
 
     protected $primaryKey = 'fertilizer_id';
 
-    public $incrementing = false;
-
     public $timestamps = false;
 
     protected $casts = [
-        'fertilizer_id' => 'int',
         'request_id' => 'int',
         'available' => 'bool',
         'price' => 'float',
