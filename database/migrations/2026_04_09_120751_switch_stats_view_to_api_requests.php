@@ -95,9 +95,4 @@ SQL;
 
         DB::statement($sql);
     }
-
-    public function down(): void
-    {
-        throw new \RuntimeException('This migration is not reversible.');
-    }
 };

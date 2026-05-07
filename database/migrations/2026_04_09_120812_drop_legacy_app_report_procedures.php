@@ -40,9 +40,4 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS process_rec_request');
         DB::unprepared('DROP PROCEDURE IF EXISTS exclusion_flag_evaluation');
     }
-
-    public function down(): void
-    {
-        throw new \RuntimeException('This migration is not reversible.');
-    }
 };

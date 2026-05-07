@@ -3,7 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;  // used in up() only
+use Illuminate\Support\Facades\Schema;
+
+// used in up() only
 
 /**
  * Finalises the move away from v_app_request_stats_view.
@@ -19,8 +21,7 @@ use Illuminate\Support\Facades\Schema;  // used in up() only
  * redundant and lets the repo query the table directly — one fewer layer of
  * indirection, and the planner can use indexes on the generated columns.
  */
-return new class extends Migration
-{
+return new class extends Migration {
     private string $viewName = 'v_app_request_stats_view';
 
     public function up(): void
@@ -53,10 +54,5 @@ return new class extends Migration
         }
 
         DB::statement("DROP VIEW IF EXISTS {$this->viewName}");
-    }
-
-    public function down(): void
-    {
-        throw new \RuntimeException('This migration is not reversible.');
     }
 };

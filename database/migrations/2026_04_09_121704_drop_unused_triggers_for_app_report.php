@@ -13,9 +13,4 @@ return new class extends Migration
         DB::unprepared('DROP TRIGGER IF EXISTS exclusion_flag_insert_trigger');
         DB::unprepared('DROP TRIGGER IF EXISTS exclusion_flag_update_trigger');
     }
-
-    public function down(): void
-    {
-        throw new \RuntimeException('This migration is not reversible.');
-    }
 };
