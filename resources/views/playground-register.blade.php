@@ -12,15 +12,21 @@
 </head>
 <body>
 
-<nav class="pg-nav">
+<nav class="pg-nav pg-nav--glass">
     <a href="/" class="pg-nav-brand">
-        <span class="pg-nav-brand-dot"></span>
-        {{ config('app.name', 'AKILIMO API') }}
+        <img src="/images/akilimo_logo_white.png" alt="Akilimo" class="pg-nav-brand-logo pg-nav-brand-logo--auth">
     </a>
     <span class="pg-nav-badge">Playground</span>
 </nav>
 
 <div class="pg-auth-wrap">
+    <div class="pg-auth-slides" aria-hidden="true">
+        <div class="pg-auth-slide pg-auth-slide--1"></div>
+        <div class="pg-auth-slide pg-auth-slide--2"></div>
+        <div class="pg-auth-slide pg-auth-slide--3"></div>
+        <div class="pg-auth-slide pg-auth-slide--4"></div>
+    </div>
+    <div class="pg-auth-overlay"></div>
     <div class="pg-auth-card">
         <div class="pg-auth-heading">
             <h1 class="pg-auth-title">Create an account</h1>
