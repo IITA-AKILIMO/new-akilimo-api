@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd9814df7b4a612dfdd3267b18bc8144",
+    "content-hash": "35971d28b8b1c4ba7959a2e444fd947a",
     "packages": [
         {
             "name": "brick/math",
@@ -2365,6 +2365,62 @@
                 }
             ],
             "time": "2026-03-08T20:05:35+00:00"
+        },
+        {
+            "name": "masgeek/artisan-toolkit",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/masgeek/artisan-toolkit.git",
+                "reference": "70f9e5da1797b0c7f0d3ff0efc309200725c5670"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/masgeek/artisan-toolkit/zipball/70f9e5da1797b0c7f0d3ff0efc309200725c5670",
+                "reference": "70f9e5da1797b0c7f0d3ff0efc309200725c5670",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Masgeek\\ArtisanToolkit\\ArtisanToolkitServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Masgeek\\ArtisanToolkit\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "masgeek",
+                    "email": "munywelebarasa@gmail.com"
+                }
+            ],
+            "description": "A collection of custom and override Artisan commands for Laravel. Enable only what you need via a published config.",
+            "keywords": [
+                "artisan",
+                "commands",
+                "laravel",
+                "override",
+                "schema",
+                "toolkit"
+            ],
+            "support": {
+                "source": "https://github.com/masgeek/artisan-toolkit/tree/main",
+                "issues": "https://github.com/masgeek/artisan-toolkit/issues"
+            },
+            "time": "2026-05-07T10:07:02+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10886,6 +10942,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "masgeek/artisan-toolkit": 20,
         "pestphp/pest": 20,
         "vermaysha/pgbouncer-laravel-extension": 10
     },
