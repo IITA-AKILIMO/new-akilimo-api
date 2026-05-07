@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Auth\TokenAbility;
+use App\Enums\EnumUserRole as UserRole;
 use App\Models\ApiKey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,9 +37,9 @@ class PlaygroundTokenController extends Controller
 
         $user = $request->user();
 
-        $abilities = match ($user->role ?? 'playground') {
-            'admin' => [TokenAbility::WILDCARD],
-            'partner' => TokenAbility::PARTNER_ABILITIES,
+        $abilities = match ($user->role) {
+            UserRole::Admin => [TokenAbility::WILDCARD],
+            UserRole::Partner => TokenAbility::PARTNER_ABILITIES,
             default => TokenAbility::PLAYGROUND_ABILITIES,
         };
 

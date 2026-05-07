@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Auth\TokenAbility;
+use App\Enums\EnumUserRole as UserRole;
 use App\Models\ApiKey;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -85,15 +86,15 @@ class ApiKeyController extends BaseController
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
-                'role' => $u->role ?? 'playground',
+                'role' => ($u->role ?? UserRole::User)->value,
             ])->all(),
             'abilities' => TokenAbility::ALL,
             'abilityGroups' => TokenAbility::GROUPS,
             'abilityLabels' => TokenAbility::LABELS,
             'rolePresets' => [
-                'playground' => TokenAbility::PLAYGROUND_ABILITIES,
-                'partner' => TokenAbility::PARTNER_ABILITIES,
-                'admin' => [TokenAbility::WILDCARD],
+                UserRole::User->value => TokenAbility::PLAYGROUND_ABILITIES,
+                UserRole::Partner->value => TokenAbility::PARTNER_ABILITIES,
+                UserRole::Admin->value => [TokenAbility::WILDCARD],
             ],
         ]);
     }
@@ -147,22 +148,22 @@ class ApiKeyController extends BaseController
                     'id' => $apiKey->user->id,
                     'name' => $apiKey->user->name,
                     'email' => $apiKey->user->email,
-                    'role' => $apiKey->user->role ?? 'playground',
+                    'role' => ($apiKey->user->role ?? UserRole::User)->value,
                 ] : null,
             ],
             'users' => $users->map(fn ($u) => [
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
-                'role' => $u->role ?? 'playground',
+                'role' => ($u->role ?? UserRole::User)->value,
             ])->all(),
             'abilities' => TokenAbility::ALL,
             'abilityGroups' => TokenAbility::GROUPS,
             'abilityLabels' => TokenAbility::LABELS,
             'rolePresets' => [
-                'playground' => TokenAbility::PLAYGROUND_ABILITIES,
-                'partner' => TokenAbility::PARTNER_ABILITIES,
-                'admin' => [TokenAbility::WILDCARD],
+                UserRole::User->value => TokenAbility::PLAYGROUND_ABILITIES,
+                UserRole::Partner->value => TokenAbility::PARTNER_ABILITIES,
+                UserRole::Admin->value => [TokenAbility::WILDCARD],
             ],
         ]);
     }

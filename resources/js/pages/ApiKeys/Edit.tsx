@@ -30,7 +30,7 @@ interface FormData {
 }
 
 const PRESET_STYLE: Record<string, string> = {
-    playground: 'btn-outline-secondary',
+    user:       'btn-outline-secondary',
     partner:    'btn-outline-primary',
     admin:      'btn-outline-danger',
 }
