@@ -34,6 +34,12 @@ class AdminAuthController extends Controller
             ])->onlyInput('username');
         }
 
+        if (! in_array($user->role, ['admin', 'partner'], true)) {
+            return back()->withErrors([
+                'username' => 'You do not have permission to access the admin panel.',
+            ])->onlyInput('username');
+        }
+
         Auth::login($user, remember: true);
         $request->session()->regenerate();
 
