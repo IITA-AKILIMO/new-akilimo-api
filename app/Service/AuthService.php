@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Auth\TokenAbility;
+use App\Enums\EnumUserRole;
 use App\Models\PersonalAccessToken;
 use App\Models\User;
 use Carbon\Carbon;
@@ -31,12 +33,18 @@ class AuthService
         $expiresAt = now()->addDays($ttlDays);
         $rawToken = bin2hex(random_bytes(32));
 
+        $abilities = match ($user->role) {
+            EnumUserRole::Admin => [TokenAbility::WILDCARD],
+            EnumUserRole::Partner => TokenAbility::PARTNER_ABILITIES,
+            default => TokenAbility::PLAYGROUND_ABILITIES,
+        };
+
         PersonalAccessToken::create([
             'tokenable_type' => User::class,
             'tokenable_id' => $user->id,
             'name' => 'login',
             'token' => hash('sha256', $rawToken),
-            'abilities' => ['*'],
+            'abilities' => $abilities,
             'expires_at' => $expiresAt,
         ]);
 
