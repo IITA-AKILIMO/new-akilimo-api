@@ -55,34 +55,8 @@ class ApiKey extends Model
         return $this->is_active && ! $this->isExpired();
     }
 
-    /**
-     * Check whether this key grants the given ability.
-     *
-     * Resolution order:
-     *   1. Null abilities list → wildcard (grants all)
-     *   2. '*' or 'admin' in list → grants all
-     *   3. Exact match
-     *   4. Broad ability that implies the requested one (e.g. 'write' → 'prices:write')
-     */
     public function can(string $ability): bool
     {
-        $abilities = $this->abilities ?? ['*'];
-
-        foreach ($abilities as $granted) {
-            if ($granted === '*' || $granted === TokenAbility::ADMIN) {
-                return true;
-            }
-
-            if ($granted === $ability) {
-                return true;
-            }
-
-            $implied = TokenAbility::BROAD_GRANTS[$granted] ?? [];
-            if (in_array($ability, $implied, true)) {
-                return true;
-            }
-        }
-
-        return false;
+        return TokenAbility::check($this->abilities ?? ['*'], $ability);
     }
 }

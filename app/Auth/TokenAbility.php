@@ -91,6 +91,29 @@ final class TokenAbility
         self::ADMIN => 'Admin operations',
     ];
 
+    /**
+     * Resolve whether a set of granted abilities satisfies a requested one.
+     * Single source of truth used by both ApiKey and PersonalAccessToken.
+     */
+    public static function check(array $granted, string $requested): bool
+    {
+        foreach ($granted as $ability) {
+            if ($ability === self::WILDCARD || $ability === self::ADMIN) {
+                return true;
+            }
+
+            if ($ability === $requested) {
+                return true;
+            }
+
+            if (in_array($requested, self::BROAD_GRANTS[$ability] ?? [], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** Grouped for the admin UI ability picker. */
     const GROUPS = [
         'Recommendations' => [
