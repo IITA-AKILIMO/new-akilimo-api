@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EnumUserRole;
 use App\Http\Requests\Admin\UserWebRequest;
 use App\Repositories\UserRepo;
 use Illuminate\Http\RedirectResponse;
@@ -35,7 +36,7 @@ class UserController extends Controller
                     'name' => $u->name,
                     'username' => $u->username,
                     'email' => $u->email,
-                    'role' => $u->role ?? 'playground',
+                    'role' => ($u->role ?? EnumUserRole::User)->value,
                     'created_at' => $u->created_at?->toIso8601String(),
                 ])->all(),
                 'meta' => [
@@ -88,7 +89,7 @@ class UserController extends Controller
                 'name' => $found->name,
                 'username' => $found->username,
                 'email' => $found->email,
-                'role' => $found->role ?? 'playground',
+                'role' => ($found->role ?? EnumUserRole::User)->value,
             ],
         ]);
     }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\EnumUserRole;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserWebRequest extends FormRequest
@@ -23,7 +25,7 @@ class UserWebRequest extends FormRequest
             'username' => [...$required, 'string', 'max:255', 'unique:users,username'.($userId ? ",{$userId}" : '')],
             'email' => [...$required, 'email', 'max:255', 'unique:users,email'.($userId ? ",{$userId}" : '')],
             'password' => [$isCreate ? 'required' : 'nullable', 'confirmed', Password::min(8)],
-            'role' => ['required', 'string', 'in:admin,partner,playground'],
+            'role' => ['required', Rule::enum(EnumUserRole::class)],
         ];
     }
 }

@@ -15,7 +15,7 @@ interface FormData {
 }
 
 const ROLE_OPTIONS: { value: UserRole; label: string; description: string }[] = [
-    { value: 'playground', label: 'Playground', description: 'Can compute recommendations only' },
+    { value: 'user',       label: 'User',       description: 'Can compute recommendations only' },
     { value: 'partner',    label: 'Partner',    description: 'Can compute, read history, submit prices & feedback' },
     { value: 'admin',      label: 'Admin',      description: 'Full access to all resources' },
 ]
@@ -25,7 +25,7 @@ export default function UsersCreate() {
         name: '',
         username: '',
         email: '',
-        role: 'playground',
+        role: 'user',
         password: '',
         password_confirmation: '',
     })

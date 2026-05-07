@@ -23,7 +23,7 @@ export default function UsersIndex({ users, filters }: Props) {
     const ROLE_BADGE: Record<string, string> = {
         admin:      'bg-danger',
         partner:    'bg-primary',
-        playground: 'bg-secondary',
+        user: 'bg-secondary',
     }
 
     const columns: Column[] = [
@@ -36,7 +36,7 @@ export default function UsersIndex({ users, filters }: Props) {
             label: 'Role',
             sortable: false,
             render: (val) => {
-                const role = (val as string) ?? 'playground'
+                const role = (val as string) ?? 'user'
                 return (
                     <span className={`badge ${ROLE_BADGE[role] ?? 'bg-secondary'}`}>
                         {role}

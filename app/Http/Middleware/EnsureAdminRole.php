@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\EnumUserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,9 @@ class EnsureAdminRole
     {
         $user = $request->user();
 
-        if ($user === null || ! in_array($user->role, $roles, true)) {
+        $allowed = array_filter(array_map(fn ($r) => EnumUserRole::tryFrom($r), $roles));
+
+        if ($user === null || ! in_array($user->role, $allowed, true)) {
             return redirect()->route('admin.login')->withErrors([
                 'username' => 'You do not have permission to access this area.',
             ]);
