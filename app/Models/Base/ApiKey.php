@@ -6,9 +6,9 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -44,11 +44,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class ApiKey extends Model
+class ApiKey extends BaseModel
 {
     protected $table = 'api_keys';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'user_id' => 'int',
         'is_active' => 'bool',
         'last_used_at' => 'datetime',

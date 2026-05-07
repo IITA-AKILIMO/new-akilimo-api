@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AvailableFertilizer
@@ -49,11 +49,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class AvailableFertilizer extends Model
+class AvailableFertilizer extends BaseModel
 {
     protected $table = 'available_fertilizer';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'n_content' => 'int',
         'p_content' => 'int',
         'k_content' => 'int',

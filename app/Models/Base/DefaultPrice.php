@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class DefaultPrice
@@ -35,11 +35,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class DefaultPrice extends Model
+class DefaultPrice extends BaseModel
 {
     protected $table = 'default_prices';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'price' => 'float',
     ];
 

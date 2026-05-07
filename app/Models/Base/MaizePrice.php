@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class MaizePrice
@@ -45,11 +45,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class MaizePrice extends Model
+class MaizePrice extends BaseModel
 {
     protected $table = 'maize_prices';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'min_local_price' => 'float',
         'max_local_price' => 'float',
         'min_usd' => 'float',

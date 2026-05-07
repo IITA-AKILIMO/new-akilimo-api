@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Translation
@@ -33,9 +33,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class Translation extends Model
+class Translation extends BaseModel
 {
     protected $table = 'translations';
+
+    public $incrementing = false;
+
+    protected $casts = [
+        'id' => 'int',
+    ];
 
     protected $fillable = [
         'key',

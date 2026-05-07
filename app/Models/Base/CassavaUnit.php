@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class CassavaUnit
@@ -35,11 +35,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class CassavaUnit extends Model
+class CassavaUnit extends BaseModel
 {
     protected $table = 'cassava_units';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'unit_weight' => 'float',
         'sort_order' => 'float',
         'is_active' => 'bool',

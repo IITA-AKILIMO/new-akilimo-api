@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\Models\BaseModel;
+use App\Core\Models\BaseUser;
 
 return [
 
@@ -54,7 +55,41 @@ return [
         |
         */
 
-        'parent' => Model::class,
+        //        'parent' => Illuminate\Database\Eloquent\Model::class,
+
+        // Table specific parent override examples:
+        'parent' => [
+            'users' => BaseUser::class,
+            '*' => BaseModel::class,
+        ],
+
+        /*
+      |--------------------------------------------------------------------------
+      | Include Database Views
+      |--------------------------------------------------------------------------
+      |
+      | By default, database views are excluded from model generation.
+      | Set this to true to also generate models for views. Generated view
+      | models will have no timestamps or soft deletes unless those columns
+      | are present in the view, and no foreign-key relationships since
+      | views do not carry constraint metadata.
+      |
+      */
+        'with_views' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | View Model Parent Class
+        |--------------------------------------------------------------------------
+        |
+        | When generating models for views you may want them to extend a different
+        | base class than regular table models — for example a ReadOnlyModel that
+        | throws on save() / delete(). Set this to a fully-qualified class name to
+        | override the default `parent` for view-backed models only.
+        | When null, view models fall back to the `parent` setting above.
+        |
+        */
+        'view_parent' => null,
 
         /*
         |--------------------------------------------------------------------------
@@ -189,6 +224,25 @@ return [
 
         /*
         |--------------------------------------------------------------------------
+        | CamelCase Relation Method Names
+        |--------------------------------------------------------------------------
+        | By default, relation method names follow the snake_attributes setting.
+        | When snake_attributes is true (the default), relations are generated as
+        | snake_case: api_keys(), belongs_to_user(), etc.
+        |
+        | Set camel_case_relations to true to always generate camelCase relation
+        | method names regardless of snake_attributes. This lets you keep
+        | snake_case column properties while using camelCase for relations:
+        |
+        |   // snake_attributes: true, camel_case_relations: true
+        |   public function apiKeys(): HasMany { ... }   ← camelCase method
+        |   public $api_key_id;                          ← snake_case property
+        |
+        */
+        'camel_case_relations' => true,
+
+        /*
+        |--------------------------------------------------------------------------
         | Indent options
         |--------------------------------------------------------------------------
         |
@@ -225,7 +279,7 @@ return [
         |
         | When casting your models into arrays or json, the need to hide some
         | attributes sometimes arise. If your tables have some fields you
-        | want to hide, you can define them bellow.
+        | want to hide, you can define them below.
         | Some fields were defined for you.
         |
         */
@@ -271,6 +325,7 @@ return [
             'plumber_request' => 'json',
             'plumber_response' => 'json',
             '*price' => 'float',
+            'active' => 'boolean',
         ],
 
         /*
@@ -286,19 +341,16 @@ return [
         */
 
         'except' => [
+            'migrations',
+            'failed_jobs',
             'jobs',
             'job_batches',
             'authorities',
-            'app_report',
-            'migrations',
             'sessions',
-            'failed_jobs',
             'password_resets',
             'personal_access_tokens',
             'password_reset_tokens',
             'cache*',
-            'DATABASECHANGE*',
-            'users_old',
         ],
 
         /*
@@ -356,6 +408,7 @@ return [
         */
 
         'model_names' => [
+
         ],
 
         /*
@@ -451,7 +504,7 @@ return [
         | if you want the $hidden to be generated in base files
         |
         */
-        'hidden_in_base_files' => false,
+        'hidden_in_base_files' => true,
 
         /*
         |--------------------------------------------------------------------------
@@ -487,6 +540,36 @@ return [
     | These values will override those defined in the section above.
     |
     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Schema Mappers
+    |--------------------------------------------------------------------------
+    |
+    | If you use a custom or third-party database connection class that is not
+    | natively supported by this package (e.g. a PgBouncer connection wrapper
+    | or any other connection decorator), you can register its schema mapper
+    | here. The key must be the fully-qualified class name of the connection
+    | and the value must be the fully-qualified class name of the schema mapper
+    | that should handle it.
+    |
+    | Built-in mapper classes you can reuse:
+    |   Reliese\Meta\MySql\Schema    — for MySQL/MariaDB-compatible connections
+    |   Reliese\Meta\Postgres\Schema — for PostgreSQL-compatible connections
+    |   Reliese\Meta\Sqlite\Schema   — for SQLite-compatible connections
+    |
+    | Example:
+    |   'custom_mappers' => [
+    |       \Vermaysha\PgbouncerLaravelExtension\PostgresPGBouncerExtension::class
+    |           => \Reliese\Meta\Postgres\Schema::class,
+    |   ],
+    |
+    */
+
+    //    'custom_mappers' => [
+    //        \Vermaysha\PgbouncerLaravelExtension\PostgresPGBouncerExtension::class
+    //        => \Reliese\Meta\Postgres\Schema::class,
+    //    ],
 
     // 'shop' => [
     //     'path' => app_path(),
@@ -536,8 +619,12 @@ return [
     //            'connection' => true,
     //            'users' => [
     //                'connection' => false,
+    //                'parent' => \Illuminate\Foundation\Auth\User::class,
     //            ],
     //            'my_other_database' => [
+    //                'users' => [
+    //                    'parent' => \Illuminate\Foundation\Auth\User::class,
+    //                ],
     //                'password_resets' => [
     //                    'connection' => false,
     //                ]

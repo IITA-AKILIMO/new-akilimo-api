@@ -25,12 +25,15 @@
     },
     "require": {
         "php": "^8.2",
+        "ext-pdo": "^8.2",
         "inertiajs/inertia-laravel": "^3.0",
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "league/csv": "^9.28",
-        "spatie/laravel-data": "^4.15"
+        "spatie/laravel-data": "^4.15",
+        "vermaysha/pgbouncer-laravel-extension": "^0.0.5@beta"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
@@ -40,11 +43,11 @@
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
+        "masgeek/reliese-laravel-model-gen": "^2.0",
         "masgeek/windows-ext-ignorer": "^0.1.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "4.x-dev",
-        "reliese/laravel": "^1.4",
         "sebastian/environment": "^8.0",
         "vcian/laravel-db-auditor": "^2.2"
     },
@@ -101,5 +104,15 @@
         "laravel": {
             "dont-discover": []
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/masgeek/reliese-laravel-model-gen"
+        }
+    ]
 }

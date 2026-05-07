@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class FertilizerPrice
@@ -41,11 +41,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class FertilizerPrice extends Model
+class FertilizerPrice extends BaseModel
 {
     protected $table = 'fertilizer_prices';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'min_price' => 'float',
         'max_price' => 'float',
         'price_per_bag' => 'float',

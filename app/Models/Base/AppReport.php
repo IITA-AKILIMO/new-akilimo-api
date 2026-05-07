@@ -1,0 +1,94 @@
+<?php
+
+/**
+ * Created by Reliese Model.
+ */
+
+namespace App\Models\Base;
+
+use App\Core\Models\BaseModel;
+use Carbon\Carbon;
+
+/**
+ * Class AppReport
+ *
+ * @property int $id
+ * @property string|null $device_token
+ * @property string|null $country_code
+ * @property float|null $lat
+ * @property float|null $lon
+ * @property string|null $full_names
+ * @property string|null $phone_number
+ * @property string|null $gender
+ * @property bool|null $excluded
+ * @property string|null $user_type
+ * @property bool|null $fr
+ * @property bool|null $ic
+ * @property bool|null $pp
+ * @property bool|null $spp
+ * @property bool|null $sph
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereCountryCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereDeviceToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereExcluded($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereFr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereFullNames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereIc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereLat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereLon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport wherePhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport wherePp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereSph($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereSpp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AppReport whereUserType($value)
+ *
+ * @mixin \Eloquent
+ */
+class AppReport extends BaseModel
+{
+    protected $table = 'app_report';
+
+    public $incrementing = false;
+
+    protected $casts = [
+        'id' => 'int',
+        'lat' => 'float',
+        'lon' => 'float',
+        'excluded' => 'bool',
+        'fr' => 'bool',
+        'ic' => 'bool',
+        'pp' => 'bool',
+        'spp' => 'bool',
+        'sph' => 'bool',
+    ];
+
+    protected $hidden = [
+        'device_token',
+    ];
+
+    protected $fillable = [
+        'device_token',
+        'country_code',
+        'lat',
+        'lon',
+        'full_names',
+        'phone_number',
+        'gender',
+        'excluded',
+        'user_type',
+        'fr',
+        'ic',
+        'pp',
+        'spp',
+        'sph',
+    ];
+}

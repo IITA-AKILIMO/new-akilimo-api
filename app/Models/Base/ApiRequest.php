@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ApiRequest
@@ -67,11 +67,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class ApiRequest extends Model
+class ApiRequest extends BaseModel
 {
     protected $table = 'api_requests';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'lat' => 'float',
         'lon' => 'float',
         'fr' => 'bool',
@@ -85,6 +88,10 @@ class ApiRequest extends Model
         'request_started_at' => 'datetime',
         'request_duration_ms' => 'int',
         'plumber_response' => 'json',
+    ];
+
+    protected $hidden = [
+        'device_token',
     ];
 
     protected $fillable = [

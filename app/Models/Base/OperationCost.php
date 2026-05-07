@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class OperationCost
@@ -37,11 +37,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class OperationCost extends Model
+class OperationCost extends BaseModel
 {
     protected $table = 'operation_costs';
 
+    public $incrementing = false;
+
     protected $casts = [
+        'id' => 'int',
         'min_cost' => 'float',
         'max_cost' => 'float',
         'is_active' => 'bool',

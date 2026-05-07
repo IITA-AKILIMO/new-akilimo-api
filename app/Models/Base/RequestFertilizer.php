@@ -6,7 +6,7 @@
 
 namespace App\Models\Base;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\Models\BaseModel;
 
 /**
  * Class RequestFertilizer
@@ -30,15 +30,18 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class RequestFertilizer extends Model
+class RequestFertilizer extends BaseModel
 {
     protected $table = 'request_fertilizer';
 
     protected $primaryKey = 'fertilizer_id';
 
+    public $incrementing = false;
+
     public $timestamps = false;
 
     protected $casts = [
+        'fertilizer_id' => 'int',
         'request_id' => 'int',
         'available' => 'bool',
         'price' => 'float',
