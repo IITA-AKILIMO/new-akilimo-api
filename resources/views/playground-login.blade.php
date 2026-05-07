@@ -12,15 +12,21 @@
 </head>
 <body>
 
-<nav class="pg-nav">
+<nav class="pg-nav pg-nav--glass">
     <a href="/" class="pg-nav-brand">
-        <span class="pg-nav-brand-dot"></span>
-        {{ config('app.name', 'AKILIMO API') }}
+        <img src="/images/akilimo_logo_white.png" alt="Akilimo" class="pg-nav-brand-logo pg-nav-brand-logo--auth">
     </a>
     <span class="pg-nav-badge">Playground</span>
 </nav>
 
 <div class="pg-auth-wrap">
+    <div class="pg-auth-slides" aria-hidden="true">
+        <div class="pg-auth-slide pg-auth-slide--1"></div>
+        <div class="pg-auth-slide pg-auth-slide--2"></div>
+        <div class="pg-auth-slide pg-auth-slide--3"></div>
+        <div class="pg-auth-slide pg-auth-slide--4"></div>
+    </div>
+    <div class="pg-auth-overlay"></div>
     <div class="pg-auth-card">
         <div class="pg-auth-heading">
             <h1 class="pg-auth-title">Welcome back</h1>
@@ -37,18 +43,19 @@
             @csrf
 
             <div class="pg-auth-field">
-                <label for="email" class="pg-auth-label">Email address</label>
+                <label for="login" class="pg-auth-label">Email or username</label>
                 <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autocomplete="email"
+                    id="login"
+                    name="login"
+                    type="text"
+                    autocomplete="username"
                     autofocus
-                    value="{{ old('email') }}"
-                    class="pg-auth-input{{ $errors->has('email') ? ' pg-auth-input--error' : '' }}"
+                    placeholder="you@example.com or john_doe"
+                    value="{{ old('login') }}"
+                    class="pg-auth-input{{ $errors->has('login') ? ' pg-auth-input--error' : '' }}"
                     required
                 />
-                @error('email')
+                @error('login')
                     <span class="pg-auth-error">{{ $message }}</span>
                 @enderror
             </div>

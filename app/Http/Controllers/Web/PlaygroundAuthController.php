@@ -21,16 +21,20 @@ class PlaygroundAuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $request->input('email'))->first();
+        $identifier = $request->input('login');
+
+        $user = User::where('username', $identifier)
+            ->orWhere('email', $identifier)
+            ->first();
 
         if ($user === null || ! Hash::check($request->input('password'), $user->password)) {
             return back()->withErrors([
-                'email' => 'These credentials do not match our records.',
-            ])->onlyInput('email');
+                'login' => 'These credentials do not match our records.',
+            ])->onlyInput('login');
         }
 
         Auth::login($user, remember: true);
