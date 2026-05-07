@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react'
-import { useState } from 'react'
-import type { PageProps } from '../types'
+import { useMemo, useState } from 'react'
+import type { PageProps, UserRole } from '../types'
 
 interface NavItem {
     label: string
@@ -9,18 +9,21 @@ interface NavItem {
 
 interface NavGroup {
     heading: string
+    roles: UserRole[]
     items: NavItem[]
 }
 
 const navigation: NavGroup[] = [
     {
         heading: 'Overview',
+        roles: ['admin', 'partner'],
         items: [
             { label: 'Dashboard', href: '/admin' },
         ],
     },
     {
         heading: 'Management',
+        roles: ['admin'],
         items: [
             { label: 'Users', href: '/admin/users' },
             { label: 'API Keys', href: '/admin/api-keys' },
@@ -30,6 +33,7 @@ const navigation: NavGroup[] = [
     },
     {
         heading: 'Commodity Prices',
+        roles: ['admin'],
         items: [
             { label: 'Maize Prices', href: '/admin/maize-prices' },
             { label: 'Cassava Prices', href: '/admin/cassava-prices' },
@@ -40,6 +44,7 @@ const navigation: NavGroup[] = [
     },
     {
         heading: 'Supporting Data',
+        roles: ['admin'],
         items: [
             { label: 'Investment Amounts', href: '/admin/investment-amounts' },
             { label: 'Operation Costs', href: '/admin/operation-costs' },
@@ -51,7 +56,15 @@ const navigation: NavGroup[] = [
         ],
     },
     {
+        heading: 'API Keys',
+        roles: ['partner'],
+        items: [
+            { label: 'My API Keys', href: '/admin/api-keys' },
+        ],
+    },
+    {
         heading: 'Monitoring',
+        roles: ['admin', 'partner'],
         items: [
             { label: 'Request Log', href: '/admin/requests' },
             { label: 'User Feedback', href: '/admin/feedback' },
@@ -69,9 +82,15 @@ interface SidebarProps {
 
 export default function Sidebar({ currentPath }: SidebarProps) {
     const { auth } = usePage<PageProps>().props
+    const role = auth.user?.role
+
+    const visibleGroups = useMemo(
+        () => navigation.filter((g) => role !== undefined && g.roles.includes(role)),
+        [role],
+    )
 
     const initialOpen = Object.fromEntries(
-        navigation.map((g) => [
+        visibleGroups.map((g) => [
             g.heading,
             g.items.some((i) => isActive(currentPath, i.href)),
         ]),
@@ -96,7 +115,7 @@ export default function Sidebar({ currentPath }: SidebarProps) {
 
             {/* Navigation */}
             <nav className="flex-grow-1 overflow-auto py-3 px-2">
-                {navigation.map((group) => {
+                {visibleGroups.map((group) => {
                     const isOpen = open[group.heading] ?? false
                     const hasActive = group.items.some((i) => isActive(currentPath, i.href))
 
@@ -154,7 +173,15 @@ export default function Sidebar({ currentPath }: SidebarProps) {
                         {auth.user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-grow-1 overflow-hidden">
-                        <div className="text-white text-truncate small fw-medium">{auth.user?.name}</div>
+                        <div className="d-flex align-items-center gap-2">
+                            <span className="text-white text-truncate small fw-medium">{auth.user?.name}</span>
+                            <span
+                                className={`badge ${role === 'admin' ? 'bg-success' : 'bg-secondary'}`}
+                                style={{ fontSize: '0.65rem' }}
+                            >
+                                {role}
+                            </span>
+                        </div>
                         <div className="text-white-50 text-truncate" style={{ fontSize: '0.75rem' }}>{auth.user?.username}</div>
                     </div>
                     <button
