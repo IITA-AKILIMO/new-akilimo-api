@@ -7,38 +7,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-test:
+  setup:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
+    timeout-minutes: 15
     concurrency:
-      group: unit-test-${{ github.ref }}
+      group: unit-test-setup-${{ github.ref }}
       cancel-in-progress: true
-
-    services:
-      mariadb:
-        image: mariadb:11.2
-        env:
-          MARIADB_ROOT_PASSWORD: root
-          MARIADB_DATABASE: akilimo_test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="healthcheck.sh --connect --innodb_initialized"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      APP_ENV: testing
-      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
-      DB_CONNECTION: mariadb
-      DB_HOST: 127.0.0.1
-      DB_PORT: 3306
-      DB_DATABASE: akilimo_test
-      DB_USERNAME: root
-      DB_PASSWORD: root
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -83,6 +57,92 @@ jobs:
       - name: Build frontend assets
         run: pnpm build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            vendor/
+            public/build/
+          retention-days: 1
+
+  test-unit:
+    needs: setup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: unit-test-unit-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, bcmath, pdo, pdo_mysql
+          coverage: none
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Run Unit Tests
+        run: ./vendor/bin/pest --testsuite=Unit
+
+  test-feature:
+    needs: setup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: unit-test-feature-${{ github.ref }}
+      cancel-in-progress: true
+
+    services:
+      mariadb:
+        image: mariadb:11.2
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: akilimo_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
+      DB_CONNECTION: mariadb
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: akilimo_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, bcmath, pdo, pdo_mysql
+          coverage: none
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
       - name: Install MariaDB client
         run: sudo apt-get install -y mariadb-client
 
@@ -92,5 +152,5 @@ jobs:
       - name: Run database migrations
         run: php artisan migrate --step
 
-      - name: Run Unit Tests
-        run: composer test
+      - name: Run Feature Tests
+        run: ./vendor/bin/pest --testsuite=Feature
