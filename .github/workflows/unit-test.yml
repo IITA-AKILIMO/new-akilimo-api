@@ -58,9 +58,6 @@ jobs:
           key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pnpm-
 
-      - name: Approve pnpm builds
-        run: pnpm approve-builds esbuild
-
       - name: Install Node dependencies
         run: pnpm install --frozen-lockfile
 
