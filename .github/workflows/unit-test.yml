@@ -90,7 +90,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Run database migrations
-        run: php artisan migrate --no-interaction --force
+        run: php artisan migrate --step
 
       - name: Run Unit Tests
         run: composer test
