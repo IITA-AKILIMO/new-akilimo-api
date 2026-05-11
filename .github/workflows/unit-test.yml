@@ -6,56 +6,27 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+concurrency:
+  group: unit-test-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_ENV: testing
+  APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
+
 jobs:
   setup:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    concurrency:
-      group: unit-test-setup-${{ github.ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, bcmath, pdo, pdo_mysql
-          coverage: none
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: latest
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.local/share/pnpm/store
-          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-
-
-      - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Set up PHP and install dependencies
+        uses: ./.github/actions/php-setup
 
       - name: Build frontend assets
-        run: pnpm build
+        uses: ./.github/actions/node-build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
@@ -70,22 +41,14 @@ jobs:
     needs: setup
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    concurrency:
-      group: unit-test-unit-${{ github.ref }}
-      cancel-in-progress: true
-    env:
-      APP_ENV: testing
-      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: ./.github/actions/php-setup
         with:
-          php-version: '8.4'
-          extensions: mbstring, bcmath, pdo, pdo_mysql
-          coverage: none
+          install-deps: 'false'
 
       - name: Download build artifacts
         uses: actions/download-artifact@v8
@@ -99,9 +62,6 @@ jobs:
     needs: setup
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    concurrency:
-      group: unit-test-feature-${{ github.ref }}
-      cancel-in-progress: true
 
     services:
       mariadb:
@@ -118,8 +78,6 @@ jobs:
           --health-retries=5
 
     env:
-      APP_ENV: testing
-      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
       DB_CONNECTION: mariadb
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
@@ -132,11 +90,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: ./.github/actions/php-setup
         with:
-          php-version: '8.4'
-          extensions: mbstring, bcmath, pdo, pdo_mysql
-          coverage: none
+          install-deps: 'false'
 
       - name: Download build artifacts
         uses: actions/download-artifact@v8
