@@ -18,6 +18,7 @@ on:
 jobs:
   docker-build-job:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     concurrency:
       cancel-in-progress: true
       group: docker-build-job-${{ github.ref }}
