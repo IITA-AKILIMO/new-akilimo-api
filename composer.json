@@ -40,7 +40,7 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
         "fakerphp/faker": "^1.23",
-        "kitloong/laravel-migrations-generator": "^7.1",
+        "kitloong/laravel-migrations-generator": "^7.4",
         "larastan/larastan": "^3.9",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
@@ -96,7 +96,7 @@
         "lint:fix": "./vendor/bin/pint --dirty",
         "lint:check": "pint --test",
         "lint:analyse": "./vendor/bin/phpstan analyse --memory-limit=256M",
-        "test": "@php artisan test",
+        "test": "@php artisan test --parallel",
         "tests": "pest tests",
         "pest:test": "./vendor/bin/pest",
         "pest:coverage": "./vendor/bin/pest --coverage",
