@@ -11,7 +11,7 @@ function validFeedbackPayload(): array
         'device_language' => 'en',
         'satisfaction_rating' => 4,
         'nps_score' => 8,
-        'use_case' => 'CASSAVA',
+        'use_case' => 'FR',
     ];
 }
 
