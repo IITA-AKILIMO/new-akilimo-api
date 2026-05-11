@@ -13,14 +13,14 @@ class StarchPriceRequest extends FormRequest
 
     public function rules(): array
     {
-        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
+        $required = $this->isMethod('POST') ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'starch_factory_id' => [$required, 'integer', 'exists:starch_factories,id'],
-            'price_class' => [$required, 'integer', 'min:0'],
-            'min_starch' => [$required, 'numeric', 'min:0'],
+            'starch_factory_id' => [...$required, 'integer', 'exists:starch_factories,id'],
+            'price_class' => [...$required, 'integer', 'min:0'],
+            'min_starch' => [...$required, 'numeric', 'min:0'],
             'range_starch' => ['nullable', 'string', 'max:50'],
-            'price' => [$required, 'numeric', 'min:0'],
+            'price' => [...$required, 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:10'],
         ];
     }

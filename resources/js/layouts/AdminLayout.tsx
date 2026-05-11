@@ -15,13 +15,17 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
             <Sidebar currentPath={currentPath} />
 
             <div className="d-flex flex-column flex-grow-1 overflow-hidden">
-                <header className="d-flex align-items-center border-bottom bg-white px-4" style={{ minHeight: 60 }}>
-                    <h1 className="h5 mb-0 fw-semibold">{title ?? 'Dashboard'}</h1>
+                <header className="admin-header">
+                    <div className="d-flex align-items-center gap-3">
+                        <img src="/images/akilimo_logo_colored.png" alt="Akilimo" className="header-logo" />
+                        <span className="header-logo-sep" aria-hidden="true" />
+                        <h1 className="page-title">{title ?? 'Dashboard'}</h1>
+                    </div>
                 </header>
 
                 <FlashBanner />
 
-                <main className="flex-grow-1 overflow-auto p-4">
+                <main className="flex-grow-1 overflow-auto p-4 bg-light">
                     {children}
                 </main>
             </div>

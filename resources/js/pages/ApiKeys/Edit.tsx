@@ -9,12 +9,16 @@ interface User {
     id: number
     name: string
     email: string
+    role: string
 }
 
 interface Props {
-    apiKey: ApiKey
+    apiKey: ApiKey & { user_id: number }
     users: User[]
     abilities: string[]
+    abilityGroups: Record<string, string[]>
+    abilityLabels: Record<string, string>
+    rolePresets: Record<string, string[]>
 }
 
 interface FormData {
@@ -25,27 +29,35 @@ interface FormData {
     is_active: boolean
 }
 
-export default function ApiKeysEdit({ apiKey, users, abilities }: Props) {
+const PRESET_STYLE: Record<string, string> = {
+    user:       'btn-outline-secondary',
+    partner:    'btn-outline-primary',
+    admin:      'btn-outline-danger',
+}
+
+export default function ApiKeysEdit({ apiKey, users, abilityGroups, abilityLabels, rolePresets }: Props) {
     const { data, setData, put, processing, errors } = useForm<FormData>({
-        user_id: apiKey.user_id,
-        name: apiKey.name,
-        abilities: apiKey.abilities || [],
+        user_id:    apiKey.user_id,
+        name:       apiKey.name,
+        abilities:  apiKey.abilities || [],
         expires_at: apiKey.expires_at ? apiKey.expires_at.split('T')[0] : '',
-        is_active: apiKey.is_active,
+        is_active:  apiKey.is_active,
     })
+
+    function toggleAbility(ability: string) {
+        const current = data.abilities
+        setData('abilities', current.includes(ability)
+            ? current.filter((a) => a !== ability)
+            : [...current, ability])
+    }
+
+    function applyPreset(preset: string) {
+        setData('abilities', rolePresets[preset] ?? [])
+    }
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
         put(`/admin/api-keys/${apiKey.id}`)
-    }
-
-    function toggleAbility(ability: string) {
-        const current = data.abilities
-        if (current.includes(ability)) {
-            setData('abilities', current.filter((a) => a !== ability))
-        } else {
-            setData('abilities', [...current, ability])
-        }
     }
 
     return (
@@ -77,7 +89,7 @@ export default function ApiKeysEdit({ apiKey, users, abilities }: Props) {
                             <option value="">Select a user…</option>
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
-                                    {user.name} ({user.email})
+                                    {user.name} ({user.email}) — {user.role}
                                 </option>
                             ))}
                         </select>
@@ -94,26 +106,61 @@ export default function ApiKeysEdit({ apiKey, users, abilities }: Props) {
                     </FormField>
 
                     <FormField label="Abilities" error={errors.abilities}>
-                        <div className="row row-cols-2 row-cols-md-4 g-2">
-                            {abilities.map((ability) => (
-                                <div key={ability} className="col">
-                                    <div className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            id={`ability-${ability}`}
-                                            checked={data.abilities.includes(ability)}
-                                            onChange={() => toggleAbility(ability)}
-                                        />
-                                        <label className="form-check-label" htmlFor={`ability-${ability}`}>
-                                            {ability}
-                                        </label>
+                        {/* Role preset quick-fill */}
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                            <span className="text-muted small align-self-center me-1">Quick-fill:</span>
+                            {Object.keys(rolePresets).map((preset) => (
+                                <button
+                                    key={preset}
+                                    type="button"
+                                    className={`btn btn-sm ${PRESET_STYLE[preset] ?? 'btn-outline-secondary'}`}
+                                    onClick={() => applyPreset(preset)}
+                                >
+                                    {preset.charAt(0).toUpperCase() + preset.slice(1)}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => setData('abilities', [])}
+                            >
+                                Clear (wildcard)
+                            </button>
+                        </div>
+
+                        {/* Grouped ability checkboxes */}
+                        <div className="d-flex flex-column gap-3">
+                            {Object.entries(abilityGroups).map(([group, groupAbilities]) => (
+                                <div key={group}>
+                                    <p className="text-muted small text-uppercase fw-semibold mb-2" style={{ letterSpacing: '0.05em' }}>
+                                        {group}
+                                    </p>
+                                    <div className="d-flex flex-column gap-1">
+                                        {groupAbilities.map((ability) => (
+                                            <div key={ability} className="form-check">
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-check-input"
+                                                    id={`ability-${ability}`}
+                                                    checked={data.abilities.includes(ability)}
+                                                    onChange={() => toggleAbility(ability)}
+                                                />
+                                                <label className="form-check-label" htmlFor={`ability-${ability}`}>
+                                                    <code className="me-2 text-secondary" style={{ fontSize: '0.8em' }}>{ability}</code>
+                                                    <span className="text-muted small">{abilityLabels[ability]}</span>
+                                                </label>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="form-text">
-                            Leave empty for wildcard access (*).
+
+                        <div className="form-text mt-2">
+                            Leave empty for wildcard access (<code>*</code>).
+                            {data.abilities.length > 0 && (
+                                <> Selected: <strong>{data.abilities.join(', ')}</strong></>
+                            )}
                         </div>
                     </FormField>
 

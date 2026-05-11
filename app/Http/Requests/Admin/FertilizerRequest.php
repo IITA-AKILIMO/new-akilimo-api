@@ -13,17 +13,17 @@ class FertilizerRequest extends FormRequest
 
     public function rules(): array
     {
-        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
+        $required = $this->isMethod('POST') ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'name' => [$required, 'string', 'max:255'],
-            'type' => [$required, 'string', 'max:50'],
-            'fertilizer_key' => [$required, 'string', 'max:50'],
+            'name' => [...$required, 'string', 'max:255'],
+            'type' => [...$required, 'string', 'max:50'],
+            'fertilizer_key' => [...$required, 'string', 'max:50'],
             'fertilizer_label' => ['nullable', 'string', 'max:50'],
-            'weight' => [$required, 'integer', 'min:1'],
-            'country' => [$required, 'string', 'size:2'],
+            'weight' => [...$required, 'integer', 'min:1'],
+            'country' => [...$required, 'string', 'size:2'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'use_case' => [$required, 'string', 'max:50'],
+            'use_case' => [...$required, 'string', 'max:50'],
             'cis' => ['boolean'],
             'cim' => ['boolean'],
             'available' => ['boolean'],

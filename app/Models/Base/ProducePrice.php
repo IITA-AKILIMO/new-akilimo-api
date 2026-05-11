@@ -6,8 +6,8 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ProducePrice
@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class ProducePrice extends Model
+class ProducePrice extends BaseModel
 {
     protected $table = 'produce_prices';
 

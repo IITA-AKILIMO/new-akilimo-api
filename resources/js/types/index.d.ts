@@ -1,8 +1,11 @@
+export type UserRole = 'admin' | 'partner' | 'user'
+
 export interface User {
     id: number
     name: string
     username: string
     email: string
+    role: UserRole
     created_at?: string
 }
 
@@ -12,6 +15,7 @@ export interface Country {
     name: string
     active?: boolean
     sort_order?: number
+    has_boundary?: boolean
 }
 
 export interface Fertilizer {
@@ -161,6 +165,7 @@ export interface AuthUser {
     name: string
     username: string
     email: string
+    role: UserRole
 }
 
 export interface Flash {

@@ -7,6 +7,9 @@ on:
 jobs:
   next-release-pr:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
     concurrency:
       cancel-in-progress: true
       group: release-${{ github.ref }}

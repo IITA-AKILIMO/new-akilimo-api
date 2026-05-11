@@ -2,22 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\EnumUserRole;
 use App\Models\Base\User as BaseUser;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class User extends BaseUser implements AuthenticatableContract
+class User extends BaseUser
 {
-    use Authenticatable;
-
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $casts = [
+        'id' => 'int',
+        'email_verified_at' => 'datetime',
+        'role' => EnumUserRole::class,
     ];
-
-    public function apiKeys(): HasMany
-    {
-        return $this->hasMany(ApiKey::class);
-    }
 }

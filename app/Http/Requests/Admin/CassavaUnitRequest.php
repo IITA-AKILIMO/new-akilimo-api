@@ -13,11 +13,11 @@ class CassavaUnitRequest extends FormRequest
 
     public function rules(): array
     {
-        $required = $this->isMethod('POST') ? 'required' : 'sometimes|required';
+        $required = $this->isMethod('POST') ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'label' => [$required, 'string', 'max:100'],
-            'unit_weight' => [$required, 'numeric', 'min:0'],
+            'label' => [...$required, 'string', 'max:100'],
+            'unit_weight' => [...$required, 'numeric', 'min:0'],
             'sort_order' => ['nullable', 'numeric', 'min:0'],
             'description' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],

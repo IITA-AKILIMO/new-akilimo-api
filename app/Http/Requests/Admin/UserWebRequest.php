@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\EnumUserRole;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserWebRequest extends FormRequest
@@ -16,13 +18,14 @@ class UserWebRequest extends FormRequest
     {
         $userId = $this->route('user');
         $isCreate = $this->isMethod('POST');
-        $required = $isCreate ? 'required' : 'sometimes|required';
+        $required = $isCreate ? ['required'] : ['sometimes', 'required'];
 
         return [
-            'name' => [$required, 'string', 'max:255'],
-            'username' => [$required, 'string', 'max:255', 'unique:users,username'.($userId ? ",{$userId}" : '')],
-            'email' => [$required, 'email', 'max:255', 'unique:users,email'.($userId ? ",{$userId}" : '')],
+            'name' => [...$required, 'string', 'max:255'],
+            'username' => [...$required, 'string', 'max:255', 'unique:users,username'.($userId ? ",{$userId}" : '')],
+            'email' => [...$required, 'email', 'max:255', 'unique:users,email'.($userId ? ",{$userId}" : '')],
             'password' => [$isCreate ? 'required' : 'nullable', 'confirmed', Password::min(8)],
+            'role' => ['required', Rule::enum(EnumUserRole::class)],
         ];
     }
 }

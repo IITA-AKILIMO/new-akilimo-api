@@ -6,11 +6,14 @@
 
 namespace App\Models\Base;
 
+use App\Core\Models\BaseUser;
 use App\Models\ApiKey;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * Class User
@@ -19,13 +22,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $username
  * @property string $email
+ * @property string $role
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Collection|ApiKey[] $api_keys
+ * @property Collection|ApiKey[] $apiKeys
  * @property-read int|null $api_keys_count
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Collection<int, PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -37,12 +45,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
  *
  * @mixin \Eloquent
  */
-class User extends Model
+class User extends BaseUser
 {
     protected $table = 'users';
 
@@ -50,16 +59,22 @@ class User extends Model
         'email_verified_at' => 'datetime',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $fillable = [
         'name',
         'username',
         'email',
+        'role',
         'email_verified_at',
         'password',
         'remember_token',
     ];
 
-    public function api_keys(): HasMany
+    public function apiKeys(): HasMany
     {
         return $this->hasMany(ApiKey::class);
     }
