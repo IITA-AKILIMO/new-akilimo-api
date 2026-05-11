@@ -9,6 +9,7 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
 
     concurrency:
       group: unit-test-${{ github.ref }}
@@ -40,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -57,7 +58,7 @@ jobs:
           restore-keys: composer-
 
       - name: Install Composer dependencies
-        run: composer install -v
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -70,7 +71,7 @@ jobs:
           version: latest
 
       - name: Cache pnpm dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.local/share/pnpm/store
           key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
@@ -85,10 +86,8 @@ jobs:
       - name: Prepare environment file
         run: cp .env.example .env
 
-      - name: Generate application key
-        run: php artisan key:generate
+      - name: Run database migrations
+        run: php artisan migrate --no-interaction --force
 
       - name: Run Unit Tests
-        run: |
-          php artisan config:clear
-          php artisan test
+        run: composer tests
