@@ -90,4 +90,4 @@ jobs:
         run: php artisan migrate --no-interaction --force
 
       - name: Run Unit Tests
-        run: composer tests
+        run: composer test
