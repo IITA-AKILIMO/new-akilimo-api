@@ -14,9 +14,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureRateLimiters();
-        Gate::define('viewApiDocs', function (User $user) {
-            return $user->email == 'admin@app.com';
-        });
+        Gate::define('viewApiDocs', fn (?User $user) => true);
+//        Gate::define('viewApiDocs', function (User $user) {
+//            return $user->email == 'admin@app.com';
+//        });
     }
 
     private function configureRateLimiters(): void
