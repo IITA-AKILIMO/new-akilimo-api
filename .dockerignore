@@ -18,7 +18,6 @@ docker-compose.yml
 *.xml
 *.neon
 *.yml
-*.md
 *.bat
 .editorconfig
 
@@ -29,5 +28,4 @@ _ide_helper.php
 _ide_helper_models.php
 cz.yaml
 .coderabbit.yaml
-artisan.bat
 pint.json
