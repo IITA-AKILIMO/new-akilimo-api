@@ -40,11 +40,18 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'API that computes and delivers agricultural recommendations (fertilizer application, intercropping, scheduled planting) based on detailed farm data. Acts as an orchestration layer between clients and an external computation service',
+        /*
+         * Description rendered on the home page of the API documentation (`/docs/api`).
+         */
+        'description' => file_get_contents(__DIR__ . '/../README.md'),
     ],
 
     'ui' => [
         'title' => null,
+        /*
+         * Use to fetch the credential policy for the Try It feature. Options are: omit, include (default), and same-origin
+         */
+        'try_it_credentials_policy' => 'include',
     ],
 
     'renderer' => 'elements',
@@ -100,7 +107,7 @@ return [
      * - 'description' – Case descriptions are stored as the enum schema's description using table formatting.
      * - 'extension' – Case descriptions are stored in the `x-enumDescriptions` enum schema extension.
      *
-     *    @see https://redocly.com/docs-legacy/api-reference-docs/specification-extensions/x-enum-descriptions
+     * @see https://redocly.com/docs-legacy/api-reference-docs/specification-extensions/x-enum-descriptions
      * - false - Case descriptions are ignored.
      */
     'enum_cases_description_strategy' => 'description',
@@ -135,7 +142,10 @@ return [
         RestrictedDocsAccess::class,
     ],
 
-    'extensions' => [],
+    'extensions' => [
+//        \App\Support\Documentation\GoToDefinitionOperationExtension::class,
+//        \App\Support\Documentation\GoToDefinitionSchemaExtension::class,
+    ],
 
     /*
      * Automatically document API security (OpenAPI `security` / `securitySchemes`) based on route

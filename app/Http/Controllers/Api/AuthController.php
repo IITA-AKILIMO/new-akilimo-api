@@ -13,6 +13,9 @@ class AuthController extends Controller
 {
     public function __construct(private readonly AuthService $authService) {}
 
+    /**
+     * @unauthenticated
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->attempt(
