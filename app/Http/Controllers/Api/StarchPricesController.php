@@ -16,7 +16,9 @@ class StarchPricesController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected StarchPriceRepo $repo) {}
+    public function __construct(protected StarchPriceRepo $repo)
+    {
+    }
 
     /**
      * List Starch Prices
@@ -37,14 +39,14 @@ class StarchPricesController extends Controller
         $sort = $this->getSortDirection($request);
 
         $relationFilters = [
-            'starch_factory' => ['country' => $request->input('country')],
+            'starchFactory' => ['country' => $request->input('country')],
         ];
 
         $starchPrices = $this->repo->paginateWithSort(
             perPage: $perPage,
             orderBy: $orderBy,
             direction: $sort,
-            with: ['starch_factory'],
+            with: ['starchFactory'],
             relationFilters: $relationFilters);
 
         return StarchPriceResourceCollection::make($starchPrices);
