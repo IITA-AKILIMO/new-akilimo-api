@@ -30,7 +30,7 @@ jobs:
       cancel-in-progress: true
       group: check-tag-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -41,11 +41,6 @@ jobs:
         if: inputs.specific_tag == ''
         uses: ./.github/actions/get-latest-tag
         id: latest-tag
-
-      - name: Set specific tag
-        if: inputs.specific_tag != ''
-        id: specific-tag
-        run: echo "tag=${{ inputs.specific_tag }}" >> $GITHUB_OUTPUT
 
       - name: Set final tag
         id: final-tag
@@ -60,8 +55,6 @@ jobs:
         with:
           image_name: ${{ inputs.image_name }}
           tag: ${{ steps.final-tag.outputs.tag }}
-          username: ${{ secrets.docker_username }}
-          password: ${{ secrets.docker_password }}
 
       - name: Docker login
         if: steps.final-tag.outputs.tag != '' && (inputs.force_rebuild == true || steps.check-image.outputs.exists != 'true')
@@ -72,7 +65,7 @@ jobs:
 
       - name: Build and push
         if: steps.final-tag.outputs.tag != '' && (inputs.force_rebuild == true || steps.check-image.outputs.exists != 'true')
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ inputs.dockerfile }}

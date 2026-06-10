@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeedBackRequest;
 use App\Http\Resources\Collections\UserFeedbackResourceCollection;
 use App\Http\Resources\UserFeedbackResource;
 use App\Repositories\UserFeedBackRepo;
+use App\Traits\HasPaginationParams;
 use Illuminate\Http\Request;
 
 class UserFeedbackController extends Controller
@@ -36,6 +36,9 @@ class UserFeedbackController extends Controller
         $data = $request->toPersistenceArray();
         $feedBack = $this->repo->create($data);
 
+        /**
+         * @status 201
+         */
         return UserFeedbackResource::make($feedBack);
     }
 }

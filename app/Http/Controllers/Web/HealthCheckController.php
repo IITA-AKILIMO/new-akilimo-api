@@ -23,6 +23,13 @@ class HealthCheckController extends Controller
         // will not implement
     }
 
+    /**
+     * Health Check
+     *
+     * Performs comprehensive health checks on all system services including database, Redis, cache, storage, queue, mail, disk space, migrations, environment config, PHP extensions, and the external Akilimo Compute service.
+     *
+     * @unauthenticated
+     */
     public function check(): JsonResponse
     {
         $healthChecks = [

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CassavaUnit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,20 @@ class CassavaUnitResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        /** @var CassavaUnit $unit */
+        $unit = $this->resource;
+
+        return [
+            /** Unique identifier for the unit */
+            'id' => $unit->id,
+            /** Unit name */
+            'unit' => $unit->unit,
+            /** Unit label/code */
+            'label' => $unit->label,
+            /** Sort order for display */
+            'sort_order' => $unit->sort_order,
+            /** Whether the unit is active */
+            'active' => $unit->active,
+        ];
     }
 }

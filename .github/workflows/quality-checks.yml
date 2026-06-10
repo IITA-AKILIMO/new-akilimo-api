@@ -7,7 +7,6 @@ on:
     branches:
       - develop
 
-
 jobs:
   sonar-checks:
     runs-on: ubuntu-24.04
@@ -32,7 +31,7 @@ jobs:
 
     env:
       APP_ENV: testing
-      APP_KEY: 'base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I='
+      APP_KEY: base64:Ny2n0WddJ9K1bJPlK4CkS5I0Wj9BbytcVYdRmqNP/5I=
       DB_CONNECTION: mariadb
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
@@ -42,49 +41,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Set up PHP and install dependencies
+        uses: ./.github/actions/php-setup
         with:
-          php-version: '8.4'
-          extensions: mbstring, bcmath, pdo, pdo_mysql
           coverage: xdebug
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/pnpm/store
-          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-
-
-      - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Build frontend assets
-        run: pnpm build
+        uses: ./.github/actions/node-build
 
       - name: Install MariaDB client
         run: sudo apt-get install -y mariadb-client

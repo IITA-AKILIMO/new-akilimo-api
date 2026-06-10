@@ -15,8 +15,6 @@ class DefaultPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => DefaultPriceResource::collection($this->resource),
-        ];
+        return DefaultPriceResource::collection($this->resource)->toArray($request);
     }
 }

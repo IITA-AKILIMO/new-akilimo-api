@@ -27,29 +27,32 @@ class CassavaPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        // One query scoped to the countries present on this page
-        $countries = $this->collection->pluck('country')->unique()->values()->all();
-        /** @var array<string, MinMaxPriceDto> $priceBands */
-        $priceBands = $this->priceRepo->findPriceBandsForCountries($countries);
-
-        // One query for all currencies needed on this page
-        $currencyCodes = $this->collection
-            ->map(fn ($item) => EnumCountry::fromCode($item->country)->currency())
+        $countries = $this->collection
+            ->pluck('country')
             ->unique()
-            ->values()
-            ->all();
-        $currencies = Currency::whereIn('currency_code', $currencyCodes)
+            ->values();
+
+        $priceBands = $this->priceRepo
+            ->findPriceBandsForCountries($countries->all());
+
+        $currencies = Currency::query()
+            ->whereIn(
+                'currency_code',
+                $countries
+                    ->map(fn ($country) => EnumCountry::fromCode($country)->currency())
+                    ->unique()
+                    ->all()
+            )
             ->get()
             ->keyBy('currency_code');
 
-        return [
-            'data' => $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
-                $band = $priceBands[$item->country] ?? new MinMaxPriceDto;
-                $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency = $currencies->get($currencyCode);
+        $this->collection->each(function ($item) use ($priceBands, $currencies) {
+            $currencyCode = EnumCountry::fromCode($item->country)->currency();
 
-                return (new CassavaPriceResource($item, $band, $currency))->toArray($request);
-            }),
-        ];
+            $item->priceBand = $priceBands[$item->country] ?? null;
+            $item->currency = $currencies[$currencyCode] ?? null;
+        });
+
+        return CassavaPriceResource::collection($this->collection)->toArray($request);
     }
 }

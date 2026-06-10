@@ -9,8 +9,6 @@ class OperationCostResourceCollection extends ResourceCollection
 {
     public function toArray($request): array
     {
-        return [
-            'data' => OperationCostResource::collection($this->collection),
-        ];
+        return OperationCostResource::collection($this->collection)->toArray($request);
     }
 }

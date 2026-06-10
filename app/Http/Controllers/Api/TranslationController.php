@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TranslationRequest;
 use App\Http\Resources\Collections\TranslationResourceCollection;
 use App\Http\Resources\TranslationResource;
 use App\Repositories\TranslationRepo;
+use App\Traits\HasPaginationParams;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -36,6 +36,9 @@ class TranslationController extends Controller
     {
         $translation = $this->translationRepo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new TranslationResource($translation),
             'message' => 'Translation created.',

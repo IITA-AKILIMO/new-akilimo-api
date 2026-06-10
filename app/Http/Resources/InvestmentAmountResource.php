@@ -34,14 +34,23 @@ class InvestmentAmountResource extends JsonResource
         $currencyResource = $this->currency ? CurrencyResource::make($this->currency) : null;
 
         return [
+            /** Unique identifier for the investment amount */
             'id' => $model->id,
+            /** Investment amount value */
             'investment_amount' => $model->investment_amount,
+            /** ISO 3166-1 alpha-2 country code */
             'country_code' => $model->country,
+            /** Currency details */
             'currency' => $currencyResource,
+            /** Whether this is an exact amount */
             'exact_amount' => $model->investment_amount === 0.0,
+            /** Item tag identifier */
             'item_tag' => $tag,
+            /** Whether the record is active */
             'active' => $model->price_active,
+            /** Area unit (e.g. ha, acre) */
             'area_unit' => $model->area_unit,
+            /** Sort order for display */
             'sort_order' => $model->sort_order,
         ];
     }

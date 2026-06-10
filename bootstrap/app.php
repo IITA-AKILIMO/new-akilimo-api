@@ -30,9 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->alias([
-            'auth'       => Authenticate::class,
+            'auth' => Authenticate::class,
             'auth.token' => AuthenticateWithToken::class,
-            'role'       => EnsureAdminRole::class,
+            'role' => EnsureAdminRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

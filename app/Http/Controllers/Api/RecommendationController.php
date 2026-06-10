@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComputeRequest;
 use App\Http\Resources\ApiRequestResourceCollection;
 use App\Http\Resources\RecommendationResource;
 use App\Repositories\ApiRequestRepo;
 use App\Service\RecommendationService;
+use App\Traits\HasPaginationParams;
 use Illuminate\Http\Request;
 
 class RecommendationController extends Controller

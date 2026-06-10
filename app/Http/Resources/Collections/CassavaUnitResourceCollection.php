@@ -15,8 +15,6 @@ class CassavaUnitResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => CassavaUnitResource::collection($this->collection),
-        ];
+        return CassavaUnitResource::collection($this->collection)->toArray($request);
     }
 }

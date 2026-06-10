@@ -15,8 +15,6 @@ class CurrencyResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => CurrencyResource::collection($this->collection),
-        ];
+        return CurrencyResource::collection($this->collection)->toArray($request);
     }
 }

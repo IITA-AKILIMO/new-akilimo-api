@@ -12,6 +12,15 @@ class CountryController extends Controller
 {
     public function __construct(protected CountryRepo $repo) {}
 
+    /**
+     * List Countries
+     *
+     * Retrieves a list of all active countries.
+     *
+     * @response AnonymousResourceCollection<CountryResource>
+     *
+     * @unauthenticated
+     */
     public function index(Request $request): AnonymousResourceCollection
     {
         $countries = $this->repo->allActive();

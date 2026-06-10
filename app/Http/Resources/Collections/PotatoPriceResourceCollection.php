@@ -15,8 +15,6 @@ class PotatoPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => PotatoPriceResource::collection($this->collection),
-        ];
+        return PotatoPriceResource::collection($this->collection)->toArray($request);
     }
 }

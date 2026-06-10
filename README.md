@@ -3,8 +3,7 @@
 Laravel 12 RESTful API that computes and delivers agricultural recommendations (fertilizer application, intercropping, scheduled planting) based on detailed farm data. Acts as an orchestration layer between clients and an external computation service.
 
 [![Tests](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/unit-test.yml)
-[![Build](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml)
-[![codebeat badge](https://codebeat.co/badges/ba1363f9-5713-458c-bb1d-05fd1bb8b0fa)](https://codebeat.co/projects/github-com-iita-akilimo-new-akilimo-api-develop)
+[![Build](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker-build.yml/badge.svg)](https://github.com/IITA-AKILIMO/new-akilimo-api/actions/workflows/docker.yml)
 
 ---
 

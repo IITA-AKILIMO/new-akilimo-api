@@ -12,6 +12,7 @@ class AdminUserSeeder extends Seeder
 {
     /**
      * @SuppressWarnings("php:S112")
+     *
      * @throws RandomException
      */
     public function run(): void
@@ -43,7 +44,7 @@ class AdminUserSeeder extends Seeder
             return;
         }
 
-        $rawKey = 'ak_' . bin2hex(random_bytes(16));
+        $rawKey = 'ak_'.bin2hex(random_bytes(16));
         $prefix = substr($rawKey, 0, 12);
 
         $user->apiKeys()->create([

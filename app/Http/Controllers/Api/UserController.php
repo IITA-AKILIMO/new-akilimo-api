@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepo;
+use App\Traits\HasPaginationParams;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -47,6 +47,9 @@ class UserController extends Controller
 
         $user = $this->repo->create($data);
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new UserResource($user),
             'message' => 'User created.',

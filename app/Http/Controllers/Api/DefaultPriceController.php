@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\DefaultPriceRequest;
 use App\Http\Resources\Collections\DefaultPriceResourceCollection;
 use App\Http\Resources\DefaultPriceResource;
 use App\Repositories\DefaultPriceRepo;
+use App\Traits\HasPaginationParams;
+use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,6 +18,18 @@ class DefaultPriceController extends Controller
 
     public function __construct(protected DefaultPriceRepo $repo) {}
 
+    /**
+     * List Default Prices
+     *
+     * Retrieves a paginated list of default prices. Optionally filter by country.
+     *
+     * @unauthenticated
+     */
+    #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
+    #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
+    #[QueryParameter(name: 'sort', description: 'Field to sort by (created_at).', type: 'string')]
+    #[QueryParameter(name: 'order', description: 'Sort direction (asc or desc).', type: 'string')]
+    #[QueryParameter(name: 'country', description: 'Filter by ISO 3166-1 alpha-2 country code.', type: 'string')]
     public function index(Request $request)
     {
         $perPage = $this->getPerPage($request);
@@ -40,6 +53,9 @@ class DefaultPriceController extends Controller
     {
         $price = $this->repo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new DefaultPriceResource($price),
             'message' => 'Default price created.',
