@@ -29,13 +29,11 @@ class MaizePriceResourceCollection extends ResourceCollection
         /** @var array<string, MinMaxPriceDto> $priceBands */
         $priceBands = $this->priceRepo->findPriceBandsBulkForCountries($countries);
 
-        return [
-            'data' => $this->collection->map(function ($item) use ($priceBands, $request) {
-                $key = "{$item->country}:{$item->produce_type}";
-                $band = $priceBands[$key] ?? new MinMaxPriceDto;
+        return $this->collection->map(function ($item) use ($priceBands, $request) {
+            $key = "{$item->country}:{$item->produce_type}";
+            $band = $priceBands[$key] ?? new MinMaxPriceDto;
 
-                return (new MaizePriceResource($item, $band))->toArray($request);
-            }),
-        ];
+            return (new MaizePriceResource($item, $band))->toArray($request);
+        })->toArray();
     }
 }

@@ -30,13 +30,11 @@ class InvestmentAmountResourceCollection extends ResourceCollection
             ->get()
             ->keyBy('currency_code');
 
-        return [
-            'data' => $this->collection->map(function ($item) use ($currencies, $request) {
-                $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency = $currencies->get($currencyCode);
+        return $this->collection->map(function ($item) use ($currencies, $request) {
+            $currencyCode = EnumCountry::fromCode($item->country)->currency();
+            $currency = $currencies->get($currencyCode);
 
-                return (new InvestmentAmountResource($item, $currency))->toArray($request);
-            }),
-        ];
+            return (new InvestmentAmountResource($item, $currency))->toArray($request);
+        })->toArray();
     }
 }

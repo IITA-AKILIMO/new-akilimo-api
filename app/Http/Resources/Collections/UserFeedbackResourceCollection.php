@@ -15,8 +15,6 @@ class UserFeedbackResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => UserFeedbackResource::collection($this->collection),
-        ];
+        return UserFeedbackResource::collection($this->collection)->toArray($request);
     }
 }

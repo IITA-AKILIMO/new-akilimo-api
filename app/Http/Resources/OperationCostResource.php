@@ -20,16 +20,27 @@ class OperationCostResource extends JsonResource
         }
 
         return [
+            /** Unique identifier for the operation cost */
             'id' => $model->id,
+            /** Item tag identifier */
             'item_tag' => $tag,
+            /** Name of the operation */
             'operation_name' => Str::upper($model->operation_name),
+            /** Type of the operation */
             'operation_type' => Str::upper($model->operation_type),
+            /** ISO 3166-1 alpha-2 country code */
             'country_code' => $model->country_code,
+            /** Minimum cost */
             'min_cost' => $model->min_cost,
+            /** Maximum cost */
             'max_cost' => $model->max_cost,
+            /** Average cost */
             'average_cost' => $avgCost,
+            /** Whether the record is active */
             'is_active' => $model->is_active,
+            /** Timestamp when created */
             'created_at' => $model->created_at,
+            /** Timestamp when last updated */
             'updated_at' => $model->updated_at,
         ];
     }

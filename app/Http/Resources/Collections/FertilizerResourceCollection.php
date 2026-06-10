@@ -15,8 +15,6 @@ class FertilizerResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => FertilizerResource::collection($this->collection),
-        ];
+        return FertilizerResource::collection($this->collection)->toArray($request);
     }
 }

@@ -8,7 +8,6 @@ use App\Http\Resources\CassavaPriceResource;
 use App\Http\Resources\Collections\CassavaPriceResourceCollection;
 use App\Repositories\CassavaPriceRepo;
 use App\Traits\HasPaginationParams;
-use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\PathParameter;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
@@ -21,9 +20,12 @@ class CassavaPricesController extends Controller
     public function __construct(protected CassavaPriceRepo $repo) {}
 
     /**
+     * List Cassava Prices
+     *
+     * Retrieves a paginated list of cassava prices.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'List Cassava Prices', description: 'Retrieves a paginated list of cassava prices.')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
     #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, created_at).', type: 'string')]
@@ -44,9 +46,12 @@ class CassavaPricesController extends Controller
     }
 
     /**
+     * Cassava Prices by Country
+     *
+     * Retrieves a paginated list of cassava prices for a specific country.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'Cassava Prices by Country', description: 'Retrieves a paginated list of cassava prices for a specific country.')]
     #[PathParameter(name: 'countryCode', description: 'ISO 3166-1 alpha-2 country code (e.g. NG, TZ).')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
@@ -75,6 +80,9 @@ class CassavaPricesController extends Controller
     {
         $price = $this->repo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new CassavaPriceResource($price),
             'message' => 'Cassava price created.',

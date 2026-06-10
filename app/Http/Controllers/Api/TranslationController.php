@@ -36,6 +36,9 @@ class TranslationController extends Controller
     {
         $translation = $this->translationRepo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new TranslationResource($translation),
             'message' => 'Translation created.',

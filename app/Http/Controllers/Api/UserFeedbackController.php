@@ -36,6 +36,9 @@ class UserFeedbackController extends Controller
         $data = $request->toPersistenceArray();
         $feedBack = $this->repo->create($data);
 
+        /**
+         * @status 201
+         */
         return UserFeedbackResource::make($feedBack);
     }
 }

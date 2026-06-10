@@ -8,7 +8,6 @@ use App\Http\Resources\Collections\CurrencyResourceCollection;
 use App\Http\Resources\CurrencyResource;
 use App\Repositories\CurrencyRepo;
 use App\Traits\HasPaginationParams;
-use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +19,12 @@ class CurrencyController extends Controller
     public function __construct(protected CurrencyRepo $repo) {}
 
     /**
+     * List Currencies
+     *
+     * Retrieves a paginated list of available currencies.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'List Currencies', description: 'Retrieves a paginated list of available currencies.')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
     #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, currency_code, created_at).', type: 'string')]
@@ -46,6 +48,9 @@ class CurrencyController extends Controller
     {
         $currency = $this->repo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new CurrencyResource($currency),
             'message' => 'Currency created.',

@@ -47,6 +47,9 @@ class UserController extends Controller
 
         $user = $this->repo->create($data);
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new UserResource($user),
             'message' => 'User created.',

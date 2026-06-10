@@ -45,14 +45,12 @@ class FertilizerPriceResourceCollection extends ResourceCollection
             ->get()
             ->keyBy('currency_code');
 
-        return [
-            'data' => $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
-                $bands = $priceBands[$item->fertilizer_key] ?? ['min' => null, 'max' => null];
-                $currencyCode = EnumCountry::fromCode($item->country)->currency();
-                $currency = $currencies->get($currencyCode);
+        return $this->collection->map(function ($item) use ($priceBands, $currencies, $request) {
+            $bands = $priceBands[$item->fertilizer_key] ?? ['min' => null, 'max' => null];
+            $currencyCode = EnumCountry::fromCode($item->country)->currency();
+            $currency = $currencies->get($currencyCode);
 
-                return (new FertilizerPriceResource($item, $bands['min'], $bands['max'], $currency))->toArray($request);
-            }),
-        ];
+            return (new FertilizerPriceResource($item, $bands['min'], $bands['max'], $currency))->toArray($request);
+        })->toArray();
     }
 }

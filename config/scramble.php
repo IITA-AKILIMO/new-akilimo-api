@@ -1,6 +1,10 @@
 <?php
 
+use App\Support\Documentation\GoToDefinitionOperationExtension;
+use App\Support\Documentation\GoToDefinitionSchemaExtension;
 use Dedoc\Scramble\Http\Middleware\RestrictedDocsAccess;
+use Dedoc\Scramble\SecurityDocumentation\MiddlewareAuthSecurityStrategy;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 
 return [
     /*
@@ -47,7 +51,7 @@ return [
     ],
 
     'ui' => [
-        'title' => null,
+        'title' => 'AKILIMO API',
         /*
          * Use to fetch the credential policy for the Try It feature. Options are: omit, include (default), and same-origin
          */
@@ -65,7 +69,7 @@ return [
             'theme' => 'light',
             'hideTryIt' => false,
             'hideSchemas' => true,
-            'logo' => '',
+            'logo' => '/images/akilimo_logo.svg',
             'tryItCredentialsPolicy' => 'include',
             'layout' => 'responsive',
             'router' => 'hash',
@@ -143,8 +147,8 @@ return [
     ],
 
     'extensions' => [
-        //        \App\Support\Documentation\GoToDefinitionOperationExtension::class,
-        //        \App\Support\Documentation\GoToDefinitionSchemaExtension::class,
+        GoToDefinitionOperationExtension::class,
+        GoToDefinitionSchemaExtension::class,
     ],
 
     /*
@@ -169,6 +173,11 @@ return [
      *     ],
      * ],
      */
-    // 'security_strategy' => \Dedoc\Scramble\SecurityDocumentation\MiddlewareAuthSecurityStrategy::class,
-    'security_strategy' => null,
+    'security_strategy' => [
+        MiddlewareAuthSecurityStrategy::class,
+        [
+            'middleware' => ['auth', 'auth:*'],
+            'scheme' => SecurityScheme::http('bearer'),
+        ],
+    ],
 ];

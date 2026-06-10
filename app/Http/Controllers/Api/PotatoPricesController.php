@@ -8,7 +8,6 @@ use App\Http\Resources\Collections\PotatoPriceResourceCollection;
 use App\Http\Resources\PotatoPriceResource;
 use App\Repositories\PotatoPriceRepo;
 use App\Traits\HasPaginationParams;
-use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\PathParameter;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
@@ -21,9 +20,12 @@ class PotatoPricesController extends Controller
     public function __construct(protected PotatoPriceRepo $repo) {}
 
     /**
+     * List Potato Prices
+     *
+     * Retrieves a paginated list of potato prices.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'List Potato Prices', description: 'Retrieves a paginated list of potato prices.')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
     #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, created_at).', type: 'string')]
@@ -40,9 +42,12 @@ class PotatoPricesController extends Controller
     }
 
     /**
+     * Potato Prices by Country
+     *
+     * Retrieves a paginated list of potato prices for a specific country.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'Potato Prices by Country', description: 'Retrieves a paginated list of potato prices for a specific country.')]
     #[PathParameter(name: 'countryCode', description: 'ISO 3166-1 alpha-2 country code (e.g. NG, TZ).')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
@@ -68,6 +73,9 @@ class PotatoPricesController extends Controller
     {
         $price = $this->repo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new PotatoPriceResource($price),
             'message' => 'Potato price created.',

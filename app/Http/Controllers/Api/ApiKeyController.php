@@ -57,6 +57,9 @@ class ApiKeyController extends Controller
             'expires_at' => $validated['expires_at'] ?? null,
         ]);
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => [
                 ...(new ApiKeyResource($apiKey))->toArray($request),

@@ -8,7 +8,6 @@ use App\Http\Resources\Collections\FertilizerResourceCollection;
 use App\Http\Resources\FertilizerResource;
 use App\Repositories\FertilizerRepo;
 use App\Traits\HasPaginationParams;
-use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\PathParameter;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
@@ -26,9 +25,12 @@ class FertilizerController extends Controller
     }
 
     /**
+     * List Fertilizers
+     *
+     * Retrieves a paginated list of all fertilizers.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'List Fertilizers', description: 'Retrieves a paginated list of all fertilizers.')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
     #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, name, created_at).', type: 'string')]
@@ -48,9 +50,12 @@ class FertilizerController extends Controller
     }
 
     /**
+     * Fertilizers by Country
+     *
+     * Retrieves a paginated list of fertilizers available in a specific country. Optionally filter by use case.
+     *
      * @unauthenticated
      */
-    #[Endpoint(title: 'Fertilizers by Country', description: 'Retrieves a paginated list of fertilizers available in a specific country. Optionally filter by use case.')]
     #[PathParameter(name: 'countryCode', description: 'ISO 3166-1 alpha-2 country code (e.g. NG, TZ).')]
     #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
     #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
@@ -86,6 +91,9 @@ class FertilizerController extends Controller
     {
         $fertilizer = $this->fertilizerRepo->create($request->validated());
 
+        /**
+         * @status 201
+         */
         return response()->json([
             'data' => new FertilizerResource($fertilizer),
             'message' => 'Fertilizer created.',

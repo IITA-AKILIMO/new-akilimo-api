@@ -14,10 +14,15 @@ class CountryResource extends JsonResource
         $country = $this->resource;
 
         return [
+            /** Unique identifier for the country */
             'id' => $country->id,
+            /** ISO 3166-1 alpha-2 country code */
             'code' => $country->code,
+            /** Full name of the country */
             'name' => $country->name,
+            /** Whether the country is active */
             'active' => $country->active,
+            /** Sort order for display */
             'sort_order' => $country->sort_order,
         ];
     }
