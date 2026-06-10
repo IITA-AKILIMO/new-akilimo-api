@@ -87,7 +87,7 @@ class CassavaPricesController extends Controller
          * @status 201
          */
         return response()->json([
-            'data' => new CassavaPriceResource(resource: $price, priceBand: new MinMaxPriceDto()),
+            'data' => new CassavaPriceResource(resource: $price),
             'message' => 'Cassava price created.',
         ], 201);
     }
@@ -97,7 +97,7 @@ class CassavaPricesController extends Controller
         $price = $this->repo->update($id, $request->validated());
 
         return response()->json([
-            'data' => new CassavaPriceResource(resource: $price, priceBand: new MinMaxPriceDto()),
+            'data' => new CassavaPriceResource(resource: $price),
             'message' => 'Cassava price updated.',
         ]);
     }
