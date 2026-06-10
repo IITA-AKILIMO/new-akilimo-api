@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Data\MinMaxPriceDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CassavaPriceRequest;
 use App\Http\Resources\CassavaPriceResource;
@@ -17,7 +18,9 @@ class CassavaPricesController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected CassavaPriceRepo $repo) {}
+    public function __construct(protected CassavaPriceRepo $repo)
+    {
+    }
 
     /**
      * List Cassava Prices
@@ -84,7 +87,7 @@ class CassavaPricesController extends Controller
          * @status 201
          */
         return response()->json([
-            'data' => new CassavaPriceResource($price),
+            'data' => new CassavaPriceResource(resource: $price),
             'message' => 'Cassava price created.',
         ], 201);
     }
@@ -94,7 +97,7 @@ class CassavaPricesController extends Controller
         $price = $this->repo->update($id, $request->validated());
 
         return response()->json([
-            'data' => new CassavaPriceResource($price),
+            'data' => new CassavaPriceResource(resource: $price),
             'message' => 'Cassava price updated.',
         ]);
     }

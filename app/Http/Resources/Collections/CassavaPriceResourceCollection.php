@@ -27,32 +27,35 @@ class CassavaPriceResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        $countries = $this->collection
-            ->pluck('country')
-            ->unique()
-            ->values();
+        // Collect unique countries
+        $countries = $this->collection->pluck('country')->unique()->values();
 
-        $priceBands = $this->priceRepo
-            ->findPriceBandsForCountries($countries->all());
+        // Precompute country → currency mapping
+        $countryCurrencies = $countries->mapWithKeys(
+            fn ($country) => [$country => EnumCountry::fromCode($country)->currency()]
+        );
 
+        // Price bands for each country
+        $priceBands = $this->priceRepo->findPriceBandsForCountries($countries->all());
+
+        // Currency models keyed by code
         $currencies = Currency::query()
-            ->whereIn(
-                'currency_code',
-                $countries
-                    ->map(fn ($country) => EnumCountry::fromCode($country)->currency())
-                    ->unique()
-                    ->all()
-            )
+            ->whereIn('currency_code', $countryCurrencies->unique()->all())
             ->get()
             ->keyBy('currency_code');
 
-        $this->collection->each(function ($item) use ($priceBands, $currencies) {
-            $currencyCode = EnumCountry::fromCode($item->country)->currency();
+        // Map each item into a resource with context
+        $resources = $this->collection->map(function ($item) use ($priceBands, $currencies, $countryCurrencies) {
+            $currencyCode = $countryCurrencies[$item->country] ?? null;
 
-            $item->priceBand = $priceBands[$item->country] ?? null;
-            $item->currency = $currencies[$currencyCode] ?? null;
+            return CassavaPriceResource::makeWithContext(
+                $item,
+                $priceBands[$item->country] ?? null,
+                $currencyCode ? $currencies[$currencyCode] ?? null : null
+            );
         });
 
-        return CassavaPriceResource::collection($this->collection)->toArray($request);
+        return $resources->toArray();
     }
+
 }

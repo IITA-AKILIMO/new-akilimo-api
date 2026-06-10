@@ -10,12 +10,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CassavaPriceResource extends JsonResource
 {
-    public function __construct(
-        $resource,
-        private readonly MinMaxPriceDto $priceBand,
-        private readonly ?Currency $currency,
-    ) {
-        parent::__construct($resource);
+    private ?MinMaxPriceDto $priceBand = null;
+    private ?Currency $currency = null;
+
+    public static function makeWithContext($resource, MinMaxPriceDto $priceBand, ?Currency $currency = null): self
+    {
+        $instance = new self($resource);
+        $instance->priceBand = $priceBand;
+        $instance->currency = $currency;
+        return $instance;
     }
 
     /**

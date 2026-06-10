@@ -15,17 +15,19 @@ class StarchPriceResource extends JsonResource
     public function toArray($request): array
     {
 
+        $factory = $this->starchFactory;
+
         return [
             /** Composite key of factory name and price class */
-            'key' => $this->starch_factory->factory_name.$this->price_class,
+            'key' => ($factory?->factory_name) . $this->price_class,
             /** Starch factory name */
-            'starch_factory' => $this->starch_factory->factory_name,
+            'starch_factory' => $factory?->factory_name,
             /** Starch factory label */
-            'starch_factory_label' => $this->starch_factory->factory_label,
+            'starch_factory_label' => $factory?->factory_label,
             /** Price class/grade */
             'class' => $this->price_class,
             /** ISO 3166-1 alpha-2 country code */
-            'country' => $this->starch_factory->country,
+            'country' => $factory?->country,
             /** Minimum starch content */
             'min_starch' => $this->min_starch,
             /** Starch content range */
