@@ -27,14 +27,13 @@ class CountriesSeeder extends Seeder
         $batch = [];
         $batchSize = 500;
 
-
         foreach ($csv as $record) {
 
             $batch[] = [
                 'code' => $record['country'],
                 'name' => $record['name'],
-                'latitude' => (float)$record['latitude'],
-                'longitude' => (float)$record['longitude'],
+                'latitude' => (float) $record['latitude'],
+                'longitude' => (float) $record['longitude'],
 
                 // bounding box unknown for now
                 'min_latitude' => null,
@@ -66,7 +65,7 @@ class CountriesSeeder extends Seeder
                         'boundary',
                         'active',
                         'sort_order',
-                        'updated_at'
+                        'updated_at',
                     ]
                 );
                 $batch = [];
@@ -74,7 +73,7 @@ class CountriesSeeder extends Seeder
         }
 
         // Insert remaining rows
-        if (!empty($batch)) {
+        if (! empty($batch)) {
             DB::table('countries')->upsert(
                 $batch,
                 ['code'],
@@ -89,7 +88,7 @@ class CountriesSeeder extends Seeder
                     'boundary',
                     'active',
                     'sort_order',
-                    'updated_at'
+                    'updated_at',
                 ]
             );
         }

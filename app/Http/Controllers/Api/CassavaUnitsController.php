@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CassavaUnitRequest;
 use App\Http\Resources\CassavaUnitResource;
 use App\Http\Resources\Collections\CassavaUnitResourceCollection;
 use App\Repositories\CassavaUnitRepo;
+use App\Traits\HasPaginationParams;
+use Dedoc\Scramble\Attributes\Endpoint;
+use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,6 +19,14 @@ class CassavaUnitsController extends Controller
 
     public function __construct(protected CassavaUnitRepo $repo) {}
 
+    /**
+     * @unauthenticated
+     */
+    #[Endpoint(title: 'List Cassava Units', description: 'Retrieves a paginated list of cassava measurement units.')]
+    #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
+    #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
+    #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, created_at).', type: 'string')]
+    #[QueryParameter(name: 'order', description: 'Sort direction (asc or desc).', type: 'string')]
     public function index(Request $request): CassavaUnitResourceCollection
     {
         $perPage = $this->getPerPage($request);

@@ -98,7 +98,7 @@
         "lint:fix": "./vendor/bin/pint --dirty",
         "lint:check": "pint --test",
         "lint:analyse": "./vendor/bin/phpstan analyse --memory-limit=256M",
-        "test": "@php artisan test --parallel",
+        "test": "@php artisan test",
         "test:unit": "@php vendor/bin/pest --testsuite=Unit",
         "test:feature": "@php vendor/bin/pest --testsuite=Feature",
         "pest:test": "./vendor/bin/pest",

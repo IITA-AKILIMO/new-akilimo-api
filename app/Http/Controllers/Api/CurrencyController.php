@@ -8,6 +8,8 @@ use App\Http\Resources\Collections\CurrencyResourceCollection;
 use App\Http\Resources\CurrencyResource;
 use App\Repositories\CurrencyRepo;
 use App\Traits\HasPaginationParams;
+use Dedoc\Scramble\Attributes\Endpoint;
+use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,10 +17,16 @@ class CurrencyController extends Controller
 {
     use HasPaginationParams;
 
-    public function __construct(protected CurrencyRepo $repo)
-    {
-    }
+    public function __construct(protected CurrencyRepo $repo) {}
 
+    /**
+     * @unauthenticated
+     */
+    #[Endpoint(title: 'List Currencies', description: 'Retrieves a paginated list of available currencies.')]
+    #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
+    #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
+    #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, currency_code, created_at).', type: 'string')]
+    #[QueryParameter(name: 'order', description: 'Sort direction (asc or desc).', type: 'string')]
     public function index(Request $request): CurrencyResourceCollection
     {
         $perPage = $this->getPerPage($request);

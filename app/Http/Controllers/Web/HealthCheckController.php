@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Dedoc\Scramble\Attributes\Endpoint;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,6 +24,10 @@ class HealthCheckController extends Controller
         // will not implement
     }
 
+    /**
+     * @unauthenticated
+     */
+    #[Endpoint(title: 'Health Check', description: 'Performs comprehensive health checks on all system services including database, Redis, cache, storage, queue, mail, disk space, migrations, environment config, PHP extensions, and the external Akilimo Compute service.')]
     public function check(): JsonResponse
     {
         $healthChecks = [

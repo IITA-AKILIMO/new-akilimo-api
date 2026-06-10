@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Traits\HasPaginationParams;;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OperationCostRequest;
 use App\Http\Resources\Collections\OperationCostResourceCollection;
 use App\Http\Resources\OperationCostResource;
 use App\Repositories\OperationCostRepo;
+use App\Traits\HasPaginationParams;
+use Dedoc\Scramble\Attributes\Endpoint;
+use Dedoc\Scramble\Attributes\PathParameter;
+use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,6 +20,16 @@ class OperationCostController extends Controller
 
     public function __construct(protected OperationCostRepo $repo) {}
 
+    /**
+     * @unauthenticated
+     */
+    #[Endpoint(title: 'List Operation Costs', description: 'Retrieves a paginated list of operation costs. Optionally filter by operation name and type.')]
+    #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
+    #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
+    #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, max_cost, min_cost, created_at).', type: 'string')]
+    #[QueryParameter(name: 'order', description: 'Sort direction (asc or desc).', type: 'string')]
+    #[QueryParameter(name: 'operation_name', description: 'Filter by operation name.', type: 'string')]
+    #[QueryParameter(name: 'operation_type', description: 'Filter by operation type.', type: 'string')]
     public function index(Request $request): OperationCostResourceCollection
     {
         $perPage = $this->getPerPage($request);
@@ -39,6 +52,17 @@ class OperationCostController extends Controller
         return OperationCostResourceCollection::make($operationCosts);
     }
 
+    /**
+     * @unauthenticated
+     */
+    #[Endpoint(title: 'Operation Costs by Country', description: 'Retrieves a paginated list of operation costs for a specific country. Optionally filter by operation name and type.')]
+    #[PathParameter(name: 'countryCode', description: 'ISO 3166-1 alpha-2 country code (e.g. NG, TZ).')]
+    #[QueryParameter(name: 'per_page', description: 'Number of items per page.', type: 'int')]
+    #[QueryParameter(name: 'page', description: 'Page number.', type: 'int')]
+    #[QueryParameter(name: 'sort', description: 'Field to sort by (sort_order, max_cost, min_cost, created_at).', type: 'string')]
+    #[QueryParameter(name: 'order', description: 'Sort direction (asc or desc).', type: 'string')]
+    #[QueryParameter(name: 'operation_name', description: 'Filter by operation name.', type: 'string')]
+    #[QueryParameter(name: 'operation_type', description: 'Filter by operation type.', type: 'string')]
     public function byCountry(string $countryCode, Request $request): OperationCostResourceCollection
     {
         $perPage = $this->getPerPage($request);

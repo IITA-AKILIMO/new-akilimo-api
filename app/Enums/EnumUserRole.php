@@ -22,6 +22,6 @@ enum EnumUserRole: string
     /** Comma-separated role values for middleware route definitions. */
     public static function adminMiddlewareParam(): string
     {
-        return implode(',', array_map(fn($r) => $r->value, self::adminRoles()));
+        return implode(',', array_map(fn ($r) => $r->value, self::adminRoles()));
     }
 }

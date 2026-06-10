@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Log;
 class AkilimoComputeService
 {
     protected string $baseUrl;
+
     protected string $endpoint;
+
     protected int $timeout;
+
     protected int $retries;
+
     protected bool $logging;
 
     public function __construct()
@@ -81,7 +85,7 @@ class AkilimoComputeService
 
     protected function log(string $level, string $context, $response, ?string $message = null, ?array $body = null): void
     {
-        if (!$this->logging) {
+        if (! $this->logging) {
             return;
         }
 

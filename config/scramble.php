@@ -43,7 +43,7 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => file_get_contents(__DIR__ . '/../README.md'),
+        'description' => file_get_contents(__DIR__.'/../README.md'),
     ],
 
     'ui' => [
@@ -143,8 +143,8 @@ return [
     ],
 
     'extensions' => [
-//        \App\Support\Documentation\GoToDefinitionOperationExtension::class,
-//        \App\Support\Documentation\GoToDefinitionSchemaExtension::class,
+        //        \App\Support\Documentation\GoToDefinitionOperationExtension::class,
+        //        \App\Support\Documentation\GoToDefinitionSchemaExtension::class,
     ],
 
     /*

@@ -19,12 +19,12 @@ class FeedbackController extends Controller
         $direction = $request->get('sort_dir', 'desc');
 
         $filters = [
-            'use_case'  => (string) $request->get('use_case', ''),
+            'use_case' => (string) $request->get('use_case', ''),
             'user_type' => (string) $request->get('user_type', ''),
-            'language'  => (string) $request->get('language', ''),
+            'language' => (string) $request->get('language', ''),
             'date_from' => (string) $request->get('date_from', ''),
-            'date_to'   => (string) $request->get('date_to', ''),
-            'search'    => (string) $request->get('search', ''),
+            'date_to' => (string) $request->get('date_to', ''),
+            'search' => (string) $request->get('search', ''),
         ];
 
         $paginator = $this->repo->paginate($perPage, $orderBy, $direction, $filters);
@@ -32,31 +32,31 @@ class FeedbackController extends Controller
         return Inertia::render('Feedback/Index', [
             'feedback' => [
                 'data' => collect($paginator->items())->map(fn ($f) => [
-                    'id'                   => $f->id,
-                    'device_token'         => $f->device_token ? substr($f->device_token, 0, 8).'****' : null,
-                    'use_case'             => $f->use_case,
-                    'user_type'            => $f->user_type,
-                    'akilimo_rec_rating'   => $f->akilimo_rec_rating,
+                    'id' => $f->id,
+                    'device_token' => $f->device_token ? substr($f->device_token, 0, 8).'****' : null,
+                    'use_case' => $f->use_case,
+                    'user_type' => $f->user_type,
+                    'akilimo_rec_rating' => $f->akilimo_rec_rating,
                     'akilimo_useful_rating' => $f->akilimo_useful_rating,
-                    'language'             => $f->language,
-                    'created_at'           => $f->created_at?->toIso8601String(),
+                    'language' => $f->language,
+                    'created_at' => $f->created_at?->toIso8601String(),
                 ])->all(),
                 'meta' => [
                     'current_page' => $paginator->currentPage(),
-                    'last_page'    => $paginator->lastPage(),
-                    'per_page'     => $paginator->perPage(),
-                    'total'        => $paginator->total(),
-                    'from'         => $paginator->firstItem(),
-                    'to'           => $paginator->lastItem(),
+                    'last_page' => $paginator->lastPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                    'from' => $paginator->firstItem(),
+                    'to' => $paginator->lastItem(),
                 ],
                 'links' => [
                     'first' => $paginator->url(1),
-                    'last'  => $paginator->url($paginator->lastPage()),
-                    'prev'  => $paginator->previousPageUrl(),
-                    'next'  => $paginator->nextPageUrl(),
+                    'last' => $paginator->url($paginator->lastPage()),
+                    'prev' => $paginator->previousPageUrl(),
+                    'next' => $paginator->nextPageUrl(),
                 ],
             ],
-            'filters'   => array_merge($filters, ['sort_by' => $orderBy, 'sort_dir' => $direction]),
+            'filters' => array_merge($filters, ['sort_by' => $orderBy, 'sort_dir' => $direction]),
             'use_cases' => $this->repo->useCases(),
             'languages' => $this->repo->languages(),
         ]);
